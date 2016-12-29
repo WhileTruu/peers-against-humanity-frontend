@@ -1,0 +1,25 @@
+.tw-dropdown-item--clickable {
+  cursor: pointer;
+}
+
+.tw-dropdown-item--divider {
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-bottom-color: #f2f5f7;
+}
+
+.generic-flag {
+  height: 21px;
+  width: 33px;
+  margin-top: 0px !important;
+  background-size: 100% 100%;
+}
+
+.flag-uk {
+  @extend .generic-flag;
+  background-image: url('./flags/uk.svg');
+}
+.flag-ee {
+  @extend .generic-flag;
+  background-image: url('./flags/ee.svg');
+}

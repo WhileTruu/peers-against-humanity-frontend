@@ -1,0 +1,16 @@
+import React, { PropTypes as Types } from 'react'
+
+const Alert = ({ type, message }) => (
+  <div className={`alert m-t-3 m-b-0 alert-${type}`}>
+    <strong>{message}</strong>
+  </div>
+)
+
+Alert.propTypes = {
+  type: Types.oneOf(['warning', 'danger', 'info', 'success']).isRequired,
+  message: Types.string.isRequired,
+}
+
+Alert.displayName = 'Alert'
+
+export default Alert

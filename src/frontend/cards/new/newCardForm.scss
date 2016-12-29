@@ -1,0 +1,44 @@
+.btn-input-inverse {
+  color: white !important;
+  background-color: #343434 !important;
+  &:hover {
+    background-color: #444444 !important;
+  }
+  &:focus {
+    background-color: #545454 !important;
+  }
+  &.active {
+    background-color: #434343 !important;
+  }
+}
+
+.new-card-form {
+  &.card-container {
+    cursor: pointer;
+    padding-right: 12px;
+  }
+  &.row-flex {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+  }
+  &.card-option-inputs {
+    width: 100%;
+  }
+}
+
+@media only screen and (max-width: 500px) {
+  .new-card-form {
+    &.row-flex {
+      align-items: center;
+      flex-direction: column;
+    }
+    &.card-container {
+      cursor: pointer;
+      padding-right: 0;
+    }
+  }
+  .panel {
+    padding: 12px;
+  }
+}

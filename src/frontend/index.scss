@@ -1,0 +1,62 @@
+@import "./variables";
+$enable-flex: true;
+@import "~bootstrap/dist/css/bootstrap.min.css";
+
+
+body {
+  margin: 0;
+  padding: 0;
+}
+.bg-sah-default {
+  background-color: $sah-bg-default;
+  color: white !important;
+  & h1 { color: $sah-color-default }
+}
+
+.bg-sah-card-white {
+  background-color: $sah-card-color-white;
+  color: $sah-card-color-black;
+  & h1, h2, h3, h4, h5, h6 { color: $sah-card-color-black; }
+  & .sah-card-footer { color: $sah-card-color-black; }
+}
+
+
+.bg-sah-card-black {
+  background-color: $sah-card-color-black;
+  color: $sah-card-color-white;
+  & h1, h2, h3, h4, h5, h6 { color: $sah-card-color-white; }
+  & .sah-card-footer { color: $sah-card-color-white; }
+}
+
+.center {
+  justify-content: center;
+}
+
+.right {
+  text-align: right;
+}
+
+.btn {
+  box-shadow: $sah-shadow;
+  border: none;
+  &:focus {
+    box-shadow: $sah-shadow-focus;
+  }
+}
+
+input, button {
+  outline: none !important;
+  box-shadow: $sah-shadow !important;
+  border: none !important;
+  &:focus {
+    box-shadow: $sah-shadow-focus !important;
+  }
+}
+
+label {
+  color: $sah-label-color !important;
+}
+
+.white-text {
+  color: white;
+}
