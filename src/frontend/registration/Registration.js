@@ -1,44 +1,52 @@
 import React, { Component } from 'react'
+import { withRouter } from 'react-router'
 
 import Alert from '../common/alert'
+import ApiService from '../services/apiService'
 
-export default class Registration extends Component {
+class Registration extends Component {
   constructor(props) {
-    super(props);
-    this.passwordsAreMatching = this.passwordsAreMatching.bind(this);
-    this.onSubmit = this.onSubmit.bind(this);
+    super(props)
+    this.passwordsAreMatching = this.passwordsAreMatching.bind(this)
+    this.onSubmit = this.onSubmit.bind(this)
     this.state = {
       error: '',
       username: '',
       password: '',
       passwordAgain: '',
-    };
+    }
   }
 
   onSubmit(event) {
-    event.preventDefault();
-    if (!this.usernameHasBeenInserted()) return;
-    if (!this.passwordsAreMatching()) return;
-    // const { username, password } = this.state;
-    //TODO apiservice stuff here.
+    event.preventDefault()
+    if (!this.usernameHasBeenInserted()) return
+    if (!this.passwordsAreMatching()) return
+    const { username, password } = this.state
+    ApiService.registerNewUserAccount(username, password)
+      .then(response => {
+        window.localStorage.setItem('token', response.data.token)
+        this.props.router.push('/')
+      }).catch((error) => {
+        this.setState({ error: error.response.data.message })
+      })
   }
 
   usernameHasBeenInserted() {
     if (this.state.username.trim() === '') {
-      this.setState({ error: 'Please insert a username.' });
-      return false;
+      this.setState({ error: 'Please insert a username.' })
+      return false
     }
-    return true;
+    return true
   }
 
   passwordsAreMatching() {
     if (this.state.password.trim() === '') {
-      this.setState({ error: 'Please insert a password.' });
-      return false;
+      this.setState({ error: 'Please insert a password.' })
+      return false
     }
-    if (this.state.password === this.state.passwordAgain) return true;
-    this.setState({ error: 'Passwords do not match.' });
-    return false;
+    if (this.state.password === this.state.passwordAgain) return true
+    this.setState({ error: 'Passwords do not match.' })
+    return false
   }
 
   render() {
@@ -64,7 +72,7 @@ export default class Registration extends Component {
                   this.setState({
                     error: '',
                     username: event.target.value,
-                  });
+                  })
                 }}
               />
             </div>
@@ -78,7 +86,7 @@ export default class Registration extends Component {
                   this.setState({
                     error: '',
                     password: event.target.value,
-                  });
+                  })
                 }}
               />
             </div>
@@ -92,7 +100,7 @@ export default class Registration extends Component {
                   this.setState({
                     error: '',
                     passwordAgain: event.target.value,
-                  });
+                  })
                 }}
               />
             </div>
@@ -114,3 +122,5 @@ export default class Registration extends Component {
     )
   }
 }
+
+export default withRouter(Registration)

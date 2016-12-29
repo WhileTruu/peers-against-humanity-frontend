@@ -47,6 +47,7 @@
     "whatwg-fetch": "1.0.0"
   },
   "dependencies": {
+    "axios": "^0.15.3",
     "bcrypt": "^1.0.1",
     "body-parser": "^1.15.2",
     "bootstrap": "github:transferwise/bootstrap",
@@ -102,5 +103,5 @@
   "eslintConfig": {
     "extends": "react-app"
   },
-  "proxy": "localhost:8080"
+  "proxy": "http://localhost:8080"
 }

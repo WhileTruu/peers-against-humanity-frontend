@@ -3,6 +3,7 @@ import './newCardForm.scss'
 
 import Card from '../card'
 import Select from '../../common/select'
+import LogOutButton from '../../common/buttons/logOut'
 
 class NewCardForm extends Component {
   constructor() {
@@ -85,7 +86,7 @@ class NewCardForm extends Component {
             </h1>
           </div>
           <div className="col-md-4 col-xs-6 right">
-            <button className="btn btn-primary">Log out</button>
+            <LogOutButton>Log out</LogOutButton>
           </div>
         </div>
         <div className="new-card-form row-flex">
