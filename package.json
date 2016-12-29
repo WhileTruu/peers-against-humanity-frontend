@@ -47,12 +47,14 @@
     "whatwg-fetch": "1.0.0"
   },
   "dependencies": {
+    "bcrypt": "^1.0.1",
     "body-parser": "^1.15.2",
     "bootstrap": "github:transferwise/bootstrap",
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",
     "gulp-eslint": "^3.0.1",
     "gulp-sourcemaps": "^1.9.1",
+    "jsonwebtoken": "^7.2.1",
     "knex": "^0.12.6",
     "node-sass": "^4.1.1",
     "react": "^15.4.1",

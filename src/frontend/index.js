@@ -4,6 +4,7 @@ import { Router, Route, IndexRedirect, browserHistory } from 'react-router'
 
 import NewCardForm from './cards/new'
 import Container from './Container'
+import Registration from './registration'
 import './index.scss'
 
 ReactDOM.render(
@@ -12,6 +13,9 @@ ReactDOM.render(
       <IndexRedirect to="cards/new" />
       <Route path="cards">
         <Route path="new" component={NewCardForm} />
+      </Route>
+      <Route path="users">
+        <Route path="registration" component={Registration} />
       </Route>
     </Route>
   </Router>,
