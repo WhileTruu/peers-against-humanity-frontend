@@ -1,16 +1,10 @@
-import React, { Component, PropTypes } from 'react'
+import React, { Component } from 'react'
 import { withRouter } from 'react-router'
-import { connect } from 'react-redux'
 
 import Alert from '../common/alert'
 import ApiService from '../services/apiService'
-import { actions as authActions } from '../services/authService'
 
 class Registration extends Component {
-  static propTypes = {
-    dispatch: PropTypes.func.isRequired,
-    auth: PropTypes.object.isRequired,
-  }
   constructor(props) {
     super(props)
     this.passwordsAreMatching = this.passwordsAreMatching.bind(this)
@@ -31,7 +25,6 @@ class Registration extends Component {
     ApiService.registerNewUserAccount(username, password)
       .then(response => {
         window.localStorage.setItem('token', response.data.token)
-        this.props.dispatch(authActions.isAuthenticated())
         this.props.router.push('/')
       }).catch((error) => {
         this.setState({ error: error.response.data.message })
@@ -130,4 +123,4 @@ class Registration extends Component {
   }
 }
 
-export default connect(value => value)(withRouter(Registration))
+export default withRouter(Registration)

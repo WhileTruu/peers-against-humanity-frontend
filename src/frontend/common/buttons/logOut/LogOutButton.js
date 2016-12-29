@@ -1,11 +1,14 @@
-import React, { Component, PropTypes as Types } from 'react'
+import React, { Component, PropTypes } from 'react'
+import { connect } from 'react-redux'
 import { withRouter } from 'react-router'
 import AuthService from '../../../services/authService'
+import { actions as authActions } from '../../../services/authService'
 
 class LogOutButton extends Component {
   logOut() {
     AuthService.logOut();
     this.setState({ activeTrack: null });
+    this.props.dispatch(authActions.isNotAuthenticated())
     this.props.router.push('/');
   }
   render() {
@@ -23,9 +26,10 @@ class LogOutButton extends Component {
 }
 
 LogOutButton.propTypes = {
-  children: Types.string.isRequired,
+  children: PropTypes.string.isRequired,
+  dispatch: PropTypes.func.isRequired,
 }
 
 LogOutButton.displayName = 'LogOutButton'
 
-export default withRouter(LogOutButton)
+export default connect(value => value)(withRouter(LogOutButton))

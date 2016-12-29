@@ -1,5 +1,5 @@
 import React from 'react'
-
+import { connect } from 'react-redux'
 // eslint-disable-next-line
 const Container = ({ children }) => (
   <div className="bg-sah-default p-t-4" style={{ minHeight: '100vh' }}>
@@ -13,4 +13,4 @@ const Container = ({ children }) => (
   </div>
 )
 
-export default Container
+export default connect(value => value)(Container)
