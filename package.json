@@ -51,6 +51,7 @@
     "bcrypt": "^1.0.1",
     "body-parser": "^1.15.2",
     "bootstrap": "github:transferwise/bootstrap",
+    "express": "^4.14.0",
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",
     "gulp-eslint": "^3.0.1",
@@ -58,6 +59,7 @@
     "jsonwebtoken": "^7.2.1",
     "knex": "^0.12.6",
     "node-sass": "^4.1.1",
+    "pg-promise": "^5.5.0",
     "react": "^15.4.1",
     "react-dom": "^15.4.1",
     "react-redux": "^5.0.1",
@@ -72,7 +74,7 @@
     "build:frontend": "node scripts/build.js",
     "test:frontend": "node scripts/test.js --env=jsdom",
     "start:backend": "NODE_ENV=production gulp build && PORT=8080 node dist",
-    "build:watch:backend": "gulp"
+    "build:watch:backend": "NODE_ENV=development gulp"
   },
   "jest": {
     "collectCoverageFrom": [

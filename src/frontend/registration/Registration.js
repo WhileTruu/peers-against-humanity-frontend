@@ -34,7 +34,7 @@ class Registration extends Component {
         this.props.dispatch(authActions.isAuthenticated())
         this.props.router.push('/')
       }).catch((error) => {
-        this.setState({ error: error.response.data.message })
+        this.setState({ error: error.response.data.message || error.message })
       })
   }
 

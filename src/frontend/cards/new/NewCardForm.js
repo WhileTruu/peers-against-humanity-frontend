@@ -14,6 +14,7 @@ class NewCardForm extends Component {
       cardIsWhite: true,
       selectedPickCount: 1,
       language: { value: 'english', label: 'English', icon: 'flag-uk' },
+      tags: [],
     }
   }
 
@@ -32,6 +33,22 @@ class NewCardForm extends Component {
           selected={this.state.language}
           placeholder="Select a language..."
           onChange={language => this.setState({ language })}
+        />
+      </div>
+    )
+  }
+
+  renderTagSelector() {
+
+    return (
+      <div className="m-b-3">
+        <label htmlFor="tagSelection">Select a tag</label>
+        <Select
+          options={this.state.tags}
+          id="tagSelection"
+          selected={this.state.language}
+          placeholder="Choose a tag..."
+          onChange={tag => this.setState({ newTags: this.state.newTags.concat(tag) })}
         />
       </div>
     )

@@ -1,10 +1,29 @@
-import Knex from 'knex'
-import config from './config'
+import postgreSQLFactory, { QueryFile } from 'pg-promise'
+import fs from 'fs'
 
-const knex = new Knex(config.database)
+import { CONNECTION_STRING } from '../config'
 
-export function runMigrations() {
-  return knex.migrate.latest(config.migration)
+const libraryOptions = {}
+const postgreSQL = postgreSQLFactory(libraryOptions)
+
+const database = postgreSQL(CONNECTION_STRING)
+
+export default database
+
+export function undoMigrations() {
+  return database.none(new QueryFile(`${__dirname}/migrations/down/down.sql`))
 }
 
-export default knex
+export function runMigrations() {
+  fs.readdir(`${__dirname}/migrations/up`, (err, items) => {
+    let p = Promise.resolve()
+
+    items.forEach(item => {
+      p = p
+        .then(() => {
+          return database.none(new QueryFile(`${__dirname}/migrations/up/${item}`))
+        }, Promise.resolve())
+        .catch((error) => console.log(error))
+    })
+  })
+}

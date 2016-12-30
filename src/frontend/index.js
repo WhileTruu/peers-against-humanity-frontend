@@ -8,6 +8,7 @@ import thunk from 'redux-thunk'
 import NewCardForm from './cards/new'
 import Container from './Container'
 import Registration from './registration'
+import Authentication from './authentication'
 import rootReducer from './rootReducer'
 import './index.scss'
 
@@ -24,6 +25,7 @@ ReactDOM.render(
         </Route>
         <Route path="users">
           <Route path="registration" component={Registration} />
+          <Route path="authentication" component={Authentication} />
         </Route>
       </Route>
     </Router>

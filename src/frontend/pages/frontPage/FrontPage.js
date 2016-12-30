@@ -23,16 +23,14 @@ class FrontPage extends Component {
 
   renderAuthenticationButtons() {
     return (
-      <div style={{ display: 'inline-flex' }}>
-        <div className="m-r-1">
+      <div className="form-inline">
           <LogInButton>Log In</LogInButton>
-        </div>
-        <button
-          className="btn btn-primary"
-          onClick={() => {this.props.router.push('/users/registration')}}
-        >
-          Register
-        </button>
+          <button
+            className="btn btn-primary m-l-1"
+            onClick={() => {this.props.router.push('/users/registration')}}
+          >
+            Register
+          </button>
       </div>
     )
   }
@@ -43,13 +41,7 @@ class FrontPage extends Component {
         <div className="row">
           <div className="col-md-8 col-xs-6">
             <h1 className="panel-heading p-t-0 p-b-0">
-              Sockets
-            </h1>
-            <h1 className="panel-heading p-t-0 p-b-0">
-              Against
-            </h1>
-            <h1 className="panel-heading p-t-0">
-              Humanity.
+              Sockets<br/>Against<br/>Humanity
             </h1>
             <h3 className="white-text">
             A shitty game for shitty people.

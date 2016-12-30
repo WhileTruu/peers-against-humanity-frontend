@@ -7,7 +7,6 @@ import { actions as authActions } from '../../../services/authService'
 class LogOutButton extends Component {
   logOut() {
     AuthService.logOut();
-    this.setState({ activeTrack: null });
     this.props.dispatch(authActions.isNotAuthenticated())
     this.props.router.push('/');
   }

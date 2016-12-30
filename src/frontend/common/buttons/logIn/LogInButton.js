@@ -1,19 +1,16 @@
 import React, { Component, PropTypes as Types } from 'react'
 import { withRouter } from 'react-router'
-import AuthService from '../../../services/authService'
 
 class LogInButton extends Component {
-  logOut() {
-    AuthService.logOut();
-    this.setState({ activeTrack: null });
-    this.props.router.push('/');
+  logIn() {
+    this.props.router.push('/users/authentication');
   }
   render() {
     return (
-      <div>
+      <div style={{ display: 'inline' }}>
         <button
           className="btn btn-input-inverse"
-          onClick={() => this.logOut()}
+          onClick={() => this.logIn()}
         >
           { this.props.children }
         </button>

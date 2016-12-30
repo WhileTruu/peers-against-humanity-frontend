@@ -1,0 +1,12 @@
+CREATE TABLE languages (
+  id SMALLINT UNIQUE,
+  name VARCHAR(255) NOT NULL,
+  createdAt TIMESTAMP NOT NULL DEFAULT LOCALTIMESTAMP
+);
+
+ALTER TABLE languages ADD CONSTRAINT PK_languages_id
+	PRIMARY KEY (id)
+;
+
+ALTER TABLE languages ADD CONSTRAINT UQ_languages_name UNIQUE (name)
+;

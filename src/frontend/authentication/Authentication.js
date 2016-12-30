@@ -4,30 +4,28 @@ import { withRouter } from 'react-router'
 import Alert from '../common/alert'
 import ApiService from '../services/apiService'
 
-class Registration extends Component {
+class Authentication extends Component {
   constructor(props) {
     super(props)
-    this.passwordsAreMatching = this.passwordsAreMatching.bind(this)
     this.onSubmit = this.onSubmit.bind(this)
     this.state = {
       error: '',
       username: '',
       password: '',
-      passwordAgain: '',
     }
   }
 
   onSubmit(event) {
     event.preventDefault()
     if (!this.usernameHasBeenInserted()) return
-    if (!this.passwordsAreMatching()) return
+    if (!this.passwordHasBeenInserted()) return
     const { username, password } = this.state
-    ApiService.registerNewUserAccount(username, password)
+    ApiService.logInWithUserAccount(username, password)
       .then(response => {
         window.localStorage.setItem('token', response.data.token)
         this.props.router.push('/')
       }).catch((error) => {
-        this.setState({ error: error.response.data.message })
+        this.setState({ error: error.response.data.message || error.message })
       })
   }
 
@@ -39,14 +37,12 @@ class Registration extends Component {
     return true
   }
 
-  passwordsAreMatching() {
+  passwordHasBeenInserted() {
     if (this.state.password.trim() === '') {
       this.setState({ error: 'Please insert a password.' })
       return false
     }
-    if (this.state.password === this.state.passwordAgain) return true
-    this.setState({ error: 'Passwords do not match.' })
-    return false
+    return true
   }
 
   render() {
@@ -55,14 +51,14 @@ class Registration extends Component {
         <div className="row">
           <div className="col-md-8 col-xs-12">
             <h1 className="panel-heading p-t-0">
-              Create an account
+              Log in
             </h1>
           </div>
         </div>
         <div className="row-flex">
           <form className="form">
             <div className="form-group">
-              <label htmlFor="usernameInput">Insert a new username below</label>
+              <label htmlFor="usernameInput">Insert your username here</label>
               <input
                 type="text"
                 className="form-control btn-input-inverse"
@@ -77,7 +73,7 @@ class Registration extends Component {
               />
             </div>
             <div className="form-group">
-              <label htmlFor="passwordInput">Insert password below</label>
+              <label htmlFor="passwordInput">Insert your password here</label>
               <input
                 type="password"
                 className="form-control btn-input-inverse"
@@ -90,30 +86,16 @@ class Registration extends Component {
                 }}
               />
             </div>
-            <div className="form-group">
-              <label htmlFor="passwordInput2">Insert password again</label>
-              <input
-                type="password"
-                className="form-control btn-input-inverse"
-                id="passwordInput2"
-                onChange={(event) => {
-                  this.setState({
-                    error: '',
-                    passwordAgain: event.target.value,
-                  })
-                }}
-              />
-            </div>
             {this.state.error ? <div className="m-t-4 m-b-3"><Alert type="danger">{this.state.error}</Alert></div> : ''}
             <div className="form-group">
-              <label htmlFor="registrationButton">Press the button below to register</label>
+              <label htmlFor="verificationButton">Press the button below to log in</label>
               <button
                 type="submit"
                 className="form-control btn btn-primary"
-                id="registrationButton"
+                id="verificationButton"
                 onClick={this.onSubmit}
               >
-                Register
+                Log in
               </button>
             </div>
           </form>
@@ -123,4 +105,4 @@ class Registration extends Component {
   }
 }
 
-export default withRouter(Registration)
+export default withRouter(Authentication)

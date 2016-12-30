@@ -1,20 +1,17 @@
 import database from '../../database'
 
 export function findByUsername(username) {
-  return database('users')
-    .where('username', username)
-    .first('*')
+  return database
+    .oneOrNone('SELECT * FROM users WHERE username=${username} LIMIT 1;', { username }) //eslint-disable-line
 }
 
 export function findById(id) {
-  return database('users')
-    .where('id', id)
-    .first('*')
+  return database
+    .oneOrNone('SELECT * FROM users WHERE id=${id}', { id }) //eslint-disable-line
 }
 
-export function create(authorization) { // eslint-disable-line
-  return database('users')
-    .returning(['id', 'username'])
-    .insert(authorization)
-    .then(([id]) => ({ id }))
+export function create(username, password) {
+  console.log(username, password)
+  return database
+    .one('INSERT INTO users(username, password) VALUES (${username}, ${password}) RETURNING *;', { username, password }) //eslint-disable-line
 }

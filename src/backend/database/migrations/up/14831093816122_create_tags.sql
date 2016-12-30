@@ -1,0 +1,16 @@
+CREATE TABLE tags (
+  id SMALLINT UNIQUE,
+  name VARCHAR(255) NOT NULL,
+  createdAt TIMESTAMP NOT NULL DEFAULT LOCALTIMESTAMP
+);
+
+ALTER TABLE tags ADD CONSTRAINT PK_tags_id
+	PRIMARY KEY (id)
+;
+
+ALTER TABLE tags ADD CONSTRAINT UQ_tags_name UNIQUE (name)
+;
+
+ALTER TABLE tags ADD CONSTRAINT CHK_cards_text_not_empty
+  CHECK (btrim(name) <> '')
+;
