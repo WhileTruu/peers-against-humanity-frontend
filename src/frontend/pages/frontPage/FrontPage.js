@@ -2,12 +2,12 @@ import React, { Component, PropTypes } from 'react'
 import { withRouter } from 'react-router'
 import { connect } from 'react-redux'
 
-import LogOutButton from '../common/buttons/logOut'
-import LogInButton from '../common/buttons/logIn'
+import LogOutButton from '../../common/buttons/logOut'
+import LogInButton from '../../common/buttons/logIn'
 
-import { actions as authActions } from '../services/authService'
+import { actions as authActions } from '../../services/authService'
 
-class IndexPage extends Component {
+class FrontPage extends Component {
   static propTypes = {
     dispatch: PropTypes.func.isRequired,
     auth: PropTypes.object.isRequired,
@@ -70,4 +70,4 @@ class IndexPage extends Component {
   }
 }
 
-export default connect(value => value)(withRouter(IndexPage))
+export default connect(value => value)(withRouter(FrontPage))
