@@ -1,7 +1,7 @@
 CREATE TABLE card_tags (
 	card_id integer NOT NULL,
 	tag_id integer NOT NULL,
-  createdAt TIMESTAMP NOT NULL DEFAULT LOCALTIMESTAMP
+  created_at TIMESTAMP NOT NULL DEFAULT LOCALTIMESTAMP
 );
 
 ALTER TABLE card_tags ADD CONSTRAINT FK_card_tags_card_id
