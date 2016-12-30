@@ -12,9 +12,9 @@ export default class Card extends Component {
 
   content() {
     const { size, text } = this.props
-    if (size === this.sizes.small) return (<div><h6>{text}</h6></div>)
-    if (size === this.sizes.medium) return (<div><h4>{text}</h4></div>)
-    return (<div><h3>{text}</h3></div>)
+    if (size === this.sizes.small) return (<div><h6>{text.replace('_', '________')}</h6></div>)
+    if (size === this.sizes.medium) return (<div><h4>{text.replace('_', '________')}</h4></div>)
+    return (<div><h3>{text.replace('_', '________')}</h3></div>)
   }
 
   footer() {
@@ -33,7 +33,7 @@ export default class Card extends Component {
     return (
       <div className={`sah-card sah-card-${size} bg-sah-card-${color}`}>
         <div className={`sah-card-content sah-card-${size}`}>
-          <div className="sah-card-text">{this.content(this.props.text)}</div>
+          <div className="sah-card-text">{this.content()}</div>
           <div className="sah-card-footer">
             <div className="sah-brand-text">
               <img

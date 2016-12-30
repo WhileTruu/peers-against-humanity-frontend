@@ -11,7 +11,6 @@ export function findById(id) {
 }
 
 export function create(username, password) {
-  console.log(username, password)
   return database
     .one('INSERT INTO users(username, password) VALUES (${username}, ${password}) RETURNING *;', { username, password }) //eslint-disable-line
 }

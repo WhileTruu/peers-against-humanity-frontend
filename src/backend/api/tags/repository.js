@@ -1,25 +1,21 @@
 import database from '../../database'
 
 export function addTag(name) {
-  return database('tags')
-    .returning(['id', 'tagName'])
-    .insert({ name })
-    .then(([id]) => ({ id }))
+  return database
+    .one('INSERT INTO tags(name) VALUES (${name}) RETURNING *;', { name }) //eslint-disable-line
 }
 
 export function getTags() {
-  return database.select('*').from('tags')
+  return database
+    .many('SELECT * FROM tags;')
 }
 
 export function findById(id) {
-  return database('tags')
-    .where('id', id)
-    .first('*')
+  return database
+    .oneOrNone('SELECT * FROM tags WHERE id=${id};', { id }) //eslint-disable-line
 }
 
 export function connectCardToTag(cardId, tagId) {
-  return database.raw(```
-      SELECT card.id, tag.id FROM cards, tags
-        WHERE card.id = ${cardId} AND tag.id = tagId
-    ```)
+  return database
+    .one('INSERT INTO card_tags(card_id, tag_id) VALUES (${cardId}, ${tagId});', {cardId, tagId}) //eslint-disable-line
 }

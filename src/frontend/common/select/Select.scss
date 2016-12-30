@@ -23,3 +23,10 @@
   @extend .generic-flag;
   background-image: url('./flags/ee.svg');
 }
+
+.no-shadow {
+  box-shadow: none !important;
+  &:focus {
+    box-shadow: none !important;
+  }
+}

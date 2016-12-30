@@ -5,17 +5,39 @@ import Card from '../card'
 import Select from '../../common/select'
 import LogOutButton from '../../common/buttons/logOut'
 
+import ApiService from '../../services/apiService'
+import Alert from '../../common/alert'
+
+import { validateText, validateTags } from './util'
+
 class NewCardForm extends Component {
   constructor() {
     super()
     this.defaultText = 'Gay aliens.'
+    this.renderTagSelector = this.renderTagSelector.bind(this)
     this.state = {
       cardText: this.defaultText,
       cardIsWhite: true,
       selectedPickCount: 1,
       language: { value: 'english', label: 'English', icon: 'flag-uk' },
       tags: [],
+      cardTags: [],
+      searchValue: '',
+      error: '',
     }
+  }
+
+  componentDidMount() {
+    ApiService.getAllTags().then((result) => {
+      this.setState({ tags: result.data.map(tag => ({ value: tag.id, label: tag.name})) })
+    })
+  }
+
+  removeTag(event) {
+    const id = parseInt(event.target.id, 10)
+    this.setState({ error: '', cardTags: this.state.cardTags.filter(tag => {
+      return tag.value !== id
+    })})
   }
 
   renderLanguageSelector() {
@@ -38,20 +60,39 @@ class NewCardForm extends Component {
     )
   }
 
-  renderTagSelector() {
+  getFilteredTags(value) {
+    const { tags, cardTags } = this.state
+    return tags.filter(tag => {
+      return cardTags.indexOf(tag) === -1 && tag.label.toLowerCase().includes(value.toLowerCase())
+    })
+  }
 
+  renderTagSelector() {
+    const selectText = `Select ${this.state.cardTags.length ? 'another' : 'a'} tag`
     return (
       <div className="m-b-3">
-        <label htmlFor="tagSelection">Select a tag</label>
+        <label htmlFor="tagSelection">{`${selectText} (optional)`}</label>
         <Select
-          options={this.state.tags}
+          options={ this.getFilteredTags(this.state.searchValue) } // this.state.tags.filter(tag => this.state.cardTags.indexOf(tag) === -1)}
           id="tagSelection"
-          selected={this.state.language}
-          placeholder="Choose a tag..."
-          onChange={tag => this.setState({ newTags: this.state.newTags.concat(tag) })}
+          placeholder={`${selectText}...`}
+          onSearchChange={(value) => this.setState({ searchValue: value })}
+          onChange={tag => {
+            if (this.state.cardTags.indexOf(tag) === -1) this.setState({
+              cardTags: this.state.cardTags.concat(tag),
+              searchValue: '',
+            })}
+          }
         />
       </div>
     )
+  }
+
+  onSubmit(event) {
+    event.preventDefault()
+    const error = validateTags(this.state.cardTags) || validateText(this.state.cardText, this.defaultText)
+    if (error) this.setState({ error: error })
+    console.log("Submitting card")
   }
 
   renderPickCountSelector() {
@@ -138,19 +179,39 @@ class NewCardForm extends Component {
                   }}
                 />
               </div>
-              {this.renderPickCountSelector()}
+              {this.renderPickCountSelector()}{this.renderTagSelector()}
+              {this.state.error ? (
+                <div className="m-b-2">
+                  <Alert type="danger">
+                    {this.state.error}
+                  </Alert>
+                </div>) : ''
+              }
               <div className="form-group">
                 <label htmlFor="cardSubmitButton">Submit your sexy new card</label>
                 <button
                   type="submit"
                   className="form-control btn btn-input-inverse"
                   id="cardSubmitButton"
+                  onClick={(event) => this.onSubmit(event)}
                 >
                   Submit
                 </button>
               </div>
             </form>
           </div>
+        </div>
+        <div className="row">
+          {this.state.cardTags.map(tag => (
+            <button
+              key={tag.value}
+              className="btn btn-default m-a-1"
+              id={tag.value}
+              onClick={(event) => this.removeTag(event)}
+            >
+            {tag.label}
+            </button>
+          ))}
         </div>
       </div>
 

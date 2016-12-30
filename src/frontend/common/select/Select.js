@@ -1,7 +1,7 @@
 import React, { Component, PropTypes as Types } from 'react'
 
 import Option from './option'
-
+import Alert from '../alert'
 import './Select.scss'
 
 export default class Select extends Component {
@@ -120,7 +120,7 @@ export default class Select extends Component {
             </span>
             <input
               type="text"
-              className="form-control tw-select-filter btn-input-inverse"
+              className="form-control tw-select-filter btn-input no-shadow"
               placeholder={searchPlaceholder}
               onChange={this.handleSearchChange}
               onClick={this.stopPropagation}
@@ -132,7 +132,12 @@ export default class Select extends Component {
   }
 
   renderOptions() {
-    return this.props.options.map(this.renderOption)
+    return this.props.options.length ? this.props.options
+      .map(this.renderOption) : (
+        <Alert className="m-t-0" type="danger">
+          No more tags available.
+        </Alert>
+      )
   }
 
   createSelectHandlerForOption(option) {

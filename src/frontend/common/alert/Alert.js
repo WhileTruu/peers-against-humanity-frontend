@@ -1,7 +1,7 @@
 import React, { PropTypes as Types } from 'react'
 
 const Alert = ({ type, children }) => (
-  <div className={`alert m-t-3 m-b-0 alert-${type}`}>
+  <div className={`alert m-b-0 alert-${type}`}>
     <strong>{children}</strong>
   </div>
 )
