@@ -11,5 +11,9 @@ app.use(json())
 
 app.use('/api/v1', controller)
 
-undoMigrations().then(() => runMigrations())
+undoMigrations()
+  .then(() => runMigrations('up')
+    .then(() => runMigrations('initialdata'))
+    .catch(err => console.log(err))
+  )
 app.listen(PORT, () => console.log(`Server running at ${PORT}`))

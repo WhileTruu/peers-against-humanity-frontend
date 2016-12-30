@@ -14,16 +14,15 @@ export function undoMigrations() {
   return database.none(new QueryFile(`${__dirname}/migrations/down/down.sql`))
 }
 
-export function runMigrations() {
-  fs.readdir(`${__dirname}/migrations/up`, (err, items) => {
+export function runMigrations(folderName) {
+  return new Promise((resolve, reject) => fs.readdir(`${__dirname}/migrations/${folderName}`, (err, items) => {
     let p = Promise.resolve()
-
     items.forEach(item => {
-      p = p
-        .then(() => {
-          return database.none(new QueryFile(`${__dirname}/migrations/up/${item}`))
-        }, Promise.resolve())
+      p = p.then(() => {
+          return database.none(new QueryFile(`${__dirname}/migrations/${folderName}/${item}`))
+        })
         .catch((error) => console.log(error))
     })
-  })
+    resolve(p)
+  }))
 }

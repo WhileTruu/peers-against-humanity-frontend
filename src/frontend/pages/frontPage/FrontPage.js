@@ -39,15 +39,12 @@ class FrontPage extends Component {
     return (
       <div className="panel">
         <div className="row">
-          <div className="col-md-8 col-xs-6">
+          <div className="col-xs-6">
             <h1 className="panel-heading p-t-0 p-b-0">
               Sockets<br/>Against<br/>Humanity
             </h1>
-            <h3 className="white-text">
-            A shitty game for shitty people.
-            </h3>
           </div>
-          <div className="col-md-4 col-xs-6">
+          <div className="col-xs-6">
             <div className="right">
               {this.props.auth.isAuthenticated ?
                 (<LogOutButton>Log out</LogOutButton>) : this.renderAuthenticationButtons()
@@ -56,6 +53,9 @@ class FrontPage extends Component {
           </div>
         </div>
         <div className="row-flex">
+          <h3 className="white-text">
+            A shitty game for shitty people.
+          </h3>
         </div>
       </div>
     )
