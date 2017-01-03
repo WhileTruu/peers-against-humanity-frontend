@@ -7,8 +7,9 @@ import LogOutButton from '../../common/buttons/logOut'
 
 import ApiService from '../../services/apiService'
 import Alert from '../../common/alert'
+import Loader from '../../common/loader'
 
-import { validateText, validateTags } from './util'
+import { validateText, validateTags, getColorName, getOtherColorId } from '../util'
 
 class NewCardForm extends Component {
   constructor() {
@@ -17,13 +18,14 @@ class NewCardForm extends Component {
     this.renderTagSelector = this.renderTagSelector.bind(this)
     this.state = {
       cardText: this.defaultText,
-      cardIsWhite: true,
+      colorId: 1,
       selectedPickCount: 1,
-      language: { value: 'english', label: 'English', icon: 'flag-uk' },
+      language: { value: 1, label: 'English', icon: 'flag-uk' },
       tags: [],
       cardTags: [],
       searchValue: '',
       error: '',
+      isLoading: false,
     }
   }
 
@@ -42,8 +44,8 @@ class NewCardForm extends Component {
 
   renderLanguageSelector() {
     const languages = [
-      { value: 'english', label: 'English', icon: 'flag-uk' },
-      { value: 'estonian', label: 'Estonian', icon: 'flag-ee' },
+      { value: 1, label: 'English', icon: 'flag-uk' },
+      { value: 2, label: 'Estonian', icon: 'flag-ee' },
     ]
 
     return (
@@ -90,14 +92,38 @@ class NewCardForm extends Component {
 
   onSubmit(event) {
     event.preventDefault()
+    if (this.state.isLoading) return;
+    this.setState({ isLoading: true })
     const error = validateTags(this.state.cardTags) || validateText(this.state.cardText, this.defaultText)
-    if (error) this.setState({ error: error })
-    console.log("Submitting card")
+    if (error) {
+      this.setState({ error: error, isLoading: false })
+      return
+    }
+    ApiService.createNewCard(this.getOrganizedCardData())
+      .then(response => {
+        this.setState({ isLoading: false })
+      })
+      .catch(error => {
+        this.setState({ error: error.response.data.message || error.message, isLoading: false })
+      })
+  }
+
+  getOrganizedCardData() {
+    const { language, colorId, selectedPickCount, cardTags, cardText } = this.state
+    const colorName = getColorName(colorId)
+    const cardData = {
+      languageId: language.value,
+      colorId: colorId,
+      pick: colorName === 'black' ? selectedPickCount : null,
+      cardText: cardText.trim(),
+      tags: cardTags.length > 0 ? cardTags : null,
+    }
+    return cardData
   }
 
   renderPickCountSelector() {
-    const { selectedPickCount, cardIsWhite } = this.state
-    if (cardIsWhite) return ''
+    const { selectedPickCount, colorId } = this.state
+    if (getColorName(colorId) === 'white') return ''
     return (
       <div className="p-b-3">
         <label htmlFor="inputPickCount">Choose a number of white cards to pick</label>
@@ -135,6 +161,9 @@ class NewCardForm extends Component {
   }
 
   render() {
+    const { colorId, isLoading } = this.state
+    const colorName = getColorName(colorId)
+    const otherColorId = getOtherColorId(colorId)
     return (
       <div className="panel">
         <div className="row">
@@ -150,10 +179,10 @@ class NewCardForm extends Component {
         <div className="new-card-form row-flex">
           <div
             className="new-card-form card-container p-t-1 m-b-3"
-            onClick={() => { this.setState({ cardIsWhite: !this.state.cardIsWhite }) }}
+            onClick={() => { this.setState({ colorId: otherColorId }) }}
           >
             <Card
-              color={this.state.cardIsWhite ? 'white' : 'black'}
+              color={colorName}
               size="large"
               text={this.state.cardText}
               pick={this.state.selectedPickCount}
@@ -195,7 +224,7 @@ class NewCardForm extends Component {
                   id="cardSubmitButton"
                   onClick={(event) => this.onSubmit(event)}
                 >
-                  Submit
+                  {isLoading ? <Loader /> : 'Submit'}
                 </button>
               </div>
             </form>

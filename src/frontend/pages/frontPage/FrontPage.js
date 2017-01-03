@@ -52,10 +52,22 @@ class FrontPage extends Component {
             </div>
           </div>
         </div>
-        <div className="row-flex">
+        <div className="row-flex m-t-1">
           <h3 className="white-text">
             A shitty game for shitty people.
           </h3>
+          <button
+            className="form-control m-t-3 btn btn-input-inverse"
+            onClick={() => {this.props.router.push('/cards/new')}}
+          >
+            Create a new card
+          </button>
+          <button
+            className="form-control m-t-3 btn btn-input-inverse"
+            onClick={() => {this.props.router.push('/cards/random')}}
+          >
+            Check out a random card
+          </button>
         </div>
       </div>
     )

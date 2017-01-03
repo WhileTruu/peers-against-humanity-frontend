@@ -53,7 +53,7 @@ export default class Card extends Component {
 Card.propTypes = {
   size: PropTypes.oneOf(['small', 'medium', 'large']),
   color: PropTypes.oneOf(['black', 'white']),
-  pick: PropTypes.number.isRequired,
+  pick: PropTypes.number,
   text: PropTypes.string.isRequired,
 }
 

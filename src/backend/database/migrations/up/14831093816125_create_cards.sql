@@ -2,8 +2,8 @@ CREATE TABLE cards (
   id SERIAL UNIQUE,
   language_id INTEGER NOT NULL,
   color_id SMALLINT NOT NULL,
-  text VARCHAR(255) NOT NULL,
-  pick SMALLINT NOT NULL DEFAULT 1,
+  card_text VARCHAR(255) NOT NULL,
+  pick SMALLINT,
   user_id INTEGER NOT NULL,
   upvotes INTEGER NOT NULL DEFAULT 0,
   downvotes INTEGER NOT NULL DEFAULT 0,
@@ -28,8 +28,8 @@ ALTER TABLE cards ADD CONSTRAINT FK_cards_user_id
   ON DELETE Set Null ON UPDATE Cascade
 ;
 
-ALTER TABLE cards ADD CONSTRAINT UQ_cards_text UNIQUE (text);
+ALTER TABLE cards ADD CONSTRAINT UQ_cards_text UNIQUE (card_text);
 
 ALTER TABLE cards ADD CONSTRAINT CHK_cards_text_not_empty
-  CHECK (btrim(text) <> '')
+  CHECK (btrim(card_text) <> '')
 ;

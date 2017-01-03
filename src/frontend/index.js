@@ -6,6 +6,7 @@ import { compose, createStore, applyMiddleware } from 'redux'
 import thunk from 'redux-thunk'
 
 import NewCardForm from './cards/new'
+import RandomCard from './cards/random'
 import Container from './Container'
 import Registration from './registration'
 import Authentication from './authentication'
@@ -22,6 +23,7 @@ ReactDOM.render(
       <Route path="/" component={Container}>
         <Route path="cards">
           <Route path="new" component={NewCardForm} />
+          <Route path="random" component={RandomCard} />
         </Route>
         <Route path="users">
           <Route path="registration" component={Registration} />
