@@ -2,6 +2,7 @@ import { Router } from 'express'
 import { hash, compare } from 'bcrypt'
 
 import { findById, create, findByUsername } from './repository'
+import logger from '../../logger'
 import {
   createTokenForUser,
   verifyAuthorization,
@@ -17,7 +18,10 @@ router.get('/:id', verifyAuthorization, (request, response) => {
   } else {
     findById(request.params.id)
       .then(user => response.status(200).json(user))
-      .catch(error => response.status(500).json(error))
+      .catch(error => {
+        logger.error(`users/${request.params.id} ${error.detail}`)
+        response.status(500).json(error)
+      })
   }
 })
 
@@ -37,7 +41,10 @@ router.post('/registration', (request, response) => {
       .then(({ id }) => {
         response.status(201).json({ username, id, token: createTokenForUser({ id }) })
       })
-      .catch(error => response.status(500).json({ message: 'That username is already taken or something.' }))
+      .catch(error => {
+        logger.error(`users/registration ${error.detail}`)
+        response.status(500).json({ message: 'That username is already taken or something.' })
+      })
   }
 })
 
@@ -63,7 +70,10 @@ router.post('/authentication', (request, response) => {
             .catch(error => response.status(500).json(error))
         }
       })
-      .catch(error => response.status(500).json(error))
+      .catch(error => {
+        logger.error(`users/authentication ${error.detail}`)
+        response.status(500).json(error)
+      })
   }
 })
 

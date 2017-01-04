@@ -25,6 +25,6 @@ export function getRandomCard() {
 export function createNewCard(cardData) {
   return http.post('/api/v1/cards/new',
     cardData,
-    { headers: { Authorization: token } }
+    { headers: { Authorization: `Bearer ${token}` } }
   )
 }

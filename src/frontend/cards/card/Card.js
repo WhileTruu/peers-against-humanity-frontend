@@ -12,9 +12,7 @@ export default class Card extends Component {
 
   content() {
     const { size, text } = this.props
-    if (size === this.sizes.small) return (<div><h6>{text.replace('_', '________')}</h6></div>)
-    if (size === this.sizes.medium) return (<div><h4>{text.replace('_', '________')}</h4></div>)
-    return (<div><h3>{text.replace('_', '________')}</h3></div>)
+    return (<div className={`card-text-${size}`}>{text}</div>)
   }
 
   footer() {

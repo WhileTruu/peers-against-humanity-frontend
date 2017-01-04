@@ -14,7 +14,7 @@ class LogOutButton extends Component {
     return (
       <div>
         <button
-          className="btn btn-primary"
+          className="btn btn-primary btn-lg"
           onClick={() => this.logOut()}
         >
           { this.props.children }

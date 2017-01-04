@@ -1,21 +1,6 @@
-.btn-input-inverse {
-  color: white !important;
-  background-color: #343434 !important;
-  &:hover {
-    background-color: #444444 !important;
-  }
-  &:focus {
-    background-color: #545454 !important;
-  }
-  &.active {
-    background-color: #434343 !important;
-  }
-}
-
 .new-card-form {
   &.card-container {
     cursor: pointer;
-    padding-right: 12px;
   }
   &.row-flex {
     display: flex;
@@ -35,10 +20,11 @@
     }
     &.card-container {
       cursor: pointer;
-      padding-right: 0;
+      padding-right: 0 !important;
     }
   }
-  .panel {
-    padding: 12px;
-  }
+}
+
+.tags-area {
+   display: inline;
 }

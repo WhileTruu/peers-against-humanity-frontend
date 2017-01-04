@@ -26,7 +26,7 @@ class FrontPage extends Component {
       <div className="form-inline">
           <LogInButton>Log In</LogInButton>
           <button
-            className="btn btn-primary m-l-1"
+            className="btn btn-primary btn-lg ml-1"
             onClick={() => {this.props.router.push('/users/registration')}}
           >
             Register
@@ -40,7 +40,7 @@ class FrontPage extends Component {
       <div className="panel">
         <div className="row">
           <div className="col-xs-6">
-            <h1 className="panel-heading p-t-0 p-b-0">
+            <h1 className="panel-heading pt-0 pb-0">
               Sockets<br/>Against<br/>Humanity
             </h1>
           </div>
@@ -52,18 +52,18 @@ class FrontPage extends Component {
             </div>
           </div>
         </div>
-        <div className="row-flex m-t-1">
-          <h3 className="white-text">
+        <div className="row-flex mt-1">
+          <h5>
             A shitty game for shitty people.
-          </h3>
+          </h5>
           <button
-            className="form-control m-t-3 btn btn-input-inverse"
+            className="form-control mt-1 btn btn-inverse btn-lg"
             onClick={() => {this.props.router.push('/cards/new')}}
           >
             Create a new card
           </button>
           <button
-            className="form-control m-t-3 btn btn-input-inverse"
+            className="form-control mt-1 btn btn-inverse btn-lg"
             onClick={() => {this.props.router.push('/cards/random')}}
           >
             Check out a random card

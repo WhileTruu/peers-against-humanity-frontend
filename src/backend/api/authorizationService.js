@@ -1,7 +1,7 @@
 import { sign as signToken, verify as verifyToken } from 'jsonwebtoken'
 
 import { SECRET } from '../config'
-
+import logger from '../logger'
 export function createTokenForUser(user) {
   return signToken({ userId: user.id }, SECRET)
 }

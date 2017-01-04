@@ -1,17 +1,7 @@
+@import url('https://fonts.googleapis.com/css?family=Nunito+Sans:400,600,700,800');
 @import "./variables";
-$enable-flex: true;
-@import "~bootstrap/dist/css/bootstrap.min.css";
 
-
-body {
-  margin: 0;
-  padding: 0;
-}
-.bg-sah-default {
-  background-color: $sah-bg-default;
-  color: white !important;
-  & h1 { color: $sah-color-default }
-}
+@import "~bootstrap/scss/bootstrap.scss";
 
 .bg-sah-card-white {
   background-color: $sah-card-color-white;
@@ -53,10 +43,15 @@ input, button {
   }
 }
 
-label {
-  color: $sah-label-color !important;
+.form-check-label {
+  padding-left: 0;
+  color: $white-dark;
 }
 
-.white-text {
-  color: white;
+.btn-inverse {
+  @include button-inverse-variant($white, $gray, $gray-light);
+}
+
+.btn-info-dark {
+  @include button-variant(#000, $btn-info-bg, $btn-info-border);
 }

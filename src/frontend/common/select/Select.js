@@ -55,7 +55,11 @@ export default class Select extends Component {
   handleButtonClick = event => {
     if (!this.props.disabled) {
       this.stopPropagation(event)
-      this.open()
+      if (this.state.open) {
+        this.close()
+      } else {
+        this.open()
+      }
     }
   }
 
@@ -88,7 +92,7 @@ export default class Select extends Component {
       <li
         key={index}
         onClick={this.createSelectHandlerForOption(option)}
-        className={`tw-dropdown-item--clickable ${isActive ? 'active' : ''}`}>
+        className={`sah-dropdown-item--clickable py-1 ${isActive ? 'active' : ''}`}>
         <a><Option {...option} /></a>
       </li>
     )
@@ -96,13 +100,13 @@ export default class Select extends Component {
 
   renderPlaceHolderOption() {
     const { placeholder = 'Select an option...' } = this.props
-    return (
+    return this.props.placeholder ? (
       <li
         onClick={this.createSelectHandlerForOption({ placeholder })}
-        className="tw-dropdown-item--clickable tw-dropdown-item--divider">
+        className="sah-dropdown-item--clickable sah-dropdown-item--divider">
         <a>{placeholder}</a>
       </li>
-    )
+    ) : ''
   }
 
   handleSearchChange = event => {
@@ -112,11 +116,11 @@ export default class Select extends Component {
   renderSearchBox() {
     const { searchValue, searchPlaceholder = 'Search...' } = this.props
     return (
-      <li className="tw-dropdown-item--divider">
-        <a className="tw-select-filter-link p-a-0">
+      <li className="sah-dropdown-item--divider">
+        <a className="tw-select-filter-link pa-0">
           <div className="input-group">
-            <span className="input-group-addon">
-              <i className="icon icon-search" />
+            <span className="sah-input-group-addon">
+              <div className="icon icon-search" />
             </span>
             <input
               type="text"
@@ -134,7 +138,7 @@ export default class Select extends Component {
   renderOptions() {
     return this.props.options.length ? this.props.options
       .map(this.renderOption) : (
-        <Alert className="m-t-0" type="danger">
+        <Alert type="warning">
           No more tags available.
         </Alert>
       )
@@ -173,16 +177,18 @@ export default class Select extends Component {
       <div className={groupClass} aria-hidden="false">
         <button
           disabled={disabled}
-          className={`btn btn-input-inverse dropdown-toggle ${size ? `btn-${size}` : ''}`}
+          className={`form-control btn btn-inverse dropdown-toggle ${size ? `btn-${size}` : ''}`}
           type="button"
           aria-expanded={open}
           onClick={this.handleButtonClick}>
+          <div style={{ display: 'inline-block', width: '100%', textAlign: 'left' }}>
           {this.renderButtonInternals()}
+          </div>
           <span className="caret" />
         </button>
         {
           open ? (
-            <ul className="dropdown-menu" role="menu">
+            <ul className="form-control dropdown-menu" role="menu">
               {!required && !canSearch ? this.renderPlaceHolderOption() : ''}
               {canSearch ? this.renderSearchBox() : '' }
               {this.renderOptions()}

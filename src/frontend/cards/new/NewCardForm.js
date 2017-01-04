@@ -3,7 +3,6 @@ import './newCardForm.scss'
 
 import Card from '../card'
 import Select from '../../common/select'
-import LogOutButton from '../../common/buttons/logOut'
 
 import ApiService from '../../services/apiService'
 import Alert from '../../common/alert'
@@ -49,13 +48,18 @@ class NewCardForm extends Component {
     ]
 
     return (
-      <div className="m-b-3">
-        <label htmlFor="languageSelection">Select a language for the card</label>
+      <div className="form-group">
+        <label
+          htmlFor="languageSelection"
+          className="form-check-label"
+        >
+          Select a language for the card
+        </label>
         <Select
           options={languages}
           id="languageSelection"
+          size="lg"
           selected={this.state.language}
-          placeholder="Select a language..."
           onChange={language => this.setState({ language })}
         />
       </div>
@@ -70,14 +74,20 @@ class NewCardForm extends Component {
   }
 
   renderTagSelector() {
-    const selectText = `Select ${this.state.cardTags.length ? 'another' : 'a'} tag`
+    const selectText = `Choose ${this.state.cardTags.length ? 'another' : 'a'} tag`
     return (
-      <div className="m-b-3">
-        <label htmlFor="tagSelection">{`${selectText} (optional)`}</label>
+      <div className="form-group">
+        <label
+          htmlFor="tagSelection"
+          className="form-check-label"
+        >
+          {`${selectText} (optional)`}
+        </label>
         <Select
           options={ this.getFilteredTags(this.state.searchValue) } // this.state.tags.filter(tag => this.state.cardTags.indexOf(tag) === -1)}
           id="tagSelection"
-          placeholder={`${selectText}...`}
+          size="lg"
+          placeholder={`${selectText}`}
           onSearchChange={(value) => this.setState({ searchValue: value })}
           onChange={tag => {
             if (this.state.cardTags.indexOf(tag) === -1) this.setState({
@@ -125,36 +135,35 @@ class NewCardForm extends Component {
     const { selectedPickCount, colorId } = this.state
     if (getColorName(colorId) === 'white') return ''
     return (
-      <div className="p-b-3">
-        <label htmlFor="inputPickCount">Choose a number of white cards to pick</label>
-        <div className="btn-group btn-group-justified" id="inputPickCount" role="group">
-          <div className="btn-group" role="group">
+      <div className="form-group">
+        <label
+          htmlFor="inputPickCount"
+          className="form-check-label"
+        >
+          Choose a number of white cards to pick
+        </label>
+        <div className="btn-group btn-group-lg btn-group-justified" id="inputPickCount" role="group">
             <button
               type="button"
-              className={`btn btn-input-inverse ${selectedPickCount === 1 ? 'active' : ''}`}
+              className={`btn btn-inverse btn-lg ${selectedPickCount === 1 ? 'active' : ''}`}
               onClick={() => this.setState({ selectedPickCount: 1 })}
             >
               Pick 1
             </button>
-          </div>
-          <div className="btn-group" role="group">
             <button
               type="button"
-              className={`btn btn-input-inverse ${selectedPickCount === 2 ? 'active' : ''}`}
+              className={`btn btn-inverse btn-lg ${selectedPickCount === 2 ? 'active' : ''}`}
               onClick={() => this.setState({ selectedPickCount: 2 })}
             >
               Pick 2
             </button>
-          </div>
-          <div className="btn-group" role="group">
             <button
               type="button"
-              className={`btn btn-input-inverse ${selectedPickCount === 3 ? 'active' : ''}`}
+              className={`btn btn-inverse btn-lg ${selectedPickCount === 3 ? 'active' : ''}`}
               onClick={() => this.setState({ selectedPickCount: 3 })}
             >
               Pick 3
             </button>
-          </div>
         </div>
       </div>
     )
@@ -167,18 +176,15 @@ class NewCardForm extends Component {
     return (
       <div className="panel">
         <div className="row">
-          <div className="col-md-8 col-xs-6">
-            <h1 className="panel-heading p-t-0">
+          <div className="col-xs-12">
+            <h1 className="panel-heading">
               Create a new card
             </h1>
-          </div>
-          <div className="col-md-4 col-xs-6 right">
-            <LogOutButton>Log out</LogOutButton>
           </div>
         </div>
         <div className="new-card-form row-flex">
           <div
-            className="new-card-form card-container p-t-1 m-b-3"
+            className="new-card-form card-container pr-1"
             onClick={() => { this.setState({ colorId: otherColorId }) }}
           >
             <Card
@@ -190,14 +196,19 @@ class NewCardForm extends Component {
           </div>
           <div className="new-card-form card-option-inputs">
             <form className="form">
+              <div>
+                {this.renderLanguageSelector()}
+              </div>
               <div className="form-group">
-                <div className="m-b-3">
-                  {this.renderLanguageSelector()}
-                </div>
-                <label htmlFor="inputCardText">Insert the text you want on your card</label>
+                <label
+                  htmlFor="inputCardText"
+                  className="form-check-label"
+                >
+                  Insert the text you want on your card
+                </label>
                 <input
                   type="text"
-                  className="form-control btn-input-inverse"
+                  className="form-control btn-inverse btn-lg"
                   id="inputCardText"
                   placeholder="Gay aliens."
                   onChange={(event) => {
@@ -210,17 +221,22 @@ class NewCardForm extends Component {
               </div>
               {this.renderPickCountSelector()}{this.renderTagSelector()}
               {this.state.error ? (
-                <div className="m-b-2">
-                  <Alert type="danger">
+                <div className="mb-2 mt-3">
+                  <Alert type="warning">
                     {this.state.error}
                   </Alert>
                 </div>) : ''
               }
               <div className="form-group">
-                <label htmlFor="cardSubmitButton">Submit your sexy new card</label>
+                <label
+                  htmlFor="cardSubmitButton"
+                  className="form-check-label"
+                >
+                  Submit your sexy new card
+                </label>
                 <button
                   type="submit"
-                  className="form-control btn btn-input-inverse"
+                  className="form-control btn btn-inverse btn-lg"
                   id="cardSubmitButton"
                   onClick={(event) => this.onSubmit(event)}
                 >
@@ -230,17 +246,21 @@ class NewCardForm extends Component {
             </form>
           </div>
         </div>
-        <div className="row">
-          {this.state.cardTags.map(tag => (
-            <button
-              key={tag.value}
-              className="btn btn-default m-a-1"
-              id={tag.value}
-              onClick={(event) => this.removeTag(event)}
-            >
-            {tag.label}
-            </button>
-          ))}
+        <div className="row pt-1">
+          <div className="col-xs-12">
+            <div className="tags-area">
+              {this.state.cardTags.map(tag => (
+                <button
+                  key={tag.value}
+                  className="btn mr-1 mb-1 btn-info-dark tag-button"
+                  id={tag.value}
+                  onClick={(event) => this.removeTag(event)}
+                >
+                {tag.label}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 
