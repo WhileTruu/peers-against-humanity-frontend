@@ -23,8 +23,8 @@ export function getRandomCard() {
 }
 
 export function createNewCard(cardData) {
-  return http.post('/api/v1/cards/new',
+  return token ? http.post('/api/v1/cards/new',
     cardData,
     { headers: { Authorization: `Bearer ${token}` } }
-  )
+  ) : Promise.reject({ message: 'You are not logged in!' })
 }

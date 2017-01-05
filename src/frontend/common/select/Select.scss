@@ -1,12 +1,8 @@
-@import "~bootstrap/scss/bootstrap.scss";
-
 .sah-dropdown-item--clickable {
-  @extend .dropdown-item;
   cursor: pointer;
 }
 
 .sah-dropdown-item--divider {
-  @extend .dropdown-item;
   border-bottom-style: solid;
   border-bottom-width: 1px;
   border-bottom-color: #f2f5f7;

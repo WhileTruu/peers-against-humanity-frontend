@@ -63,7 +63,7 @@ class FrontPage extends Component {
             Create a new card
           </button>
           <button
-            className="form-control mt-1 btn btn-inverse btn-lg"
+            className="form-control mt-2 btn btn-inverse btn-lg"
             onClick={() => {this.props.router.push('/cards/random')}}
           >
             Check out a random card

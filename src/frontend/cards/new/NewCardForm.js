@@ -7,6 +7,8 @@ import Select from '../../common/select'
 import ApiService from '../../services/apiService'
 import Alert from '../../common/alert'
 import Loader from '../../common/loader'
+import { errorTypes } from '../../common/util'
+
 
 import { validateText, validateTags, getColorName, getOtherColorId } from '../util'
 
@@ -25,6 +27,7 @@ class NewCardForm extends Component {
       searchValue: '',
       error: '',
       isLoading: false,
+      errorType: null,
     }
   }
 
@@ -36,7 +39,7 @@ class NewCardForm extends Component {
 
   removeTag(event) {
     const id = parseInt(event.target.id, 10)
-    this.setState({ error: '', cardTags: this.state.cardTags.filter(tag => {
+    this.setState({ errorType: null, error: '', cardTags: this.state.cardTags.filter(tag => {
       return tag.value !== id
     })})
   }
@@ -74,9 +77,10 @@ class NewCardForm extends Component {
   }
 
   renderTagSelector() {
-    const selectText = `Choose ${this.state.cardTags.length ? 'another' : 'a'} tag`
+    const { errorType, cardTags, searchValue } = this.state
+    const selectText = `Choose ${cardTags.length ? 'another' : 'a'} tag`
     return (
-      <div className="form-group">
+      <div className={`form-group${errorType === errorTypes.tag ? ' has-warning' : ''}`}>
         <label
           htmlFor="tagSelection"
           className="form-check-label"
@@ -84,14 +88,14 @@ class NewCardForm extends Component {
           {`${selectText} (optional)`}
         </label>
         <Select
-          options={ this.getFilteredTags(this.state.searchValue) } // this.state.tags.filter(tag => this.state.cardTags.indexOf(tag) === -1)}
+          options={ this.getFilteredTags(searchValue) } // this.state.tags.filter(tag => this.state.cardTags.indexOf(tag) === -1)}
           id="tagSelection"
           size="lg"
           placeholder={`${selectText}`}
           onSearchChange={(value) => this.setState({ searchValue: value })}
           onChange={tag => {
-            if (this.state.cardTags.indexOf(tag) === -1) this.setState({
-              cardTags: this.state.cardTags.concat(tag),
+            if (cardTags.indexOf(tag) === -1) this.setState({
+              cardTags: cardTags.concat(tag),
               searchValue: '',
             })}
           }
@@ -104,17 +108,27 @@ class NewCardForm extends Component {
     event.preventDefault()
     if (this.state.isLoading) return;
     this.setState({ isLoading: true })
-    const error = validateTags(this.state.cardTags) || validateText(this.state.cardText, this.defaultText)
-    if (error) {
-      this.setState({ error: error, isLoading: false })
+    const tagError = validateTags(this.state.cardTags)
+    const textError = validateText(this.state.cardText, this.defaultText)
+    if (tagError || textError) {
+      this.setState({
+        error: tagError || textError,
+        errorType: tagError ? errorTypes.tag : errorTypes.text,
+        isLoading: false,
+      })
       return
     }
     ApiService.createNewCard(this.getOrganizedCardData())
       .then(response => {
-        this.setState({ isLoading: false })
+        this.setState({ error: '', errorType: null, isLoading: false })
       })
       .catch(error => {
-        this.setState({ error: error.response.data.message || error.message, isLoading: false })
+        console.log(error)
+        this.setState({
+          error: error.message || error.response.data.message,
+          errorType: errorTypes.submit,
+          isLoading: false
+        })
       })
   }
 
@@ -170,7 +184,7 @@ class NewCardForm extends Component {
   }
 
   render() {
-    const { colorId, isLoading } = this.state
+    const { colorId, isLoading, errorType } = this.state
     const colorName = getColorName(colorId)
     const otherColorId = getOtherColorId(colorId)
     return (
@@ -199,7 +213,7 @@ class NewCardForm extends Component {
               <div>
                 {this.renderLanguageSelector()}
               </div>
-              <div className="form-group">
+              <div className={`form-group${errorType === errorTypes.text ? ' has-warning' : ''}`}>
                 <label
                   htmlFor="inputCardText"
                   className="form-check-label"
@@ -214,6 +228,7 @@ class NewCardForm extends Component {
                   onChange={(event) => {
                     this.setState({
                       error: '',
+                      errorType: null,
                       cardText: event.target.value ? event.target.value : this.defaultText,
                     })
                   }}
@@ -227,7 +242,7 @@ class NewCardForm extends Component {
                   </Alert>
                 </div>) : ''
               }
-              <div className="form-group">
+              <div className={`form-group${errorType === errorTypes.submit ? ' has-warning' : ''}`}>
                 <label
                   htmlFor="cardSubmitButton"
                   className="form-check-label"

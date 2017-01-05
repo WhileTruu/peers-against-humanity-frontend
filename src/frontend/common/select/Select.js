@@ -92,7 +92,7 @@ export default class Select extends Component {
       <li
         key={index}
         onClick={this.createSelectHandlerForOption(option)}
-        className={`sah-dropdown-item--clickable py-1 ${isActive ? 'active' : ''}`}>
+        className={`dropdown-item sah-dropdown-item--clickable py-1 ${isActive ? 'active' : ''}`}>
         <a><Option {...option} /></a>
       </li>
     )
@@ -103,7 +103,7 @@ export default class Select extends Component {
     return this.props.placeholder ? (
       <li
         onClick={this.createSelectHandlerForOption({ placeholder })}
-        className="sah-dropdown-item--clickable sah-dropdown-item--divider">
+        className="dropdown-item sah-dropdown-item--clickable dropdown-item sah-dropdown-item--divider">
         <a>{placeholder}</a>
       </li>
     ) : ''
@@ -116,7 +116,7 @@ export default class Select extends Component {
   renderSearchBox() {
     const { searchValue, searchPlaceholder = 'Search...' } = this.props
     return (
-      <li className="sah-dropdown-item--divider">
+      <li className="dropdown-item sah-dropdown-item--divider">
         <a className="tw-select-filter-link pa-0">
           <div className="input-group">
             <span className="sah-input-group-addon">
