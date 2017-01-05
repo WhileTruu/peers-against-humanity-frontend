@@ -1,7 +1,6 @@
 import { sign as signToken, verify as verifyToken } from 'jsonwebtoken'
 
 import { SECRET } from '../config'
-
 export function createTokenForUser(user) {
   return signToken({ userId: user.id }, SECRET)
 }
@@ -9,14 +8,14 @@ export function createTokenForUser(user) {
 export function verifyAuthorization(request, response, next) {
   const authHeader = request.get('Authorization')
   if (!authHeader) {
-    response.sendStatus(403)
+    response.status(403).json('Your request was made without an authorization header, kind sir.')
   } else {
     const token = authHeader.replace('Bearer ', '')
     let decoded
     try {
       decoded = verifyToken(token, SECRET)
     } catch (e) {
-      response.sendStatus(403)
+      response.status(403).json('The token sir sent to our humble selves is sligtly malformed.')
     }
     if (decoded) {
       response.locals.userId = decoded.userId // eslint-disable-line no-param-reassign

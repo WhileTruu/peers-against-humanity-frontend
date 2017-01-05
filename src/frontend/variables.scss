@@ -2,8 +2,112 @@ $sah-bg-default: #232323;
 $sah-color-default: #fff;
 $sah-card-bg-black: #000;
 $sah-card-color-white: #fff;
-$sah-card-bg-white: #fff;
+$sah-card-bg-white: #eeeeee;
 $sah-card-color-black: #000;
 $sah-shadow: 0 2px 2px 0 rgba(0,0,0,0.16),0 0 0 1px rgba(0,0,0,0.08);
 $sah-shadow-focus: 0 3px 8px 0 rgba(0,0,0,0.2),0 0 0 1px rgba(0,0,0,0.08);
 $sah-label-color: #aaa;
+
+
+$white:                     #ffffff;
+$white-dark:                #cacaca;
+$gray-dark:                 #232323;
+$gray:                      #343434;
+$gray-light:                #434343;
+$gray-lighter:              #444444;
+$gray-lightest:             #545454;
+
+$brand-primary:             #0072ce;
+$brand-success:             #5cb85c;
+$brand-info:                #5bc0de;
+$brand-warning:             #f0ad4e;
+$brand-danger:              #d9534f;
+$brand-inverse:             $gray-dark !default;
+
+$enable-flex:        true;
+$font-family-base:   'Nunito Sans', sans-serif;
+$body-bg:            $gray-dark;
+$body-color:         $white;
+
+$font-size-lg:   1rem;
+$font-size-base: 0.875rem;
+$font-size-sm:   .75rem;
+$font-size-xs:   .5rem;
+
+$headings-font-weight: 800;
+$btn-font-weight: 700;
+
+$spacer: 0.75rem;
+
+@mixin button-inverse-variant($color, $background, $border) {
+  $active-background: lighten($background, 10%);
+  $active-border: lighten($border, 12%);
+
+  color: $color;
+  background-color: $background;
+  border-color: $border;
+  @include box-shadow($btn-box-shadow);
+
+  @include hover {
+    color: $color;
+    background-color: $active-background;
+        border-color: $active-border;
+  }
+
+  &:focus,
+  &.focus {
+    color: $color;
+    background-color: $active-background;
+        border-color: $active-border;
+  }
+
+  &:active,
+  &.active,
+  .open > &.dropdown-toggle {
+    color: $color;
+    background-color: $active-background;
+        border-color: $active-border;
+    // Remove the gradient for the pressed/active state
+    background-image: none;
+    @include box-shadow($btn-active-box-shadow);
+
+    &:hover,
+    &:focus,
+    &.focus {
+      color: $color;
+      background-color: lighten($background, 17%);
+          border-color: lighten($border, 25%);
+    }
+  }
+
+  &.disabled,
+  &:disabled {
+    &:focus,
+    &.focus {
+      background-color: $background;
+          border-color: $border;
+    }
+    @include hover {
+      background-color: $background;
+          border-color: $border;
+    }
+  }
+}
+
+// Justified button groups
+// ----------------------
+
+.btn-group-justified {
+  display: flex !important;
+  width: 100%;
+  .btn,
+  .btn-group {
+    flex: 1;
+    .btn {
+      width: 100%;
+    }
+    .dropdown-menu {
+      left: auto;
+    }
+  }
+}

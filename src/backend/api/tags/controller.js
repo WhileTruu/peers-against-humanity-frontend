@@ -1,19 +1,25 @@
 import { Router } from 'express'
 
 import { findById, getTags, addTag } from './repository'
-
+import logger from '../../logger'
 const router = new Router()
 
 router.get('/all', (request, response) => {
   getTags()
     .then(tags => response.status(200).json(tags))
-    .catch(error => response.status(404).json(error))
+    .catch(error => {
+      logger.error(error.detail)
+      response.status(404).json(error)
+    })
 })
 
 router.get('/:id', (request, response) => {
   findById(request.params.id)
     .then(tag => response.status(200).json(tag))
-    .catch(error => response.status(500).json(error))
+    .catch(error => {
+      logger.error(error.detail)
+      response.status(500).json(error)
+    })
 })
 
 router.post('/createNewTag', (request, response) => {
@@ -23,14 +29,16 @@ router.post('/createNewTag', (request, response) => {
   } else {
     addTag(tagName)
       .then((tagId) => {
-        console.log(tagId)
         if (!tagId) {
           response.status(403).json({ message: 'Invalid username or password.' })
         } else {
-          response.status(200).json({ created: true })
+          response.status(200).json({ tagId, created: true })
         }
       })
-      .catch(error => response.status(500).json(error))
+      .catch(error => {
+        logger.error(error.detail)
+        response.status(500).json(error)
+      })
   }
 })
 

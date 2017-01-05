@@ -2,13 +2,13 @@ import React, { PropTypes as Types } from 'react';
 
 const Option = ({ currency, label, note, secondary, icon }) => {
   const iconClass = currency ?
-    `currency-flag currency-flag-${currency} pull-left m-r-1` :
-    `icon ${icon} pull-left m-r-1`;
+    `currency-flag currency-flag-${currency} pull-xs-0 mr-1` :
+    `icon ${icon} pull-xs-0 mr-1`;
   return (
     <span>
-      {icon || currency ? <i className={iconClass} /> : ''}
+      {icon || currency ? <div className={iconClass} /> : ''}
       {label}
-      {note ? <span className="small m-l-1">{note}</span> : ''}
+      {note ? <span className="small ml-1">{note}</span> : ''}
       {secondary ? <span className="small text-ellipsis">{secondary}</span> : ''}
     </span>
   );

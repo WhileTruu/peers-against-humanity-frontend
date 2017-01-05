@@ -72,10 +72,10 @@ $sah-card-border-radius: 6px;
   &.sah-card-large {
     padding: $sah-card-border-radius * 2;
     & .sah-card-footer {
-      font-size: 0.75rem !important;
+      font-size: 0.625rem !important;
       & .sah-card-logo {
-        max-height: 2rem;
-        padding-right: 8px;
+        max-height: 1.25rem;
+        padding-right: 6px;
         padding-bottom: 2px;
       }
     }
@@ -110,15 +110,15 @@ $sah-card-border-radius: 6px;
 
 .sah-card-large {
   & .sah-card-footer {
-    line-height: 2rem;
+    line-height: 1.25rem;
   }
   & .sah-card-pick {
-    font-size: 2rem;
+    font-size: 1rem;
   }
   & .sah-card-pick-circle {
-    width: 2rem;
-    height: 2rem;
-    margin-left: 1rem;
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-left: 0.5rem;
     background-size: cover;
   }
 }
@@ -152,4 +152,19 @@ $sah-card-border-radius: 6px;
     margin-left: 0.5rem;
     background-size: cover;
   }
+}
+
+.card-text-large {
+  font-size: 1.375rem;
+  font-weight: 700;
+}
+
+.card-text-medium {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.card-text-small {
+  font-size: .875rem;
+  font-weight: 700;
 }

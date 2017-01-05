@@ -41,6 +41,6 @@ function validateLanguage(languageId) {
 }
 
 export function validateTags(tags) {
-  if (tags.length >= 4) return 'One card may not have over 4 tags.'
+  if (tags && tags.length >= 4) return 'One card may not have over 4 tags.'
   return ''
 }

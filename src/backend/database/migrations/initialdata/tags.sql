@@ -13,5 +13,5 @@ insert into languages(id, name) values (2, 'estonian');
 insert into users(username, password)
 values (
   'TheLegend27',
-  '$2a$10$YDnMoB4dn3I1AFsIG9ys6uKjHWiSLNqd39AZJoF0M6qXB5M80zaiG'
+  '$2a$10$q6Ktp1YjbjphHYXcmEzHkOzxSsd7gOQIHABcP76uqq33uSUOmmNO6'
 );
