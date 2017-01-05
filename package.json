@@ -74,7 +74,7 @@
     "start:frontend": "node scripts/start.js",
     "build:frontend": "node scripts/build.js",
     "test:frontend": "node scripts/test.js --env=jsdom",
-    "start:backend": "NODE_ENV=production gulp build && PORT=8080 node dist",
+    "start:backend": "NODE_ENV=production gulp build && PORT=1337 node dist",
     "build:watch:backend": "NODE_ENV=development gulp"
   },
   "jest": {
@@ -109,5 +109,5 @@
   "eslintConfig": {
     "extends": "react-app"
   },
-  "proxy": "http://localhost:8080"
+  "proxy": "http://localhost:1337"
 }
