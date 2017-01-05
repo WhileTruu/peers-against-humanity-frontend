@@ -1,7 +1,5 @@
 import http from 'axios';
 
-const token = window.localStorage.getItem('token');
-
 export function registerNewUserAccount(username, password) {
   return http.post('/api/v1/users/registration',
     { username, plainTextPassword: password },
@@ -23,6 +21,7 @@ export function getRandomCard() {
 }
 
 export function createNewCard(cardData) {
+  const token = window.localStorage.getItem('token');
   return token ? http.post('/api/v1/cards/new',
     cardData,
     { headers: { Authorization: `Bearer ${token}` } }
