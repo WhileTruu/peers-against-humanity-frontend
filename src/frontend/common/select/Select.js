@@ -116,21 +116,16 @@ export default class Select extends Component {
   renderSearchBox() {
     const { searchValue, searchPlaceholder = 'Search...' } = this.props
     return (
-      <li className="dropdown-item sah-dropdown-item--divider">
-        <a className="tw-select-filter-link pa-0">
-          <div className="input-group">
-            <span className="sah-input-group-addon">
-              <div className="icon icon-search" />
-            </span>
-            <input
-              type="text"
-              className="form-control tw-select-filter btn-input no-shadow"
-              placeholder={searchPlaceholder}
-              onChange={this.handleSearchChange}
-              onClick={this.stopPropagation}
-              value={searchValue} />
-          </div>
-        </a>
+      <li className="sah-dropdown-item--divider">
+        <div className="px-1">
+          <input
+            type="text"
+            className="form-control btn-input no-shadow"
+            placeholder={searchPlaceholder}
+            onChange={this.handleSearchChange}
+            onClick={this.stopPropagation}
+            value={searchValue} />
+        </div>
       </li>
     )
   }
@@ -188,11 +183,13 @@ export default class Select extends Component {
         </button>
         {
           open ? (
-            <ul className="form-control dropdown-menu" role="menu">
+            <div className="form-control dropdown-menu" role="menu">
               {!required && !canSearch ? this.renderPlaceHolderOption() : ''}
               {canSearch ? this.renderSearchBox() : '' }
+              <div className="dropdown-scrollable-list">
               {this.renderOptions()}
-            </ul>
+              </div>
+            </div>
           ) : ''
         }
       </div>

@@ -54,3 +54,8 @@
 .sah-input-group-addon {
   width: 20px;
 }
+
+.dropdown-scrollable-list {
+  max-height: 25vh;
+  overflow-y: auto;
+}
