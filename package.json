@@ -75,7 +75,10 @@
     "build:frontend": "node scripts/build.js",
     "test:frontend": "node scripts/test.js --env=jsdom",
     "start:backend": "NODE_ENV=production gulp build && PORT=8080 node dist",
-    "build:watch:backend": "NODE_ENV=development gulp"
+    "build:watch:backend": "NODE_ENV=development gulp",
+    "migrations:down:all": "NODE_ENV=development gulp migrations:down:all",
+    "migrations:up:all": "NODE_ENV=development gulp migrations:up:all",
+    "migrations:data:init": "NODE_ENV=development gulp migrations:data:init"
   },
   "jest": {
     "collectCoverageFrom": [

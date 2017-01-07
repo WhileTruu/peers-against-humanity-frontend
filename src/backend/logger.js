@@ -1,10 +1,10 @@
 import { Logger, transports } from 'winston';
-import { red, blue, yellow, green } from 'chalk';
+import chalk from 'chalk';
 
 const levelColors = {
-  ERROR: red,
-  WARN: yellow,
-  INFO: blue,
+  ERROR: chalk.bold.red.inverse,
+  WARN: chalk.bold.yellow.inverse,
+  INFO: chalk.bold.blue.inverse,
 };
 
 const logger = new Logger({
@@ -14,7 +14,7 @@ const logger = new Logger({
         const level = options.level.toUpperCase();
         const levelColor = levelColors[level] || (a => a);
         const message = options.message || '';
-        return `[${levelColor(level)}] ${message}`;
+        return `${levelColor(`[${level}]`)} ${message}`;
       },
     }),
   ],
@@ -27,7 +27,7 @@ export function loggingMiddleware() {
     const startTime = Date.now();
     response.on('finish', () => {
       const duration = Date.now() - startTime;
-      logger.info(`${green(request.method)} ${blue(request.originalUrl)} ${duration}ms`);
+      logger.info(`${chalk.cyan((new Date().toUTCString()))} ${chalk.green(request.method)} ${chalk.blue(request.originalUrl)} ${duration}ms`);
     });
     next();
   };

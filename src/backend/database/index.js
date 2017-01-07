@@ -10,11 +10,11 @@ const database = postgreSQL(CONNECTION_STRING)
 
 export default database
 
-export function undoMigrations() {
+export function undoAllMigrations() {
   return database.none(new QueryFile(`${__dirname}/migrations/down/down.sql`))
 }
 
-export function runMigrations(folderName) {
+export function runMigrationsInFolder(folderName) {
   return new Promise((resolve, reject) => fs.readdir(`${__dirname}/migrations/${folderName}`, (err, items) => {
     let p = Promise.resolve()
     items.forEach(item => {
