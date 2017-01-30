@@ -13,7 +13,6 @@ export default class Select extends Component {
       value: Types.any.isRequired,
       label: Types.string,
       icon: Types.string,
-      currency: Types.string,
       note: Types.string,
       secondary: Types.secondary,
     }),
@@ -24,7 +23,6 @@ export default class Select extends Component {
       label: Types.string,
       header: Types.string,
       icon: Types.string,
-      currency: Types.string,
       note: Types.string,
       secondary: Types.secondary,
     })).isRequired,
@@ -81,7 +79,7 @@ export default class Select extends Component {
   renderOption = (option, index) => {
     if (option.header) {
       return (
-        <li key={index} onClick={this.stopPropagation} className="dropdown-header">
+        <li key={index} onClick={this.stopPropagation} className="dropdown-item">
           {option.header}
         </li>
       )
@@ -92,7 +90,7 @@ export default class Select extends Component {
       <li
         key={index}
         onClick={this.createSelectHandlerForOption(option)}
-        className={`dropdown-item sah-dropdown-item--clickable py-1 ${isActive ? 'active' : ''}`}>
+        className={`dropdown-item ${isActive ? 'active' : ''}`}>
         <a><Option {...option} /></a>
       </li>
     )
@@ -103,7 +101,7 @@ export default class Select extends Component {
     return this.props.placeholder ? (
       <li
         onClick={this.createSelectHandlerForOption({ placeholder })}
-        className="dropdown-item sah-dropdown-item--clickable dropdown-item sah-dropdown-item--divider">
+        className="dropdown-item">
         <a>{placeholder}</a>
       </li>
     ) : ''
@@ -116,11 +114,11 @@ export default class Select extends Component {
   renderSearchBox() {
     const { searchValue, searchPlaceholder = 'Search...' } = this.props
     return (
-      <li className="sah-dropdown-item--divider">
-        <div className="px-1">
+      <li className="dropdown-item">
+        <div className="">
           <input
             type="text"
-            className="form-control btn-input no-shadow"
+            className="form-control btn-input"
             placeholder={searchPlaceholder}
             onChange={this.handleSearchChange}
             onClick={this.stopPropagation}
@@ -167,12 +165,14 @@ export default class Select extends Component {
     const { disabled, required, onSearchChange, size } = this.props
     const canSearch = !!onSearchChange
     const { open } = this.state
-    const groupClass = `btn-group btn-block dropdown ${open ? 'open' : ''} ${size ? `btn-group-${size}` : ''}`
     return (
-      <div className={groupClass} aria-hidden="false">
+      <div
+        className={`dropdown ${open ? 'show' : ''} ${size ? `btn-group-${size}` : ''}`}
+        aria-hidden="false"
+      >
         <button
           disabled={disabled}
-          className={`form-control btn btn-inverse dropdown-toggle ${size ? `btn-${size}` : ''}`}
+          className={`form-control btn sah-btn-default dropdown-toggle ${size ? `btn-${size}` : ''}`}
           type="button"
           aria-expanded={open}
           onClick={this.handleButtonClick}>
@@ -183,7 +183,7 @@ export default class Select extends Component {
         </button>
         {
           open ? (
-            <div className="form-control dropdown-menu" role="menu">
+            <div className={`dropdown-menu ${open ? 'show' : ''}`} role="menu">
               {!required && !canSearch ? this.renderPlaceHolderOption() : ''}
               {canSearch ? this.renderSearchBox() : '' }
               <div className="dropdown-scrollable-list">

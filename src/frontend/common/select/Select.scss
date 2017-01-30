@@ -1,11 +1,13 @@
-.sah-dropdown-item--clickable {
-  cursor: pointer;
+.dropdown-menu {
+  width: 100%;
+  overflow: hidden;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  box-shadow: 0 10px 18px rgba(0,0,0,.11), 0 4px 5px rgba(0,0,0,.08);
 }
 
-.sah-dropdown-item--divider {
-  border-bottom-style: solid;
-  border-bottom-width: 1px;
-  border-bottom-color: #f2f5f7;
+.dropdown-item {
+  padding: 0.75rem 1.5rem !important;
 }
 
 .generic-flag {
@@ -40,13 +42,6 @@
   background-image: url('./icons/search-icon-light-grey.svg');
 }
 
-.no-shadow {
-  box-shadow: none !important;
-  &:focus {
-    box-shadow: none !important;
-  }
-}
-
 .caret {
   margin-left: -1rem !important;
 }
@@ -56,6 +51,6 @@
 }
 
 .dropdown-scrollable-list {
-  max-height: 25vh;
+  max-height: 15rem;
   overflow-y: auto;
 }

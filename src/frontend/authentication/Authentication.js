@@ -51,75 +51,76 @@ class Authentication extends Component {
   render() {
     const { error, errorType } = this.state
     return (
-      <div className="panel">
+      <div className="panel pt-5">
         <div className="row">
-          <div className="col-md-8 col-xs-12">
-            <h1 className="panel-heading">
-              Log in
-            </h1>
+          <div className="col-12">
+            <h1 className="panel-heading">Log in</h1>
           </div>
         </div>
-        <div className="row-flex">
-          <form className="form">
-            <div className={`form-group${errorType === errorTypes.username ? ' has-warning' : ''}`}>
-              <label
-                htmlFor="usernameInput"
-                className="form-check-label"
-              >
-                Insert username here
-              </label>
-              <input
-                type="text"
-                className="form-control btn-inverse btn-lg"
-                id="usernameInput"
-                placeholder="TheLegend27"
-                onChange={(event) => {
-                  this.setState({
-                    error: '',
-                    errorType: null,
-                    username: event.target.value,
-                  })
-                }}
-              />
-            </div>
-            <div className={`form-group${errorType === errorTypes.password ? ' has-warning' : ''}`}>
-              <label
-                htmlFor="passwordInput"
-                className="form-check-label"
-              >
-                Insert your password here
-              </label>
-              <input
-                type="password"
-                className="form-control btn-inverse btn-lg"
-                id="passwordInput"
-                onChange={(event) => {
-                  this.setState({
-                    error: '',
-                    errorType: null,
-                    password: event.target.value,
-                  })
-                }}
-              />
-            </div>
-            {error ? <div className="mt-3 mb-2"><Alert type="warning">{error}</Alert></div> : ''}
-            <div className={`form-group${errorType === errorTypes.submit ? ' has-warning' : ''}`}>
-              <label
-                htmlFor="verificationButton"
-                className="form-check-label"
-              >
-                Press the button below to log in
-              </label>
-              <button
-                type="submit"
-                className="form-control btn btn-primary btn-lg"
-                id="verificationButton"
-                onClick={this.onSubmit}
-              >
-                Log in
-              </button>
-            </div>
-          </form>
+        <div className="row">
+          <div className="col-12">
+            <form className="form">
+              <div className={`mb-0 pt-3 form-group${errorType === errorTypes.username ? ' has-warning' : ''}`}>
+                <label
+                  htmlFor="usernameInput"
+                  className="form-check-label"
+                >
+                  Insert username here
+                </label>
+                <input
+                  type="text"
+                  className="form-control sah-btn-default btn-lg"
+                  id="usernameInput"
+                  placeholder="TheLegend27"
+                  onChange={(event) => {
+                    this.setState({
+                      error: '',
+                      errorType: null,
+                      username: event.target.value,
+                    })
+                  }}
+                />
+              </div>
+              <div className={`mb-0 pt-3 form-group${errorType === errorTypes.password ? ' has-warning' : ''}`}>
+                <label
+                  htmlFor="passwordInput"
+                  className="form-check-label"
+                >
+                  Insert your password here
+                </label>
+                <input
+                  type="password"
+                  className="form-control sah-btn-default btn-lg"
+                  placeholder="Password"
+                  id="passwordInput"
+                  onChange={(event) => {
+                    this.setState({
+                      error: '',
+                      errorType: null,
+                      password: event.target.value,
+                    })
+                  }}
+                />
+              </div>
+              {error ? <div className="mt-4 pt-3"><Alert type="warning">{error}</Alert></div> : ''}
+              <div className={`mb-0 pt-3 form-group${errorType === errorTypes.submit ? ' has-warning' : ''}`}>
+                <label
+                  htmlFor="verificationButton"
+                  className="form-check-label"
+                >
+                  Press the button below to log in
+                </label>
+                <button
+                  type="submit"
+                  className="form-control btn sah-btn-success btn-lg"
+                  id="verificationButton"
+                  onClick={this.onSubmit}
+                >
+                  Log in
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
     )

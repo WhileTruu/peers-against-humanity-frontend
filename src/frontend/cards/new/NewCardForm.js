@@ -51,7 +51,7 @@ class NewCardForm extends Component {
     ]
 
     return (
-      <div className="form-group">
+      <div className="mb-0 pt-3 form-group">
         <label
           htmlFor="languageSelection"
           className="form-check-label"
@@ -80,7 +80,7 @@ class NewCardForm extends Component {
     const { errorType, cardTags, searchValue } = this.state
     const selectText = `Choose ${cardTags.length ? 'another' : 'a'} tag`
     return (
-      <div className={`form-group${errorType === errorTypes.tag ? ' has-warning' : ''}`}>
+      <div className={`mb-0 pt-3 form-group${errorType === errorTypes.tag ? ' has-warning' : ''}`}>
         <label
           htmlFor="tagSelection"
           className="form-check-label"
@@ -159,21 +159,21 @@ class NewCardForm extends Component {
         <div className="btn-group btn-group-lg btn-group-justified" id="inputPickCount" role="group">
             <button
               type="button"
-              className={`btn btn-inverse btn-lg ${selectedPickCount === 1 ? 'active' : ''}`}
+              className={`btn sah-btn-default btn-lg ${selectedPickCount === 1 ? 'active' : ''}`}
               onClick={() => this.setState({ selectedPickCount: 1 })}
             >
               Pick 1
             </button>
             <button
               type="button"
-              className={`btn btn-inverse btn-lg ${selectedPickCount === 2 ? 'active' : ''}`}
+              className={`btn sah-btn-default btn-lg ${selectedPickCount === 2 ? 'active' : ''}`}
               onClick={() => this.setState({ selectedPickCount: 2 })}
             >
               Pick 2
             </button>
             <button
               type="button"
-              className={`btn btn-inverse btn-lg ${selectedPickCount === 3 ? 'active' : ''}`}
+              className={`btn sah-btn-default btn-lg ${selectedPickCount === 3 ? 'active' : ''}`}
               onClick={() => this.setState({ selectedPickCount: 3 })}
             >
               Pick 3
@@ -190,90 +190,94 @@ class NewCardForm extends Component {
     return (
       <div className="panel">
         <div className="row">
-          <div className="col-xs-12">
+          <div className="col-12">
             <h1 className="panel-heading">
               Create a new card
             </h1>
           </div>
         </div>
-        <div className="new-card-form row-flex">
-          <div
-            className="new-card-form card-container pr-1"
-            onClick={() => { this.setState({ colorId: otherColorId }) }}
-          >
-            <Card
-              color={colorName}
-              size="large"
-              text={this.state.cardText}
-              pick={this.state.selectedPickCount}
-            />
-          </div>
-          <div className="new-card-form card-option-inputs">
-            <form className="form">
-              <div>
-                {this.renderLanguageSelector()}
-              </div>
-              <div className={`form-group${errorType === errorTypes.text ? ' has-warning' : ''}`}>
-                <label
-                  htmlFor="inputCardText"
-                  className="form-check-label"
-                >
-                  Insert the text you want on your card
-                </label>
-                <input
-                  type="text"
-                  className="form-control btn-inverse btn-lg"
-                  id="inputCardText"
-                  placeholder="Gay aliens."
-                  onChange={(event) => {
-                    this.setState({
-                      error: '',
-                      errorType: null,
-                      cardText: event.target.value ? event.target.value : this.defaultText,
-                    })
-                  }}
+        <div className="row">
+          <div className="col-12">
+            <div className="new-card-form row-flex">
+              <div
+                className="new-card-form card-container pt-3 pr-3"
+                onClick={() => { this.setState({ colorId: otherColorId }) }}
+              >
+                <Card
+                  color={colorName}
+                  size="large"
+                  text={this.state.cardText}
+                  pick={this.state.selectedPickCount}
                 />
               </div>
-              {this.renderPickCountSelector()}{this.renderTagSelector()}
-              {this.state.error ? (
-                <div className="mb-2 mt-3">
-                  <Alert type="warning">
-                    {this.state.error}
-                  </Alert>
-                </div>) : ''
-              }
-              <div className={`form-group${errorType === errorTypes.submit ? ' has-warning' : ''}`}>
-                <label
-                  htmlFor="cardSubmitButton"
-                  className="form-check-label"
-                >
-                  Submit your sexy new card
-                </label>
-                <button
-                  type="submit"
-                  className="form-control btn btn-inverse btn-lg"
-                  id="cardSubmitButton"
-                  onClick={(event) => this.onSubmit(event)}
-                >
-                  {isLoading ? <Loader /> : 'Submit'}
-                </button>
+              <div className="new-card-form card-option-inputs">
+                <form className="form">
+                  <div>
+                    {this.renderLanguageSelector()}
+                  </div>
+                  <div className={`mb-0 pt-3 form-group${errorType === errorTypes.text ? ' has-warning' : ''}`}>
+                    <label
+                      htmlFor="inputCardText"
+                      className="form-check-label"
+                    >
+                      Insert the text you want on your card
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control sah-btn-default btn-lg"
+                      id="inputCardText"
+                      placeholder="Gay aliens."
+                      onChange={(event) => {
+                        this.setState({
+                          error: '',
+                          errorType: null,
+                          cardText: event.target.value ? event.target.value : this.defaultText,
+                        })
+                      }}
+                    />
+                  </div>
+                  {this.renderPickCountSelector()}{this.renderTagSelector()}
+                  {this.state.error ? (
+                    <div className="mt-4 pt-3">
+                      <Alert type="warning">
+                        {this.state.error}
+                      </Alert>
+                    </div>) : ''
+                  }
+                  <div className={`mb-0 pt-3 form-group${errorType === errorTypes.submit ? ' has-warning' : ''}`}>
+                    <label
+                      htmlFor="cardSubmitButton"
+                      className="form-check-label"
+                    >
+                      Submit your sexy new card
+                    </label>
+                    <button
+                      type="submit"
+                      className="form-control btn sah-btn-default btn-lg"
+                      id="cardSubmitButton"
+                      onClick={(event) => this.onSubmit(event)}
+                    >
+                      {isLoading ? <Loader /> : 'Submit'}
+                    </button>
+                  </div>
+                </form>
               </div>
-            </form>
-          </div>
-        </div>
-        <div className="row pt-1">
-          <div className="col-xs-12">
-            <div className="tags-area">
-              {this.state.cardTags.map(tag => (
-                <button
-                  key={tag.value}
-                  className="btn mr-1 mb-1 btn-info-dark tag-button"
-                  id={tag.value}
-                  onClick={(event) => this.removeTag(event)}
-                >
-                {tag.label}
-                </button>
-              ))}
+            </div>
+            <div className="row pt-1">
+              <div className="col-xs-12">
+                <div className="tags-area">
+                  {this.state.cardTags.map(tag => (
+                    <button
+                      key={tag.value}
+                      className="btn mr-1 mb-1 btn-info-dark tag-button"
+                      id={tag.value}
+                      onClick={(event) => this.removeTag(event)}
+                    >
+                    {tag.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </div>

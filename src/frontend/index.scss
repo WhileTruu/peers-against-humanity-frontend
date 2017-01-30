@@ -3,55 +3,24 @@
 
 @import "~bootstrap/scss/bootstrap.scss";
 
-.bg-sah-card-white {
-  background-color: $sah-card-color-white;
-  color: $sah-card-color-black;
-  & h1, h2, h3, h4, h5, h6 { color: $sah-card-color-black; }
-  & .sah-card-footer { color: $sah-card-color-black; }
-}
-
-
-.bg-sah-card-black {
-  background-color: $sah-card-color-black;
-  color: $sah-card-color-white;
-  & h1, h2, h3, h4, h5, h6 { color: $sah-card-color-white; }
-  & .sah-card-footer { color: $sah-card-color-white; }
-}
-
-.center {
-  justify-content: center;
-}
-
-.right {
-  text-align: right;
-}
-
-.btn {
-  box-shadow: $sah-shadow;
-  border: none;
-  &:focus {
-    box-shadow: $sah-shadow-focus;
-  }
-}
-
-input, button {
-  outline: none !important;
-  box-shadow: $sah-shadow !important;
-  border: none !important;
-  &:focus {
-    box-shadow: $sah-shadow-focus !important;
-  }
-}
-
 .form-check-label {
   padding-left: 0;
   color: $white-dark;
 }
 
-.btn-inverse {
-  @include button-inverse-variant($white, $gray, $gray-light);
+.sah-btn-default {
+  @include sah-button-variant($white, $gray, $gray);
 }
 
-.btn-info-dark {
-  @include button-variant(#000, $btn-info-bg, $btn-info-border);
+.sah-btn-success {
+  @include sah-button-variant($white, $brand-success, $brand-success);
+}
+
+.sah-btn-primary {
+  @include sah-button-variant($white, $brand-primary, $brand-primary);
+}
+
+
+.sah-btn-info-dark {
+  @include sah-button-variant(#000, $btn-info-bg, $btn-info-border);
 }

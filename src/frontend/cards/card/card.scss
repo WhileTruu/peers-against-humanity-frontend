@@ -3,10 +3,7 @@ $sah-card-sm-width: 125px;
 $sah-card-border-radius: 6px;
 
 .sah-card {
-  -webkit-user-select: none;  /* Chrome all / Safari all */
-  -moz-user-select: none;     /* Firefox all */
-  -ms-user-select: none;      /* IE 10+ */
-  user-select: none;          /* Likely future */
+  user-select: none;
   font-weight: bold !important;
   box-shadow: $sah-shadow;
   border: none;
@@ -167,4 +164,19 @@ $sah-card-border-radius: 6px;
 .card-text-small {
   font-size: .875rem;
   font-weight: 700;
+}
+
+.bg-sah-card-white {
+  background-color: $sah-card-color-white;
+  color: $sah-card-color-black;
+  & h1, h2, h3, h4, h5, h6 { color: $sah-card-color-black; }
+  & .sah-card-footer { color: $sah-card-color-black; }
+}
+
+
+.bg-sah-card-black {
+  background-color: $sah-card-color-black;
+  color: $sah-card-color-white;
+  & h1, h2, h3, h4, h5, h6 { color: $sah-card-color-white; }
+  & .sah-card-footer { color: $sah-card-color-white; }
 }

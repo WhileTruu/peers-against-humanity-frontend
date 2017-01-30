@@ -23,10 +23,10 @@ class FrontPage extends Component {
 
   renderAuthenticationButtons() {
     return (
-      <div className="form-inline">
+      <div>
           <LogInButton>Log In</LogInButton>
           <button
-            className="btn btn-primary btn-lg ml-1"
+            className="btn sah-btn-primary btn-lg ml-3"
             onClick={() => {this.props.router.push('/users/registration')}}
           >
             Register
@@ -37,37 +37,43 @@ class FrontPage extends Component {
 
   render() {
     return (
-      <div className="panel">
+      <div className="panel pt-5">
         <div className="row">
-          <div className="col-xs-6">
-            <h1 className="panel-heading pt-0 pb-0">
+          <div className="col-6">
+            <h1 className="panel-heading">
               Sockets<br/>Against<br/>Humanity
             </h1>
           </div>
-          <div className="col-xs-6">
-            <div className="right">
+          <div className="col-6">
+            <div className="form-inline justify-content-end">
               {this.props.auth.isAuthenticated ?
                 (<LogOutButton>Log out</LogOutButton>) : this.renderAuthenticationButtons()
               }
             </div>
           </div>
         </div>
-        <div className="row-flex mt-1">
-          <h5>
-            A shitty game for shitty people.
-          </h5>
-          <button
-            className="form-control mt-1 btn btn-inverse btn-lg"
-            onClick={() => {this.props.router.push('/cards/new')}}
-          >
-            Create a new card
-          </button>
-          <button
-            className="form-control mt-2 btn btn-inverse btn-lg"
-            onClick={() => {this.props.router.push('/cards/random')}}
-          >
-            Check out a random card
-          </button>
+        <div className="row">
+          <div className="col-12">
+            <div className="pt-3">
+              <h5>A shitty game for shitty people.</h5>
+            </div>
+            <div className="pt-3">
+              <button
+                className="form-control btn sah-btn-default btn-lg"
+                onClick={() => {this.props.router.push('/cards/new')}}
+              >
+                Create a new card
+              </button>
+            </div>
+            <div className="pt-3">
+              <button
+                className="form-control btn sah-btn-default btn-lg"
+                onClick={() => {this.props.router.push('/cards/random')}}
+              >
+                Check out a random card
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     )

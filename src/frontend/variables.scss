@@ -39,26 +39,40 @@ $btn-font-weight: 700;
 
 $spacer: 0.75rem;
 
-@mixin button-inverse-variant($color, $background, $border) {
+$sah-btn-box-shadow-first:  0 2px   3px rgba(0,0,0,.11), 0 1px 1px rgba(0,0,0,.08);
+$sah-btn-box-shadow-second: 0 4px   6px rgba(0,0,0,.11), 0 1px 3px rgba(0,0,0,.08);
+$sah-btn-box-shadow-third:  0 10px 18px rgba(0,0,0,.11), 0 4px 5px rgba(0,0,0,.08);
+
+$dropdown-bg: $gray-light;
+$dropdown-link-color: $white;
+$dropdown-link-hover-color: $white;
+$dropdown-border-width: 0;
+
+@mixin sah-button-variant($color, $background, $border) {
   $active-background: lighten($background, 10%);
   $active-border: lighten($border, 12%);
-
+  transition: all .15s ease;
   color: $color;
   background-color: $background;
   border-color: $border;
-  @include box-shadow($btn-box-shadow);
+  box-shadow: $sah-btn-box-shadow-second;
 
   @include hover {
     color: $color;
     background-color: $active-background;
-        border-color: $active-border;
+    border-color:     $active-border;
+    // TODO: figure out how to do this with an ::after element.
+    box-shadow: $sah-btn-box-shadow-third;
+    transform: translateY(-2%);
   }
 
   &:focus,
   &.focus {
     color: $color;
     background-color: $active-background;
-        border-color: $active-border;
+    border-color:     $active-border;
+    transform: translateY(0);
+    box-shadow: $sah-btn-box-shadow-first;
   }
 
   &:active,
@@ -66,17 +80,22 @@ $spacer: 0.75rem;
   .open > &.dropdown-toggle {
     color: $color;
     background-color: $active-background;
-        border-color: $active-border;
+    border-color:     $active-border;
     // Remove the gradient for the pressed/active state
     background-image: none;
-    @include box-shadow($btn-active-box-shadow);
+
+    transform: translateY(2%);
+    box-shadow: $sah-btn-box-shadow-first;
+    //@include box-shadow($btn-active-box-shadow);
 
     &:hover,
     &:focus,
     &.focus {
       color: $color;
       background-color: lighten($background, 17%);
-          border-color: lighten($border, 25%);
+      border-color:     lighten($border, 19%);
+      transform: translateY(2%);
+      box-shadow: $sah-btn-box-shadow-first;
     }
   }
 
@@ -85,29 +104,29 @@ $spacer: 0.75rem;
     &:focus,
     &.focus {
       background-color: $background;
-          border-color: $border;
+      border-color:     $border;
     }
     @include hover {
       background-color: $background;
-          border-color: $border;
+      border-color:     $border;
     }
   }
 }
 
-// Justified button groups
-// ----------------------
-
-.btn-group-justified {
-  display: flex !important;
-  width: 100%;
-  .btn,
-  .btn-group {
-    flex: 1;
-    .btn {
-      width: 100%;
-    }
-    .dropdown-menu {
-      left: auto;
-    }
-  }
-}
+//// Justified button groups
+//// ----------------------
+//
+//.btn-group-justified {
+//  display: flex !important;
+//  width: 100%;
+//  .btn,
+//  .btn-group {
+//    flex: 1;
+//    .btn {
+//      width: 100%;
+//    }
+//    .dropdown-menu {
+//      left: auto;
+//    }
+//  }
+//}

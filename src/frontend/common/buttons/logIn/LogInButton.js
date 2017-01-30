@@ -9,7 +9,7 @@ class LogInButton extends Component {
     return (
       <div style={{ display: 'inline' }}>
         <button
-          className="btn btn-inverse btn-lg"
+          className="btn sah-btn-success btn-lg"
           onClick={() => this.logIn()}
         >
           { this.props.children }

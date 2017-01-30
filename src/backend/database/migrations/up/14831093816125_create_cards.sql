@@ -5,27 +5,25 @@ CREATE TABLE cards (
   card_text VARCHAR(255) NOT NULL,
   pick SMALLINT,
   user_id INTEGER NOT NULL,
-  upvotes INTEGER NOT NULL DEFAULT 0,
-  downvotes INTEGER NOT NULL DEFAULT 0,
   created_at TIMESTAMP NOT NULL DEFAULT LOCALTIMESTAMP
 );
 
 ALTER TABLE cards ADD CONSTRAINT FK_cards_language_id
   FOREIGN KEY (language_id)
   REFERENCES languages (id)
-  ON DELETE Set Null ON UPDATE Cascade
+  ON UPDATE Cascade
 ;
 
 ALTER TABLE cards ADD CONSTRAINT FK_cards_color_id
   FOREIGN KEY (color_id)
   REFERENCES colors (id)
-  ON DELETE Set Null ON UPDATE Cascade
+  ON UPDATE Cascade
 ;
 
 ALTER TABLE cards ADD CONSTRAINT FK_cards_user_id
   FOREIGN KEY (user_id)
   REFERENCES users (id)
-  ON DELETE Set Null ON UPDATE Cascade
+  ON UPDATE Cascade
 ;
 
 ALTER TABLE cards ADD CONSTRAINT UQ_cards_text UNIQUE (card_text);

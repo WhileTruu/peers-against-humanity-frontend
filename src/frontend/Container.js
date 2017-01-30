@@ -6,7 +6,7 @@ const Container = ({ children }) => (
   <div className="pt-3" style={{ minHeight: '100vh' }}>
     <div className="container">
       <div className="row">
-        <div className="col-xs-12 col-md-10 offset-md-1 col-lg-8 offset-lg-2">
+        <div className="col-12 col-md-10 offset-md-1 col-lg-8 offset-lg-2">
           {children || (<FrontPage />)}
         </div>
       </div>

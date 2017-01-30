@@ -11,6 +11,6 @@ ALTER TABLE tags ADD CONSTRAINT PK_tags_id
 ALTER TABLE tags ADD CONSTRAINT UQ_tags_name UNIQUE (name)
 ;
 
-ALTER TABLE tags ADD CONSTRAINT CHK_cards_text_not_empty
+ALTER TABLE tags ADD CONSTRAINT CHK_tags_text_not_empty
   CHECK (btrim(name) <> '')
 ;

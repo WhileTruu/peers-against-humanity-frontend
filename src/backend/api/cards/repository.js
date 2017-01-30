@@ -14,7 +14,10 @@ export function getAllCards() {
 /* eslint-disable */
 export function create(card) {
   return database
-    .one('INSERT INTO cards(language_id, color_id, card_text, pick, user_id) VALUES (${languageId}, ${colorId}, ${cardText}, ${pick}, ${userId}) RETURNING *;', card)
+    .one('INSERT INTO cards(language_id, color_id, card_text, pick, user_id) \
+      VALUES (${languageId}, ${colorId}, ${cardText}, ${pick}, ${userId}) RETURNING *;',
+      card
+    )
 }
 
 export function getRandomCard() {
@@ -28,4 +31,11 @@ export function getRandomCard() {
 export function connectCardToTag(cardId, tagId) {
   return database
     .one('INSERT INTO card_tags(card_id, tag_id) VALUES (${cardId}, ${tagId}) RETURNING *;', {cardId, tagId}) //eslint-disable-line
+}
+
+export function vote(cardId, userId, isPositive) {
+  return database.one(
+    'INSERT INTO card_votes(card_id, user_id, vote) VALUES (${cardId, userId, vote})', //eslint-disable-line
+    { cardId, userId, vote: isPositive ? 1 : -1 }
+  )
 }
