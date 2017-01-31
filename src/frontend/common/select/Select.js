@@ -115,20 +115,20 @@ export default class Select extends Component {
     const { searchValue, searchPlaceholder = 'Search...' } = this.props
     return (
       <div>
-      <li
-        onClick={this.stopPropagation}
-        className="dropdown-item"
-      >
-        <div className="">
-          <input
-            type="text"
-            className="form-control"
-            placeholder={searchPlaceholder}
-            onChange={this.handleSearchChange}
-            value={searchValue} />
-        </div>
-      </li>
-      <div className="dropdown-divider"></div>
+        <li
+          onClick={this.stopPropagation}
+          className="dropdown-item"
+        >
+          <div className="">
+            <input
+              type="text"
+              className="form-control"
+              placeholder={searchPlaceholder}
+              onChange={this.handleSearchChange}
+              value={searchValue} />
+          </div>
+        </li>
+        <div className="dropdown-divider"></div>
       </div>
     )
   }
