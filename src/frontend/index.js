@@ -17,13 +17,19 @@ const devTools = window.devToolsExtension ? window.devToolsExtension() : (variab
 const finalCreateStore = compose(applyMiddleware(thunk), devTools)(createStore)
 const store = finalCreateStore(rootReducer)
 
+function requireAccess() {
+  if (!store.getState().auth.isAuthenticated) {
+    browserHistory.push('/')
+  }
+}
+
 ReactDOM.render(
   <Provider store={store}>
     <Router history={browserHistory}>
       <Route path="/" component={Container}>
         <Route path="cards">
-          <Route path="new" component={NewCardForm} />
-          <Route path="random" component={RandomCard} />
+          <Route path="new" component={NewCardForm} onEnter={requireAccess} />
+          <Route path="random" component={RandomCard} onEnter={requireAccess} />
         </Route>
         <Route path="users">
           <Route path="registration" component={Registration} />

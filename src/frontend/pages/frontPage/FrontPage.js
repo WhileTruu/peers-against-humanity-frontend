@@ -36,6 +36,8 @@ class FrontPage extends Component {
   }
 
   render() {
+    const { isAuthenticated } = this.props.auth
+    const { router } = this.props
     return (
       <div className="panel pt-5">
         <div className="row">
@@ -46,7 +48,7 @@ class FrontPage extends Component {
           </div>
           <div className="col-6">
             <div className="form-inline justify-content-end">
-              {this.props.auth.isAuthenticated ?
+              {isAuthenticated ?
                 (<LogOutButton>Log out</LogOutButton>) : this.renderAuthenticationButtons()
               }
             </div>
@@ -60,7 +62,7 @@ class FrontPage extends Component {
             <div className="pt-3">
               <button
                 className="form-control btn sah-btn-default btn-lg"
-                onClick={() => {this.props.router.push('/cards/new')}}
+                onClick={() => {router.push('/cards/new')}}
               >
                 Create a new card
               </button>
@@ -68,7 +70,7 @@ class FrontPage extends Component {
             <div className="pt-3">
               <button
                 className="form-control btn sah-btn-default btn-lg"
-                onClick={() => {this.props.router.push('/cards/random')}}
+                onClick={() => {router.push('/cards/random')}}
               >
                 Check out a random card
               </button>
