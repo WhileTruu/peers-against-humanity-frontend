@@ -54,3 +54,8 @@
   max-height: 15rem;
   overflow-y: auto;
 }
+
+.dropdown-divider {
+  margin: 0 !important;
+  background-color: lighten(#434343, 10%) !important;
+}

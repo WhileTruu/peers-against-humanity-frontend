@@ -114,17 +114,22 @@ export default class Select extends Component {
   renderSearchBox() {
     const { searchValue, searchPlaceholder = 'Search...' } = this.props
     return (
-      <li className="dropdown-item">
+      <div>
+      <li
+        onClick={this.stopPropagation}
+        className="dropdown-item"
+      >
         <div className="">
           <input
             type="text"
-            className="form-control btn-input"
+            className="form-control"
             placeholder={searchPlaceholder}
             onChange={this.handleSearchChange}
-            onClick={this.stopPropagation}
             value={searchValue} />
         </div>
       </li>
+      <div className="dropdown-divider"></div>
+      </div>
     )
   }
 

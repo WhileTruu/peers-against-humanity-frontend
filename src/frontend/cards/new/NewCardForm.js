@@ -149,14 +149,14 @@ class NewCardForm extends Component {
     const { selectedPickCount, colorId } = this.state
     if (getColorName(colorId) === 'white') return ''
     return (
-      <div className="form-group">
+      <div className="mb-0 pt-3 form-group">
         <label
           htmlFor="inputPickCount"
           className="form-check-label"
         >
           Choose a number of white cards to pick
         </label>
-        <div className="btn-group btn-group-lg btn-group-justified" id="inputPickCount" role="group">
+        <div className="btn-group btn-group-lg sah-btn-group-justified" id="inputPickCount" role="group">
             <button
               type="button"
               className={`btn sah-btn-default btn-lg ${selectedPickCount === 1 ? 'active' : ''}`}
@@ -253,7 +253,7 @@ class NewCardForm extends Component {
                     </label>
                     <button
                       type="submit"
-                      className="form-control btn sah-btn-default btn-lg"
+                      className="form-control btn sah-btn-success btn-lg"
                       id="cardSubmitButton"
                       onClick={(event) => this.onSubmit(event)}
                     >

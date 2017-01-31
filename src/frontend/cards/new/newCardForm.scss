@@ -28,3 +28,18 @@
 .tags-area {
    display: inline;
 }
+
+.sah-btn-group-justified {
+  display: flex !important;
+  width: 100%;
+  .btn,
+  .btn-group {
+    flex: 1 !important;
+    .btn {
+      width: 100%;
+    }
+    .dropdown-menu {
+      left: auto;
+    }
+  }
+}
