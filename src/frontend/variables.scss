@@ -60,6 +60,7 @@ $dropdown-border-width: 0;
   box-shadow: $sah-btn-box-shadow-second;
 
   @include hover {
+    cursor: pointer;
     color: $color;
     background-color: $active-background;
     border-color:     $active-border;
