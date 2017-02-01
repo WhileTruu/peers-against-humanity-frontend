@@ -1,5 +1,7 @@
 import http from 'axios';
 
+const authReject = () => Promise.reject({ message: 'You are not logged in!' })
+
 export function registerNewUserAccount(username, password) {
   return http.post('/api/v1/users/registration',
     { username, plainTextPassword: password },
@@ -21,9 +23,23 @@ export function getRandomCard() {
 }
 
 export function createNewCard(cardData) {
-  const token = window.localStorage.getItem('token');
+  const token = window.localStorage.getItem('token')
   return token ? http.post('/api/v1/cards/new',
     cardData,
     { headers: { Authorization: `Bearer ${token}` } }
-  ) : Promise.reject({ message: 'You are not logged in!' })
+  ) : authReject
+}
+
+export function cardEvaluationUpVote(cardId) {
+  const token = window.localStorage.getItem('token')
+  return token ? http.post(`/api/v1/cards/${cardId}/vote/up`,
+    { headers: { Authorization: `Bearer ${token}` } }
+  ) : authReject
+}
+
+export function cardEvaluationDownVote(cardId) {
+  const token = window.localStorage.getItem('token')
+  return token ? http.post(`/api/v1/cards/${cardId}/vote/down`,
+    { headers: { Authorization: `Bearer ${token}` } }
+  ) : authReject
 }

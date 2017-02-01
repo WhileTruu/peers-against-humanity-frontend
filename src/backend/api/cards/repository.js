@@ -1,9 +1,13 @@
 import database from '../../database'
 
+export const voteValues = {
+  up: 'UP',
+  down: 'DOWN'
+}
 
 export function findById(id) {
   return database
-    .oneOrNone('SELECT * FROM cards WHERE id=${id}', { id }) //eslint-disable-line
+    .oneOrNone('SELECT * FROM cards WHERE id=${id};', { id }) //eslint-disable-line
 }
 
 export function getAllCards() {
@@ -24,7 +28,7 @@ export function getRandomCard() {
   return database
     .oneOrNone('SELECT * FROM cards \
       ORDER BY RANDOM() \
-      LIMIT 1')
+      LIMIT 1;')
 }
 /* eslint-enable */
 
@@ -33,9 +37,9 @@ export function connectCardToTag(cardId, tagId) {
     .one('INSERT INTO card_tags(card_id, tag_id) VALUES (${cardId}, ${tagId}) RETURNING *;', {cardId, tagId}) //eslint-disable-line
 }
 
-export function vote(cardId, userId, isPositive) {
+export function vote(cardId, userId, voteValue) {
   return database.one(
-    'INSERT INTO card_votes(card_id, user_id, vote) VALUES (${cardId, userId, vote})', //eslint-disable-line
-    { cardId, userId, vote: isPositive ? 1 : -1 }
+    'INSERT INTO card_votes(card_id, user_id, vote) VALUES (${cardId}, ${userId}, ${voteValue}) RETURNING *;', //eslint-disable-line
+    { cardId, userId, voteValue: voteValue === voteValues.up ? 1 : -1 }
   )
 }

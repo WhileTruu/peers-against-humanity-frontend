@@ -1,6 +1,14 @@
 import { Router } from 'express'
 
-import { findById, getAllCards, create, getRandomCard, connectCardToTag, vote} from './repository'
+import {
+  findById,
+  getAllCards,
+  create,
+  getRandomCard,
+  connectCardToTag,
+  vote,
+  voteValues,
+} from './repository'
 import { validateCardData } from './util'
 import { verifyAuthorization } from '../authorizationService'
 
@@ -50,23 +58,23 @@ router.post('/new', verifyAuthorization, (request, response) => {
 })
 
 router.post('/:id/vote/up', verifyAuthorization, (request, response) => {
-  const userId = request.locals.userId
+  const userId = response.locals.userId
   const cardId = request.params.id
-  vote(cardId, userId, true)
+  vote(cardId, userId, voteValues.up)
     .then((result) => response.status(200).json(result))
     .catch((error) => {
-      logger.error(error.detail)
+      logger.error(error.message)
       response.status(500).json({ message: 'Something went wrong with upvoting.' })
     })
 })
 
 router.post('/:id/vote/down', verifyAuthorization, (request, response) => {
-  const userId = request.locals.userId
+  const userId = response.locals.userId
   const cardId = request.params.id
-  vote(cardId, userId, false)
+  vote(cardId, userId, voteValues.down)
     .then((result) => response.status(200).json(result))
     .catch((error) => {
-      logger.error(error.detail)
+      logger.error(error.message)
       response.status(500).json({ message: 'Something went wrong with downvoting.' })
     })
 })

@@ -56,7 +56,6 @@ class FrontPage extends Component {
           <div className="col-12">
             <div className="pt-3">
               <h5>{`If you're feeling suicidal you've come to the right place.`}</h5>
-              <h5>{`Because I want to fucking kill myself as well.`}</h5>
             </div>
           </div>
         </div>
