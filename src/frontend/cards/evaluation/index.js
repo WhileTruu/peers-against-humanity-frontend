@@ -10,6 +10,8 @@ import { getColorName } from '../util'
 export default class Evaluation extends Component {
   constructor(props) {
     super(props)
+    this.upVote = this.upVote.bind(this)
+    this.downVote = this.downVote.bind(this)
     this.state = {
       card: null,
       error: '',
@@ -21,7 +23,23 @@ export default class Evaluation extends Component {
     this.setState({ isLoading: true })
     ApiService.getRandomCard()
       .then(request => this.setState({ isLoading: false, card: request.data }))
-      .catch(error => this.setState({ isLoading: false, error }))
+      .catch(error => this.setState({ isLoading: false, error: error.response.data.message || error.message }))
+  }
+
+  upVote() {
+    const { card } = this.state
+    this.setState({ isLoading: true })
+    ApiService.cardEvaluationUpVote(card.id)
+      .then(request => this.setState({ isLoading: false, card: request.data }))
+      .catch(error => this.setState({ isLoading: false, error: error.response.data.message || error.message }))
+  }
+
+  downVote() {
+    const { card } = this.state
+    this.setState({ isLoading: true })
+    ApiService.cardEvaluationDownVote(card.id)
+      .then(request => this.setState({ isLoading: false, card: request.data }))
+      .catch((error) => this.setState({ isLoading: false, error: error.response.data.message || error.message }))
   }
 
   renderEvaluationCard() {
@@ -41,11 +59,19 @@ export default class Evaluation extends Component {
         />
         <div className="sah-evaluation-btn-container">
           <button className="btn sah-btn-danger sah-evaluation-btn">
-            <div className="sah-evaluation-thumb-down">
+            <div
+              className="sah-evaluation-thumb-down"
+              onClick={this.downVote}
+            >
               {thumb}
             </div>
           </button>
-          <button className="btn sah-btn-success sah-evaluation-btn">{thumb}</button>
+          <button
+            className="btn sah-btn-success sah-evaluation-btn"
+            onClick={this.upVote}
+          >
+            {thumb}
+          </button>
         </div>
       </div>
     )
@@ -53,13 +79,15 @@ export default class Evaluation extends Component {
 
   render() {
     const { card, error, isLoading } = this.state
-    const alert = (<Alert type="warning">this.state.error</Alert>)
+    const alert = (<Alert type="warning">{error}</Alert>)
     const loader = (<Loader size="md"/>)
     return (
       <div>
         <div className="pt-5 sah-evaluation-container">
-          {isLoading ? loader : ''}
           {card ? this.renderEvaluationCard() : ''}
+        </div>
+        <div className="pt-5 sah-evaluation-container">
+          {isLoading ? loader : ''}
           {error ? alert : ''}
         </div>
       </div>

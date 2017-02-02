@@ -21,7 +21,7 @@ router.get('/all', (request, response) => {
     .then(cards => response.status(200).json(cards))
     .catch(error => {
       logger.error(error.detail)
-      response.status(404).json(error)
+      response.status(404).json({ message: error.message })
     })
 })
 
@@ -30,7 +30,7 @@ router.get('/random', (request, response) => {
     .then(card => response.status(200).json(card))
     .catch(error => {
       logger.error(error.message)
-      response.status(404).json(error.message)
+      response.status(404).json({ message: error.message })
     })
 })
 
@@ -84,7 +84,7 @@ router.get('/:id', (request, response) => {
     .then(card => response.status(200).json(card))
     .catch(error => {
       logger.error(error.detail)
-      response.status(500).json(error)
+      response.status(500).json({ message: error.detail })
     })
 })
 
