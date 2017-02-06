@@ -19,8 +19,8 @@ router.get('/:id', verifyAuthorization, (request, response) => {
     findById(request.params.id)
       .then(user => response.status(200).json(user))
       .catch(error => {
-        logger.error(`users/${request.params.id} ${error.detail}`)
-        response.status(500).json(error)
+        logger.error(`users/${request.params.id}: ${error.detail}`)
+        response.status(500).json({ message: error.detail })
       })
   }
 })
@@ -42,8 +42,8 @@ router.post('/registration', (request, response) => {
         response.status(201).json({ username, id, token: createTokenForUser({ id }) })
       })
       .catch(error => {
-        logger.error(`users/registration ${error.detail}`)
-        response.status(500).json({ message: 'That username is already taken or something.' })
+        logger.error(`users/registration: ${error.detail}`)
+        response.status(500).json({ message: error.detail })
       })
   }
 })
@@ -67,12 +67,12 @@ router.post('/authentication', (request, response) => {
                 response.status(200).json({ valid: true, token: createTokenForUser({ id }) })
               }
             })
-            .catch(error => response.status(500).json(error))
+            .catch(error => response.status(500).json({ message: error.detail }))
         }
       })
       .catch(error => {
-        logger.error(`users/authentication ${error.detail}`)
-        response.status(500).json(error)
+        logger.error(`users/authentication: ${error.detail}`)
+        response.status(500).json({ message: error.detail })
       })
   }
 })

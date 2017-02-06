@@ -20,8 +20,8 @@ router.get('/all', (request, response) => {
   getAllCards()
     .then(cards => response.status(200).json(cards))
     .catch(error => {
-      logger.error(error.detail)
-      response.status(404).json({ message: error.message })
+      logger.error(error.message)
+      response.status(500).json({ message: error.message })
     })
 })
 
@@ -30,7 +30,7 @@ router.get('/random', (request, response) => {
     .then(card => response.status(200).json(card))
     .catch(error => {
       logger.error(error.message)
-      response.status(404).json({ message: error.message })
+      response.status(500).json({ message: error.message })
     })
 })
 
@@ -46,12 +46,12 @@ router.post('/new', verifyAuthorization, (request, response) => {
         Promise.all(cardData.tags ? cardData.tags.map(tag => connectCardToTag(card.id, tag.value)) : [])
           .then(() => response.status(201).json(card))
           .catch((error) => {
-            logger.error(error.detail)
+            logger.error(error.message)
             response.status(500).json({ card, message: 'The card was added, but the tags were a bit messy.'})
           })
       })
       .catch(error => {
-        logger.error(error.detail)
+        logger.error(error.message)
         response.status(500).json({ message: 'That card has already been made or something.' })
       })
   }
@@ -83,8 +83,8 @@ router.get('/:id', (request, response) => {
   findById(request.params.id)
     .then(card => response.status(200).json(card))
     .catch(error => {
-      logger.error(error.detail)
-      response.status(500).json({ message: error.detail })
+      logger.error(error.message)
+      response.status(500).json({ message: error.message })
     })
 })
 

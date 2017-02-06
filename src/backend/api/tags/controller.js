@@ -29,11 +29,7 @@ router.post('/createNewTag', (request, response) => {
   } else {
     addTag(tagName)
       .then((tagId) => {
-        if (!tagId) {
-          response.status(403).json({ message: 'Invalid username or password.' })
-        } else {
-          response.status(200).json({ tagId, created: true })
-        }
+        response.status(200).json({ tagId, created: true })
       })
       .catch(error => {
         logger.error(error.detail)

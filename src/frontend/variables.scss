@@ -118,22 +118,21 @@ $dropdown-border-width: 0;
 
 //  &.first
 //    box-shadow 0 1px 3px 0 tint(#000000,44%), 0 1px 1px  0 tint(#000000,68%)
-
-  &.second
-    box-shadow 0 5px 10px 0 tint(#000000,46%), 0 4px 5px 0 tint(#000000,66%)
-
-  &.third
-    box-shadow 0 11px 23px 0 tint(#000000,48%), 0 6px 11px 0 tint(#000000,63%)
-
-  &.fourth
-    box-shadow 0 15px 33px 0 tint(#000000,49%), 0 12px 14px 0 tint(#000000,62%)
-
-  &.fifth
-    box-shadow 0 18px 45px 0 tint(#000000,50%), 0 15px 15px 0 tint(#000000,60%)
-
-  &.-example
-    box-shadow 0 1px 3px 0 tint(#000000,44%), 0 1px 1px  0 tint(#000000,68%)
-    transition box-shadow 0.3s ease-in-out
-    &:hover
-      box-shadow 0 18px 45px 0 tint(#000000,50%), 0 15px 15px 0 tint(#000000,60%)
-      */
+//
+//  &.second
+//    box-shadow 0 5px 10px 0 tint(#000000,46%), 0 4px 5px 0 tint(#000000,66%)
+//
+//  &.third
+//    box-shadow 0 11px 23px 0 tint(#000000,48%), 0 6px 11px 0 tint(#000000,63%)
+//
+//  &.fourth
+//    box-shadow 0 15px 33px 0 tint(#000000,49%), 0 12px 14px 0 tint(#000000,62%)
+//
+//  &.fifth
+//    box-shadow 0 18px 45px 0 tint(#000000,50%), 0 15px 15px 0 tint(#000000,60%)
+//
+//  &.-example
+//    box-shadow 0 1px 3px 0 tint(#000000,44%), 0 1px 1px  0 tint(#000000,68%)
+//    transition box-shadow 0.3s ease-in-out
+//    &:hover
+//      box-shadow 0 18px 45px 0 tint(#000000,50%), 0 15px 15px 0 tint(#000000,60%)

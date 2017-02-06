@@ -13,7 +13,7 @@ app.use(loggingMiddleware())
 app.use('/api/v1', controller)
 
 app.use('/', express.static(path.join(__dirname, '../build')));
-app.use('/cards*', express.static(path.join(__dirname, '../build')));
-app.use('/users*', express.static(path.join(__dirname, '../build')));
+app.use('/cards/*', express.static(path.join(__dirname, '../build')));
+app.use('/users/*', express.static(path.join(__dirname, '../build')));
 
 app.listen(PORT, () => logger.info(`Server running at ${PORT}`))

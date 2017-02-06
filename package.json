@@ -4,6 +4,7 @@
   "private": true,
   "devDependencies": {
     "autoprefixer": "6.5.1",
+    "babel-cli": "^6.22.2",
     "babel-core": "6.17.0",
     "babel-eslint": "7.1.1",
     "babel-jest": "17.0.2",
@@ -52,14 +53,10 @@
     "body-parser": "^1.15.2",
     "bootstrap": "4.0.0-alpha.6",
     "express": "^4.14.0",
-    "gulp": "^3.9.1",
-    "gulp-babel": "^6.1.2",
-    "gulp-eslint": "^3.0.1",
-    "gulp-sourcemaps": "^1.9.1",
     "jsonwebtoken": "^7.2.1",
     "knex": "^0.12.6",
     "node-sass": "^4.1.1",
-    "pg-promise": "^5.5.0",
+    "pg": "^6.1.2",
     "react": "^15.4.1",
     "react-dom": "^15.4.1",
     "react-redux": "^5.0.1",
@@ -67,18 +64,16 @@
     "redux": "^3.6.0",
     "redux-thunk": "^2.1.0",
     "sass-loader": "^4.1.1",
-    "sqlite3": "^3.1.8",
     "winston": "^2.3.0"
   },
   "scripts": {
-    "start:frontend": "node scripts/start.js",
-    "build:frontend": "node scripts/build.js",
-    "test:frontend": "node scripts/test.js --env=jsdom",
-    "start:backend": "NODE_ENV=production gulp build && PORT=8080 node dist",
-    "build:watch:backend": "NODE_ENV=development gulp",
-    "migrations:down:all": "NODE_ENV=development gulp migrations:down:all",
-    "migrations:up:all": "NODE_ENV=development gulp migrations:up:all",
-    "migrations:data:init": "NODE_ENV=development gulp migrations:data:init"
+    "start:frontend": "node scripts/frontend/start.js",
+    "build:frontend": "node scripts/frontend/build.js",
+    "test:frontend": "node scripts/frontend/test.js --env=jsdom",
+    "start:backend": "scripts/backend/start.sh",
+    "build:backend": "scripts/backend/build.sh",
+    "migrate:rollback": "scripts/backend/migrate.rollback.sh",
+    "migrate:latest": "scripts/backend/migrate.latest.sh"
   },
   "jest": {
     "collectCoverageFrom": [
