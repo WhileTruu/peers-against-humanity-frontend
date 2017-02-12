@@ -1,7 +1,7 @@
 
 exports.up = function(knex, Promise) {
   return knex.raw(`
-    CREATE TABLE cards (
+    CREATE TABLE IF NOT EXISTS cards (
       id SERIAL UNIQUE,
       language_id INTEGER NOT NULL,
       color_id SMALLINT NOT NULL,

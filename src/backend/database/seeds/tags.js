@@ -5,11 +5,11 @@ exports.seed = function(knex, Promise) {
     .then(function () {
       return Promise.all([
         // Inserts seed entries
-        knex('tags').insert({id: 1, colName: 'A Game of Thrones'}),
-        knex('tags').insert({id: 2, colName: 'Westworld'}),
-        knex('tags').insert({id: 3, colName: 'Gay'}),
-        knex('tags').insert({id: 4, colName: 'Military'}),
-        knex('tags').insert({id: 5, colName: 'Donald Trump'}),
+        knex('tags').insert({id: 1, name: 'A Game of Thrones'}),
+        knex('tags').insert({id: 2, name: 'Westworld'}),
+        knex('tags').insert({id: 3, name: 'Gay'}),
+        knex('tags').insert({id: 4, name: 'Military'}),
+        knex('tags').insert({id: 5, name: 'Donald Trump'}),
       ]);
     });
 };

@@ -1,7 +1,7 @@
 
 exports.up = function(knex, Promise) {
   return knex.raw(`
-    CREATE TABLE colors (
+    CREATE TABLE IF NOT EXISTS colors (
       id SMALLINT UNIQUE,
       name VARCHAR(255),
       created_at TIMESTAMP NOT NULL DEFAULT LOCALTIMESTAMP

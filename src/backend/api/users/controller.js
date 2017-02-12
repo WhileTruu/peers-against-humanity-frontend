@@ -2,6 +2,7 @@ import { Router } from 'express'
 import { hash, compare } from 'bcrypt'
 
 import { findById, create, findByUsername } from './repository'
+import { error as errorMessage } from '../util'
 import logger from '../../logger'
 import {
   createTokenForUser,
@@ -14,13 +15,13 @@ const router = new Router()
 
 router.get('/:id', verifyAuthorization, (request, response) => {
   if (response.locals.userId !== parseInt(request.params.id, 10)) {
-    response.status(403).json({ message: 'You do not have access to that user.' })
+    response.status(403).send(errorMessage.ACCESS_DENIED)
   } else {
     findById(request.params.id)
       .then(user => response.status(200).json(user))
       .catch(error => {
-        logger.error(`users/${request.params.id}: ${error.detail}`)
-        response.status(500).json({ message: error.detail })
+        logger.error(`users/${request.params.id}: ${error}`)
+        response.status(503).send(errorMessage.SERVICE_UNAVAILABLE)
       })
   }
 })

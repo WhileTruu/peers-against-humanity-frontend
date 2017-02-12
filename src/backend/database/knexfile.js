@@ -1,5 +1,20 @@
 
 module.exports = {
+  test: {
+    client: 'postgresql',
+    connection: process.env.CONNECTION_STRING,
+    pool: {
+      min: 2,
+      max: 1000
+    },
+    migrations: {
+      tableName: 'knex_migrations',
+      directory: 'src/backend/database/migrations'
+    },
+    seeds: {
+      directory: 'src/backend/database/seeds'
+    }
+  },
 
   development: {
     client: 'postgresql',
@@ -9,7 +24,7 @@ module.exports = {
       max: 10
     },
     migrations: {
-      tableName: 'knex_migrations'
+      tableName: 'knex_migrations',
     }
   },
 

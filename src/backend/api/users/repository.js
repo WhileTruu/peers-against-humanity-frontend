@@ -1,16 +1,13 @@
 import database from '../../database'
 
 export function findByUsername(username) {
-  return database.raw(`SELECT * FROM users WHERE username='${username}' LIMIT 1;`)
+  return database('users').where({username}).first()
 }
 
 export function findById(id) {
-  return database.raw(`SELECT * FROM users WHERE id='${id}'`)
+  return database('users').where({id}).first()
 }
 
 export function create(username, password) {
-  return database.raw(`
-    INSERT INTO users(username, password)
-    VALUES ('${username}', '${password}') RETURNING *;
-  `)
+  return database('users').insert({ username, password })
 }

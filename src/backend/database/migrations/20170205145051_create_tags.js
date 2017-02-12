@@ -1,7 +1,7 @@
 
 exports.up = function(knex, Promise) {
   return knex.raw(`
-    CREATE TABLE tags (
+    CREATE TABLE IF NOT EXISTS tags (
       id SERIAL UNIQUE,
       name VARCHAR(255) NOT NULL,
       created_at TIMESTAMP NOT NULL DEFAULT LOCALTIMESTAMP

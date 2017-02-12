@@ -7,7 +7,7 @@
     "babel-cli": "^6.22.2",
     "babel-core": "6.17.0",
     "babel-eslint": "7.1.1",
-    "babel-jest": "17.0.2",
+    "babel-jest": "^18.0.0",
     "babel-loader": "6.2.7",
     "babel-preset-react-app": "^2.0.1",
     "case-sensitive-paths-webpack-plugin": "1.1.4",
@@ -52,6 +52,8 @@
     "bcrypt": "^1.0.1",
     "body-parser": "^1.15.2",
     "bootstrap": "4.0.0-alpha.6",
+    "chai": "^3.5.0",
+    "chai-http": "^3.0.0",
     "express": "^4.14.0",
     "jsonwebtoken": "^7.2.1",
     "knex": "^0.12.6",
@@ -64,16 +66,19 @@
     "redux": "^3.6.0",
     "redux-thunk": "^2.1.0",
     "sass-loader": "^4.1.1",
+    "supertest": "^3.0.0",
     "winston": "^2.3.0"
   },
   "scripts": {
     "start:frontend": "node scripts/frontend/start.js",
     "build:frontend": "node scripts/frontend/build.js",
-    "test:frontend": "node scripts/frontend/test.js --env=jsdom",
+    "test:frontend": "node scripts/test.js --env=jsdom ./src/frontend/**/*.{js,jsx}",
+    "test:backend": "node scripts/test.js ./src/backend/**/*.{js,jsx}",
     "start:backend": "scripts/backend/start.sh",
     "build:backend": "scripts/backend/build.sh",
     "migrate:rollback": "scripts/backend/migrate.rollback.sh",
-    "migrate:latest": "scripts/backend/migrate.latest.sh"
+    "migrate:latest": "scripts/backend/migrate.latest.sh",
+    "seed:run": "scripts/backend/seed.run.sh"
   },
   "jest": {
     "collectCoverageFrom": [
@@ -83,7 +88,7 @@
       "<rootDir>/config/polyfills.js"
     ],
     "testPathIgnorePatterns": [
-      "<rootDir>[/\\\\](build|docs|node_modules)[/\\\\]"
+      "<rootDir>[/\\\\](build|dist|docs|node_modules)[/\\\\]"
     ],
     "testEnvironment": "node",
     "testURL": "http://localhost",

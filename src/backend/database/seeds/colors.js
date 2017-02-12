@@ -5,8 +5,8 @@ exports.seed = function(knex, Promise) {
     .then(function () {
       return Promise.all([
         // Inserts seed entries
-        knex('colors').insert({id: 1, colName: 'white'}),
-        knex('colors').insert({id: 2, colName: 'black'}),
+        knex('colors').insert({id: 1, name: 'white'}),
+        knex('colors').insert({id: 2, name: 'black'}),
       ]);
     });
 };

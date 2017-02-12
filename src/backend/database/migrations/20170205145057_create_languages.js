@@ -1,7 +1,7 @@
 
 exports.up = function(knex, Promise) {
   return knex.raw(`
-    CREATE TABLE languages (
+    CREATE TABLE IF NOT EXISTS languages (
       id SMALLINT UNIQUE,
       name VARCHAR(255) NOT NULL,
       created_at TIMESTAMP NOT NULL DEFAULT LOCALTIMESTAMP

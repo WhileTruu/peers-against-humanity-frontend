@@ -1,7 +1,7 @@
 
 exports.up = function(knex, Promise) {
   return knex.raw(`
-    CREATE TABLE card_votes (
+    CREATE TABLE IF NOT EXISTS card_votes (
       card_id integer NOT NULL,
       user_id integer NOT NULL,
       vote smallint NOT NULL,

@@ -1,7 +1,7 @@
 
 exports.up = function(knex, Promise) {
   return knex.raw(`
-    CREATE TABLE card_tags (
+    CREATE TABLE IF NOT EXISTS card_tags (
       card_id integer NOT NULL,
       tag_id integer NOT NULL,
       created_at TIMESTAMP NOT NULL DEFAULT LOCALTIMESTAMP
