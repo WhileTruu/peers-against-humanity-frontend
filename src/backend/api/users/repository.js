@@ -9,5 +9,5 @@ export function findById(id) {
 }
 
 export function create(username, password) {
-  return database('users').insert({ username, password })
+  return database('users').returning('id').insert({ username, password })
 }

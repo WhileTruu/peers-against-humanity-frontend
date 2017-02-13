@@ -5,7 +5,7 @@ exports.seed = function(knex, Promise) {
     .then(function () {
       return Promise.all([
         // Inserts seed entries
-        knex('users').insert({id: 1, username: 'TheLegend27', password: '$2a$10$q6Ktp1YjbjphHYXcmEzHkOzxSsd7gOQIHABcP76uqq33uSUOmmNO6'})
+        knex('users').insert({username: 'TheLegend27', password: '$2a$10$q6Ktp1YjbjphHYXcmEzHkOzxSsd7gOQIHABcP76uqq33uSUOmmNO6'})
       ]);
     });
 };
