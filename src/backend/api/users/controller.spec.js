@@ -1,4 +1,4 @@
-//jest.disableAutomock()
+// jest.disableAutomock()
 
 import express from 'express'
 import request from 'supertest'

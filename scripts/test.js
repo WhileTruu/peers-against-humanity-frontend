@@ -1,6 +1,6 @@
 process.env.NODE_ENV = 'test';
 process.env.PUBLIC_URL = '';
-process.env.CONNECTION_STRING = 'postgres://user:password@localhost:5432/sah';
+process.env.CONNECTION_STRING = 'postgres://user:password@localhost:5432/sah_test';
 process.env.SECRET='yolohorsebatterystable'
 
 // Load environment variables from .env file. Suppress warnings using silent
