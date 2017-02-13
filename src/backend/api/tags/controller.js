@@ -2,6 +2,8 @@ import { Router } from 'express'
 
 import { findById, getTags, addTag } from './repository'
 import logger from '../../logger'
+import { error as errorMessage } from '../util'
+
 const router = new Router()
 
 router.get('/all', (request, response) => {
@@ -17,8 +19,8 @@ router.get('/:id', (request, response) => {
   findById(request.params.id)
     .then(tag => response.status(200).json(tag))
     .catch(error => {
-      logger.error(error.detail)
-      response.status(500).json(error)
+      logger.error(`tags/${request.params.id}: ${error}`)
+      response.status(500).send(errorMessage.SERVICE_UNAVAILABLE)
     })
 })
 

@@ -9,5 +9,5 @@ export function getTags() {
 }
 
 export function findById(id) {
-  return database.raw(`SELECT * FROM tags WHERE id=${id} LIMIT 1;`)
+  return database('tags').where({id}).first()
 }

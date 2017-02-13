@@ -112,8 +112,8 @@ describe('POST /api/v1/users/authentication', () => {
       })
   })
 
-  it('should respond with status 500 when something is wrong with db', () => {
-    return knex.migrate.rollback()
+  it('should respond with status 500 when something is wrong with db', (done) => {
+    knex.migrate.rollback()
       .then(() => {
         request(app)
           .post('/')
@@ -121,6 +121,7 @@ describe('POST /api/v1/users/authentication', () => {
           .then((res) => {
             expect(res.status).toBe(500)
             expect(res.text).toEqual(error.SERVICE_UNAVAILABLE)
+            done()
           })
       })
   })
