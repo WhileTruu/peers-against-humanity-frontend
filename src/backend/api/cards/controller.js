@@ -3,12 +3,13 @@ import { Router } from 'express'
 import {
   findById,
   getAllCards,
-  create,
+  createNewCard,
   getRandomCard,
-  connectCardToTag,
-  vote,
-  voteValues,
+  upVote,
+  downVote,
+  connectCardWithCategory,
 } from './repository'
+import { error as errorMessage } from '../util'
 import { validateCardData } from './util'
 import { verifyAuthorization } from '../authorizationService'
 
@@ -34,33 +35,32 @@ router.get('/random', (request, response) => {
     })
 })
 
-router.post('/new', verifyAuthorization, (request, response) => {
-  const cardData = request.body
-  const error = validateCardData(cardData)
-  cardData.userId = response.locals.userId
-  if (error.length) {
-    response.status(400).json({ message: error })
-  } else {
-    create(cardData)
-      .then(card => {
-        Promise.all(cardData.tags ? cardData.tags.map(tag => connectCardToTag(card.id, tag.value)) : [])
-          .then(() => response.status(201).json(card))
-          .catch((error) => {
-            logger.error(error.message)
-            response.status(500).json({ card, message: 'The card was added, but the tags were a bit messy.'})
-          })
-      })
-      .catch(error => {
-        logger.error(error.message)
-        response.status(500).json({ message: 'That card has already been made or something.' })
-      })
-  }
+router.post('/new', verifyAuthorization, validateCardData, (request, response) => {
+  const { languageId, colorId, pickCount, text, category } = request.body
+  const { userId, categoryId } = response.locals
+
+  createNewCard({ languageId, colorId, pickCount, text, category, userId })
+    .then(cardIds => {
+      const cardId = cardIds[0]
+      connectCardWithCategory(cardId, categoryId)
+        .then(() => {
+          response.status(201).json({ cardId: cardId, categoryId: categoryId })
+        })
+        .catch(error => {
+          logger.error(`cards/new: ${error}`)
+          response.status(201).json({ cardId: cardId })
+        })
+    })
+    .catch(error => {
+      logger.error(`cards/new: ${error}`)
+      response.status(500).send(errorMessage.SERVICE_UNAVAILABLE)
+    })
 })
 
 router.post('/:id/vote/up', verifyAuthorization, (request, response) => {
   const userId = response.locals.userId
   const cardId = request.params.id
-  vote(cardId, userId, voteValues.up)
+  upVote(cardId, userId)
     .then((result) => response.status(200).json(result))
     .catch((error) => {
       logger.error(error.message)
@@ -71,7 +71,7 @@ router.post('/:id/vote/up', verifyAuthorization, (request, response) => {
 router.post('/:id/vote/down', verifyAuthorization, (request, response) => {
   const userId = response.locals.userId
   const cardId = request.params.id
-  vote(cardId, userId, voteValues.down)
+  downVote(cardId, userId)
     .then((result) => response.status(200).json(result))
     .catch((error) => {
       logger.error(error.message)

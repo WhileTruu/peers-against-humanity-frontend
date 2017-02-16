@@ -5,8 +5,8 @@ exports.up = function(knex, Promise) {
       id SERIAL UNIQUE,
       language_id INTEGER NOT NULL,
       color_id SMALLINT NOT NULL,
-      card_text VARCHAR(255) NOT NULL,
-      pick SMALLINT,
+      text VARCHAR(255) NOT NULL,
+      pick_count SMALLINT,
       user_id INTEGER NOT NULL,
       created_at TIMESTAMP NOT NULL DEFAULT LOCALTIMESTAMP
     );
@@ -29,10 +29,10 @@ exports.up = function(knex, Promise) {
       ON UPDATE Cascade
     ;
 
-    ALTER TABLE cards ADD CONSTRAINT UQ_cards_text UNIQUE (card_text);
+    ALTER TABLE cards ADD CONSTRAINT UQ_cards_text UNIQUE (text);
 
     ALTER TABLE cards ADD CONSTRAINT CHK_cards_text_not_empty
-      CHECK (btrim(card_text) <> '')
+      CHECK (btrim(text) <> '')
     ;
   `)
 };

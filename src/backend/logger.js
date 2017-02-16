@@ -7,7 +7,7 @@ const levelColors = {
   INFO: chalk.bold.blue.inverse,
 };
 
-const logger = new Logger({
+const winston = new Logger({
   transports: [
     new (transports.Console)({
       formatter(options) {
@@ -20,6 +20,15 @@ const logger = new Logger({
   ],
 });
 
+const logger = {
+  error(message) {
+    if (process.env.NODE_ENV === 'test') winston.error(message)
+  },
+  info(message) {
+    if (process.env.NODE_ENV === 'test') winston.info(message)
+  }
+}
+
 export default logger;
 
 export function loggingMiddleware() {
@@ -27,7 +36,7 @@ export function loggingMiddleware() {
     const startTime = Date.now();
     response.on('finish', () => {
       const duration = Date.now() - startTime;
-      logger.info(`${chalk.cyan((new Date().toUTCString()))} ${chalk.green(request.method)} ${chalk.blue(request.originalUrl)} ${duration}ms`);
+      winston.info(`${chalk.cyan((new Date().toUTCString()))} ${chalk.green(request.method)} ${chalk.blue(request.originalUrl)} ${duration}ms`);
     });
     next();
   };

@@ -1,46 +1,51 @@
 import database from '../../database'
 
-export const voteValues = {
-  up: 'UP',
-  down: 'DOWN',
+export function findById(id) {
+  return database('cards').select('*').where({ id }).first()
 }
 
-export function findById(id) {
-  return database('cards').select().raw(`SELECT * FROM cards WHERE id=${id} LIMIT 1;`)
+export function findCardByText(text) {
+  return database('cards').where({ text }).first()
 }
 
 export function getAllCards() {
-  return database.raw(`SELECT * FROM cards;`)
-  .then(result => result.rows)
+  return database('cards').select('*')
 }
 
-//export function getAllCards() {
-//  return database('cards').select()
-//}
-
-/* eslint-disable */
-export function create(card) {
-  const { languageId, colorId, cardText, pick, userId } = card
-  return database.raw(`
-    INSERT INTO cards(language_id, color_id, card_text, pick, user_id)
-    VALUES (${languageId}, ${colorId}, '${cardText}', ${pick}, ${userId}) RETURNING *;
-  `)
+export function createNewCard(card) {
+  const { languageId, colorId, text, pickCount, userId } = card
+  return database('cards').returning('id').insert({
+    language_id: languageId,
+    color_id: colorId,
+    text: text,
+    pick_count: pickCount,
+    user_id: userId,
+  })
 }
 
 export function getRandomCard() {
   return database.raw(`SELECT * FROM cards ORDER BY RANDOM() LIMIT 1;`)
 }
 
-export function connectCardToTag(cardId, tagId) {
-  return database.raw(`
-    INSERT INTO card_tags(card_id, tag_id)
-    VALUES (${cardId}, ${tagId}) RETURNING *;
-  `)
+export function connectCardWithCategory(cardId, categoryId) {
+  return database('card_category').insert({
+    card_id: cardId,
+    category_id: categoryId,
+  })
 }
 
-export function vote(cardId, userId, voteValue) {
-  return database.raw(`
-    INSERT INTO card_votes(card_id, user_id, vote)
-    VALUES (${cardId}, ${userId}, ${voteValue}) RETURNING *;
-  `)
+export function upVote(cardId, userId) {
+  return database('card_votes').returning('id').insert({
+    card_id: cardId,
+    user_id: userId,
+    vote: 1,
+  })
+}
+
+export function downVote(cardId, userId) {
+  return database('card_votes').returning('id').insert({
+    card_id: cardId,
+    user_id: userId,
+    vote: -1,
+  })
 }
