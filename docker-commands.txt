@@ -1,2 +1,0 @@
-docker build -t eg_postgresql .
-docker run -p 5432:5432 --name docker -e POSTGRES_PASSWORD=docker -d eg_postgresql
