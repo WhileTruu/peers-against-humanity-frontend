@@ -12,14 +12,25 @@ export function getAllCards() {
   return database('cards').select('*')
 }
 
-export function createNewCard(card) {
+export function createNewCard(card, categoryId) {
   const { languageId, colorId, text, pickCount, userId } = card
-  return database('cards').returning('id').insert({
-    language_id: languageId,
-    color_id: colorId,
-    text: text,
-    pick_count: pickCount,
-    user_id: userId,
+  return new Promise((resolve, reject) => {
+    database('cards')
+      .returning('id')
+      .insert({
+        language_id: languageId,
+        color_id: colorId,
+        text: text,
+        pick_count: pickCount,
+        user_id: userId,
+      })
+      .then(cardResult => {
+        const cardId = cardResult[0]
+        connectCardWithCategory(cardId, categoryId)
+          .then(cardCategoryResult => resolve({ cardId, categoryId }))
+          .catch(error => resolve(error))
+      })
+      .catch(error => reject(error))
   })
 }
 

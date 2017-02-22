@@ -22,10 +22,10 @@ const winston = new Logger({
 
 const logger = {
   error(message) {
-    if (process.env.NODE_ENV === 'test') winston.error(message)
+    if (process.env.NODE_ENV !== 'test') winston.error(message)
   },
   info(message) {
-    if (process.env.NODE_ENV === 'test') winston.info(message)
+    if (process.env.NODE_ENV !== 'test') winston.info(message)
   }
 }
 

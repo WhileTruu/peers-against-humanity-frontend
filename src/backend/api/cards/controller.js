@@ -7,10 +7,9 @@ import {
   getRandomCard,
   upVote,
   downVote,
-  connectCardWithCategory,
 } from './repository'
 import { error as errorMessage } from '../util'
-import { validateCardData } from './util'
+import { validateCardData } from './validationService'
 import { verifyAuthorization } from '../authorizationService'
 
 import logger from '../../logger'
@@ -39,17 +38,9 @@ router.post('/new', verifyAuthorization, validateCardData, (request, response) =
   const { languageId, colorId, pickCount, text, category } = request.body
   const { userId, categoryId } = response.locals
 
-  createNewCard({ languageId, colorId, pickCount, text, category, userId })
-    .then(cardIds => {
-      const cardId = cardIds[0]
-      connectCardWithCategory(cardId, categoryId)
-        .then(() => {
-          response.status(201).json({ cardId: cardId, categoryId: categoryId })
-        })
-        .catch(error => {
-          logger.error(`cards/new: ${error}`)
-          response.status(201).json({ cardId: cardId })
-        })
+  createNewCard({ languageId, colorId, pickCount, text, category, userId }, categoryId)
+    .then(result => {
+      response.status(201).json(result)
     })
     .catch(error => {
       logger.error(`cards/new: ${error}`)
