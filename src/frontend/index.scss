@@ -24,7 +24,6 @@
   @include sah-button-variant($white, $brand-danger, $brand-danger);
 }
 
-
 .sah-btn-info-dark {
   @include sah-button-variant(#000, $btn-info-bg, $btn-info-border);
 }
