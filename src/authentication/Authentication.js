@@ -2,8 +2,10 @@ import React, { Component, PropTypes } from 'react'
 import { withRouter } from 'react-router'
 
 import Alert from '../common/alert'
+import FormGroup from '../common/formGroup'
+import Button from '../common/formGroup/button'
 import ApiService from '../services/apiService'
-import { errorTypes } from '../common/util'
+import errorTypes from '../common/util'
 
 class Authentication extends Component {
   constructor(props) {
@@ -26,7 +28,7 @@ class Authentication extends Component {
       .then((response) => {
         window.localStorage.setItem('token', response.data.token)
         this.setState({ error: '', errorType: null })
-        this.props.router.push('/')
+        this.props.history.push('/')
       }).catch((error) => {
         this.setState({ error: error.message, errorType: errorTypes.submit })
       })
@@ -60,16 +62,14 @@ class Authentication extends Component {
         <div className="row">
           <div className="col-12">
             <form className="form">
-              <div className={`mb-0 pt-3 form-group${errorType === errorTypes.username ? ' has-warning' : ''}`}>
-                <label
-                  htmlFor="usernameInput"
-                  className="form-check-label"
-                >
-                  Insert username here
-                </label>
+              <FormGroup
+                htmlFor={'usernameInput'}
+                hasWarning={errorType === errorTypes.username}
+                labelText={'Insert username here'}
+              >
                 <input
                   type="text"
-                  className="form-control sah-btn-default btn-lg"
+                  className="form-control"
                   id="usernameInput"
                   placeholder="TheLegend27"
                   onChange={(event) => {
@@ -80,17 +80,15 @@ class Authentication extends Component {
                     })
                   }}
                 />
-              </div>
-              <div className={`mb-0 pt-3 form-group${errorType === errorTypes.password ? ' has-warning' : ''}`}>
-                <label
-                  htmlFor="passwordInput"
-                  className="form-check-label"
-                >
-                  Insert your password here
-                </label>
+              </FormGroup>
+              <FormGroup
+                htmlFor={'passwordInput'}
+                hasWarning={errorType === errorTypes.password}
+                labelText={'Insert password here'}
+              >
                 <input
                   type="password"
-                  className="form-control sah-btn-default btn-lg"
+                  className="form-control"
                   placeholder="Password"
                   id="passwordInput"
                   onChange={(event) => {
@@ -101,24 +99,21 @@ class Authentication extends Component {
                     })
                   }}
                 />
-              </div>
-              {error ? <div className="mt-4 pt-3"><Alert type="warning">{error}</Alert></div> : ''}
-              <div className={`mb-0 pt-3 form-group${errorType === errorTypes.submit ? ' has-warning' : ''}`}>
-                <label
-                  htmlFor="verificationButton"
-                  className="form-check-label"
-                >
-                  Press the button below to log in
-                </label>
-                <button
-                  type="submit"
-                  className="form-control btn sah-btn-success btn-lg"
-                  id="verificationButton"
+              </FormGroup>
+              <FormGroup
+                htmlFor={'logInSubmitButton'}
+                hasWarning={errorType === errorTypes.submit}
+                labelText={'Press the button below to log in'}
+              >
+                <Button
+                  id={'logInSubmitButton'}
                   onClick={this.onSubmit}
+                  type={'success'}
                 >
                   Log in
-                </button>
-              </div>
+                </Button>
+              </FormGroup>
+              {error ? <div className="pt-3"><Alert type="danger">{error}</Alert></div> : ''}
             </form>
           </div>
         </div>
@@ -128,7 +123,7 @@ class Authentication extends Component {
 }
 
 Authentication.propTypes = {
-  router: PropTypes.shape({
+  history: PropTypes.shape({
     push: PropTypes.func.isRequired,
   }).isRequired,
 }

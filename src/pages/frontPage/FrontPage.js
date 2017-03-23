@@ -1,11 +1,8 @@
 import React, { Component, PropTypes } from 'react'
-import { withRouter } from 'react-router'
 import { connect } from 'react-redux'
+import { withRouter } from 'react-router-dom'
 
-import LogOutButton from '../../common/buttons/logOut'
-import LogInButton from '../../common/buttons/logIn'
-
-import { actions as authActions } from '../../services/authService'
+import AuthService, { actions as authActions } from '../../services/authService'
 
 class FrontPage extends Component {
   componentDidMount() {
@@ -16,13 +13,24 @@ class FrontPage extends Component {
     this.setState({ authenticated: nextProps.auth.isAuthenticated })
   }
 
+  logOut() {
+    AuthService.logOut()
+    this.props.dispatch(authActions.isNotAuthenticated())
+    this.props.history.push('/')
+  }
+
   renderAuthenticationButtons() {
     return (
-      <div>
-        <LogInButton>Log In</LogInButton>
+      <div className="form-inline justify-content-end">
         <button
-          className="btn sah-btn-primary btn-lg ml-3"
-          onClick={() => this.props.router.push('/users/registration')}
+          className="btn btn-success mb-3"
+          onClick={() => this.props.history.push('/login')}
+        >
+          Log in
+        </button>
+        <button
+          className="btn btn-primary mb-3 ml-3"
+          onClick={() => this.props.history.push('/register')}
         >
           Register
         </button>
@@ -30,9 +38,21 @@ class FrontPage extends Component {
     )
   }
 
+  renderLogOutButton() {
+    return (
+      <div>
+        <button
+          className="btn sah-btn-primary btn-lg"
+          onClick={() => this.logOut()}
+        >
+          Log out
+        </button>
+      </div>
+    )
+  }
+
   render() {
     const { isAuthenticated } = this.props.auth
-    const { router } = this.props
     return (
       <div className="panel pt-5">
         <div className="row">
@@ -42,11 +62,7 @@ class FrontPage extends Component {
             </h1>
           </div>
           <div className="col-6">
-            <div className="form-inline justify-content-end">
-              {isAuthenticated ?
-                (<LogOutButton>Log out</LogOutButton>) : this.renderAuthenticationButtons()
-              }
-            </div>
+            {isAuthenticated ? this.renderLogOutButton() : this.renderAuthenticationButtons()}
           </div>
           <div className="col-12">
             <div className="pt-3">
@@ -66,7 +82,7 @@ class FrontPage extends Component {
                 </label>
                 <button
                   className="form-control btn sah-btn-default btn-lg"
-                  onClick={() => router.push('/cards/new')}
+                  onClick={() => history.replace('/cards/new')}
                 >
                   Create a new card
                 </button>
@@ -80,7 +96,7 @@ class FrontPage extends Component {
                 </label>
                 <button
                   className="form-control btn sah-btn-default btn-lg"
-                  onClick={() => router.push('/cards/evaluation')}
+                  onClick={() => history.replace('/cards/evaluation')}
                 >
                   Evaluate cards
                 </button>
@@ -97,10 +113,14 @@ FrontPage.propTypes = {
   dispatch: PropTypes.func.isRequired,
   auth: PropTypes.shape({
     isAuthenticated: PropTypes.bool.isRequired,
-  }).isRequired,
-  router: PropTypes.shape({
+  }),
+  history: PropTypes.shape({
     push: PropTypes.func.isRequired,
   }).isRequired,
+}
+
+FrontPage.defaultProps = {
+  auth: null,
 }
 
 export default connect(value => value)(withRouter(FrontPage))

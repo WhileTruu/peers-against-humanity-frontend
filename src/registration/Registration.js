@@ -5,7 +5,7 @@ import { connect } from 'react-redux'
 import Alert from '../common/alert'
 import ApiService from '../services/apiService'
 import { actions as authActions } from '../services/authService'
-import { errorTypes } from '../common/util'
+import errorTypes from '../common/util'
 
 class Registration extends Component {
   constructor(props) {
@@ -31,7 +31,7 @@ class Registration extends Component {
         window.localStorage.setItem('token', response.data.token)
         this.props.dispatch(authActions.isAuthenticated())
         this.setState({ error: '', errorType: null })
-        this.props.router.push('/')
+        this.props.history.push('/')
       }).catch((error) => {
         this.setState({ error: error.message, errorType: errorTypes.submit })
       })
@@ -147,7 +147,7 @@ class Registration extends Component {
 
 Registration.propTypes = {
   dispatch: PropTypes.func.isRequired,
-  router: PropTypes.shape({
+  history: PropTypes.shape({
     push: PropTypes.func.isRequired,
   }).isRequired,
 }

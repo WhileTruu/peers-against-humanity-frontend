@@ -1,25 +1,25 @@
-import React, { PropTypes } from 'react'
+import React from 'react'
 import { connect } from 'react-redux'
-import FrontPage from './pages/frontPage'
+import { BrowserRouter as Router, Route } from 'react-router-dom'
 
-const Container = ({ children }) => (
-  <div className="pt-3" style={{ minHeight: '100vh' }}>
-    <div className="container">
-      <div className="row">
-        <div className="col-12 col-md-10 offset-md-1 col-lg-8 offset-lg-2">
-          {children || (<FrontPage />)}
+import FrontPage from './pages/frontPage'
+import Authentication from './authentication'
+import Registration from './registration'
+
+const Container = () => (
+  <Router>
+    <div className="pt-3" style={{ minHeight: '100vh' }}>
+      <div className="container">
+        <div className="row">
+          <div className="col-12 col-md-10 offset-md-1 col-lg-8 offset-lg-2">
+            <Route exact path="/" component={FrontPage} />
+            <Route path="/login" component={Authentication} />
+            <Route path="/register" component={Registration} />
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </Router>
 )
-
-Container.propTypes = {
-  children: PropTypes.arrayOf(PropTypes.object),
-}
-
-Container.defaultProps = {
-  children: null,
-}
 
 export default connect(value => value)(Container)

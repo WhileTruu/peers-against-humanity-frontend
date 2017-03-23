@@ -5,25 +5,25 @@
 
 .form-check-label {
   padding-left: 0;
-  color: $white-dark;
+  // color: $white-dark;
 }
 
-.sah-btn-default {
-  @include sah-button-variant($white, $gray, $gray);
-}
-
-.sah-btn-success {
-  @include sah-button-variant($white, $brand-success, $brand-success);
-}
-
-.sah-btn-primary {
-  @include sah-button-variant($white, $brand-primary, $brand-primary);
-}
-
-.sah-btn-danger {
-  @include sah-button-variant($white, $brand-danger, $brand-danger);
-}
-
-.sah-btn-info-dark {
-  @include sah-button-variant(#000, $btn-info-bg, $btn-info-border);
-}
+// .sah-btn-default {
+//   @include sah-button-variant($white, $gray, $gray);
+// }
+//
+// .sah-btn-success {
+//   @include sah-button-variant($white, $brand-success, $brand-success);
+// }
+//
+// .sah-btn-primary {
+//   @include sah-button-variant($white, $brand-primary, $brand-primary);
+// }
+//
+// .sah-btn-danger {
+//   @include sah-button-variant($white, $brand-danger, $brand-danger);
+// }
+//
+// .sah-btn-info-dark {
+//   @include sah-button-variant(#000, $btn-info-bg, $btn-info-border);
+// }
