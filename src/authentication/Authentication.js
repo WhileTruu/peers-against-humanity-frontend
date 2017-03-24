@@ -53,7 +53,7 @@ class Authentication extends Component {
   render() {
     const { error, errorType } = this.state
     return (
-      <div className="panel pt-5">
+      <div>
         <div className="row">
           <div className="col-12">
             <h1 className="panel-heading">Log in</h1>

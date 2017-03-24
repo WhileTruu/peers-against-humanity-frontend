@@ -2,6 +2,8 @@ import React, { Component, PropTypes } from 'react'
 import { withRouter } from 'react-router'
 import { connect } from 'react-redux'
 
+import FormGroup from '../common/formGroup'
+import Button from '../common/formGroup/button'
 import Alert from '../common/alert'
 import ApiService from '../services/apiService'
 import { actions as authActions } from '../services/authService'
@@ -58,7 +60,7 @@ class Registration extends Component {
   render() {
     const { error, errorType } = this.state
     return (
-      <div className="panel">
+      <div>
         <div className="row">
           <div className="col-12">
             <h1 className="panel-heading">
@@ -69,13 +71,14 @@ class Registration extends Component {
         <div className="row">
           <div className="col-12">
             <form className="form">
-              <div className={`mb-0 pt-3 form-group${errorType === errorTypes.username ? ' has-warning' : ''}`}>
-                <label htmlFor="usernameInput" className="form-check-label">
-                  Insert a new username below
-                </label>
+              <FormGroup
+                htmlFor={'usernameInput'}
+                hasWarning={errorType === errorTypes.username}
+                labelText={'Insert a new username below'}
+              >
                 <input
                   type="text"
-                  className="form-control form-control-lg sah-btn-default"
+                  className="form-control"
                   id="usernameInput"
                   placeholder="TheLegend27"
                   onChange={(event) => {
@@ -86,14 +89,15 @@ class Registration extends Component {
                     })
                   }}
                 />
-              </div>
-              <div className={`mb-0 pt-3 form-group${errorType === errorTypes.password ? ' has-warning' : ''}`}>
-                <label htmlFor="passwordInput" className="form-check-label">
-                  Insert password below
-                </label>
+              </FormGroup>
+              <FormGroup
+                htmlFor={'passwordInput'}
+                hasWarning={errorType === errorTypes.password}
+                labelText={'Insert password below'}
+              >
                 <input
                   type="password"
-                  className="form-control form-control-lg sah-btn-default"
+                  className="form-control"
                   id="passwordInput"
                   placeholder="Password"
                   onChange={(event) => {
@@ -104,14 +108,15 @@ class Registration extends Component {
                     })
                   }}
                 />
-              </div>
-              <div className={`mb-0 pt-3 form-group${errorType === errorTypes.password ? ' has-warning' : ''}`}>
-                <label htmlFor="passwordInput2" className="form-check-label">
-                  Insert password again
-                </label>
+              </FormGroup>
+              <FormGroup
+                htmlFor={'passwordInput2'}
+                hasWarning={errorType === errorTypes.password}
+                labelText={'Insert password again'}
+              >
                 <input
                   type="password"
-                  className="form-control form-control-lg sah-btn-default"
+                  className="form-control"
                   id="passwordInput2"
                   placeholder="Password"
                   onChange={(event) => {
@@ -122,21 +127,21 @@ class Registration extends Component {
                     })
                   }}
                 />
-              </div>
-              {error ? <div className="mt-4 pt-3 mb-0"><Alert type="warning">{error}</Alert></div> : ''}
-              <div className={`mb-0 pt-3 form-group${errorType === errorTypes.submit ? ' has-warning' : ''}`}>
-                <label htmlFor="registrationButton" className="form-check-label">
-                  Press the button below to register
-                </label>
-                <button
-                  type="submit"
-                  className="form-control btn sah-btn-primary btn-lg"
-                  id="registrationButton"
+              </FormGroup>
+              <FormGroup
+                htmlFor={'registrationSubmitButton'}
+                hasWarning={errorType === errorTypes.submit}
+                labelText={'Press the button below to register'}
+              >
+                <Button
+                  id={'registrationSubmitButton'}
+                  type={'primary'}
                   onClick={this.onSubmit}
                 >
                   Register
-                </button>
-              </div>
+                </Button>
+              </FormGroup>
+              {error ? <div className="pt-3"><Alert type="danger">{error}</Alert></div> : ''}
             </form>
           </div>
         </div>

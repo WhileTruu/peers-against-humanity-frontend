@@ -19,13 +19,14 @@ const FormGroup = ({ children, hasWarning, labelText, htmlFor }) => (
 
 FormGroup.propTypes = {
   htmlFor: PropTypes.string.isRequired,
-  hasWarning: PropTypes.bool.isRequired,
+  hasWarning: PropTypes.bool,
   labelText: PropTypes.string,
   children: PropTypes.element.isRequired,
 }
 
 FormGroup.defaultProps = {
   labelText: '',
+  hasWarning: false,
 }
 
 export default FormGroup

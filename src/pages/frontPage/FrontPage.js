@@ -3,6 +3,9 @@ import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 
 import AuthService, { actions as authActions } from '../../services/authService'
+import FormGroup from '../../common/formGroup'
+import Button from '../../common/formGroup/button'
+
 
 class FrontPage extends Component {
   componentDidMount() {
@@ -40,9 +43,9 @@ class FrontPage extends Component {
 
   renderLogOutButton() {
     return (
-      <div>
+      <div className="form-inline justify-content-end">
         <button
-          className="btn sah-btn-primary btn-lg"
+          className="btn btn-primary"
           onClick={() => this.logOut()}
         >
           Log out
@@ -53,8 +56,9 @@ class FrontPage extends Component {
 
   render() {
     const { isAuthenticated } = this.props.auth
+    const { history } = this.props
     return (
-      <div className="panel pt-5">
+      <div>
         <div className="row">
           <div className="col-6">
             <h1 className="panel-heading">
@@ -65,7 +69,7 @@ class FrontPage extends Component {
             {isAuthenticated ? this.renderLogOutButton() : this.renderAuthenticationButtons()}
           </div>
           <div className="col-12">
-            <div className="pt-3">
+            <div className="py-3">
               <h5>{"If you're feeling suicidal you've come to the right place."}</h5>
             </div>
           </div>
@@ -73,7 +77,7 @@ class FrontPage extends Component {
         {isAuthenticated ?
           <div className="row">
             <div className="col-12">
-              <div className="mb-0 pt-3 form-group">
+              <div className="form-group">
                 <label
                   htmlFor="inputCardText"
                   className="form-check-label"
@@ -81,13 +85,13 @@ class FrontPage extends Component {
                   Shitty card maker for shitty people
                 </label>
                 <button
-                  className="form-control btn sah-btn-default btn-lg"
-                  onClick={() => history.replace('/cards/new')}
+                  className="form-control btn btn-primary"
+                  onClick={() => history.push('/cards/new')}
                 >
                   Create a new card
                 </button>
               </div>
-              <div className="mb-0 pt-3 form-group">
+              <div className="form-group">
                 <label
                   htmlFor="inputCardText"
                   className="form-check-label"
@@ -95,12 +99,21 @@ class FrontPage extends Component {
                   Judge cards other people have created!
                 </label>
                 <button
-                  className="form-control btn sah-btn-default btn-lg"
-                  onClick={() => history.replace('/cards/evaluation')}
+                  className="form-control btn btn-primary"
+                  onClick={() => history.push('/cards/evaluation')}
                 >
                   Evaluate cards
                 </button>
               </div>
+              <FormGroup htmlFor={'roomsButton'} labelText={'Join a game!'}>
+                <Button
+                  id={'roomsButton'}
+                  type={'success'}
+                  onClick={() => history.push('/rooms')}
+                >
+                  Available rooms
+                </Button>
+              </FormGroup>
             </div>
           </div>
           : '' }
