@@ -6,7 +6,7 @@ import FormGroup from '../common/formGroup'
 import Button from '../common/formGroup/button'
 import Alert from '../common/alert'
 import ApiService from '../services/apiService'
-import { actions as authActions } from '../services/authService'
+import { actions as authenticationActions } from '../authentication'
 import errorTypes from '../common/util'
 
 class Registration extends Component {
@@ -30,12 +30,11 @@ class Registration extends Component {
     const { username, password } = this.state
     ApiService.registerNewUserAccount(username, password)
       .then((response) => {
-        window.localStorage.setItem('token', response.data.token)
-        this.props.dispatch(authActions.isAuthenticated())
+        this.props.logIn(response.token)
         this.setState({ error: '', errorType: null })
         this.props.history.push('/')
       }).catch((error) => {
-        this.setState({ error: error.message, errorType: errorTypes.submit })
+        this.setState({ error: error.response.status.toString(), errorType: errorTypes.submit })
       })
   }
 
@@ -151,10 +150,15 @@ class Registration extends Component {
 }
 
 Registration.propTypes = {
-  dispatch: PropTypes.func.isRequired,
+  logIn: PropTypes.func.isRequired,
   history: PropTypes.shape({
     push: PropTypes.func.isRequired,
   }).isRequired,
 }
 
-export default connect(value => value)(withRouter(Registration))
+const mapDispatchToProps = dispatch => ({
+  logIn: token => dispatch(authenticationActions.logIn(token)),
+})
+
+
+export default connect(value => value, mapDispatchToProps)(withRouter(Registration))

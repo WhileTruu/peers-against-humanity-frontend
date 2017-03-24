@@ -1,19 +1,41 @@
 import http from 'axios'
+import 'whatwg-fetch'
+
+function checkStatus(response) {
+  if (response.status >= 200 && response.status < 300) {
+    return response
+  }
+  const error = new Error(response.statusText)
+  error.response = response
+  throw error
+}
+
+const headers = {
+  'Content-Type': 'application/json',
+}
 
 const authReject = () => Promise.reject({ message: 'You are not logged in!' })
 
-// http.defaults.headers.common['Authorization'] = window.localStorage.getItem('token');
-
 export function registerNewUserAccount(username, password) {
-  return http.post('/api/v1/users/registration',
-    { username, plainTextPassword: password },
-  )
+  return fetch('/api/v1/users/registration', {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({
+      username,
+      plainTextPassword: password,
+    }),
+  }).then(checkStatus).then(response => response.json())
 }
 
 export function logInWithUserAccount(username, password) {
-  return http.post('/api/v1/users/authentication',
-    { username, plainTextPassword: password },
-  )
+  return fetch('/api/v1/users/authentication', {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({
+      username,
+      plainTextPassword: password,
+    }),
+  }).then(checkStatus).then(response => response.json())
 }
 
 export function getAllTags() {

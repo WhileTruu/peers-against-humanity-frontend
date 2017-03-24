@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react'
+import { connect } from 'react-redux'
 import { withRouter } from 'react-router'
 
 import Alert from '../common/alert'
@@ -6,6 +7,7 @@ import FormGroup from '../common/formGroup'
 import Button from '../common/formGroup/button'
 import ApiService from '../services/apiService'
 import errorTypes from '../common/util'
+import { logIn } from './actions'
 
 class Authentication extends Component {
   constructor(props) {
@@ -26,11 +28,14 @@ class Authentication extends Component {
     const { username, password } = this.state
     ApiService.logInWithUserAccount(username, password)
       .then((response) => {
-        window.localStorage.setItem('token', response.data.token)
+        this.props.logIn(response.token)
         this.setState({ error: '', errorType: null })
         this.props.history.push('/')
       }).catch((error) => {
-        this.setState({ error: error.message, errorType: errorTypes.submit })
+        this.setState({
+          error: error.response.status.toString(),
+          errorType: errorTypes.submit,
+        })
       })
   }
 
@@ -123,9 +128,14 @@ class Authentication extends Component {
 }
 
 Authentication.propTypes = {
+  logIn: PropTypes.func.isRequired,
   history: PropTypes.shape({
     push: PropTypes.func.isRequired,
   }).isRequired,
 }
 
-export default withRouter(Authentication)
+const mapDispatchToProps = dispatch => ({
+  logIn: token => dispatch(logIn(token)),
+})
+
+export default connect(value => value, mapDispatchToProps)(withRouter(Authentication))

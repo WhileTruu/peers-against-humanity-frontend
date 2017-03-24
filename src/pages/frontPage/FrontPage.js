@@ -2,23 +2,18 @@ import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 
-import AuthService, { actions as authActions } from '../../services/authService'
+import { actions as authenticationActions } from '../../authentication'
 import FormGroup from '../../common/formGroup'
 import Button from '../../common/formGroup/button'
 
 
 class FrontPage extends Component {
   componentDidMount() {
-    if (window.localStorage.getItem('token')) this.props.dispatch(authActions.isAuthenticated())
-  }
-
-  componentWillReceiveProps(nextProps) {
-    this.setState({ authenticated: nextProps.auth.isAuthenticated })
+    this.props.updateLogInStatus()
   }
 
   logOut() {
-    AuthService.logOut()
-    this.props.dispatch(authActions.isNotAuthenticated())
+    this.props.logOut()
     this.props.history.push('/')
   }
 
@@ -55,7 +50,7 @@ class FrontPage extends Component {
   }
 
   render() {
-    const { isAuthenticated } = this.props.auth
+    const { authenticated } = this.props
     const { history } = this.props
     return (
       <div>
@@ -66,7 +61,7 @@ class FrontPage extends Component {
             </h1>
           </div>
           <div className="col-6">
-            {isAuthenticated ? this.renderLogOutButton() : this.renderAuthenticationButtons()}
+            {authenticated ? this.renderLogOutButton() : this.renderAuthenticationButtons()}
           </div>
           <div className="col-12">
             <div className="py-3">
@@ -74,7 +69,7 @@ class FrontPage extends Component {
             </div>
           </div>
         </div>
-        {isAuthenticated ?
+        {authenticated ?
           <div className="row">
             <div className="col-12">
               <div className="form-group">
@@ -123,17 +118,19 @@ class FrontPage extends Component {
 }
 
 FrontPage.propTypes = {
-  dispatch: PropTypes.func.isRequired,
-  auth: PropTypes.shape({
-    isAuthenticated: PropTypes.bool.isRequired,
-  }),
-  history: PropTypes.shape({
-    push: PropTypes.func.isRequired,
-  }).isRequired,
+  authenticated: PropTypes.bool.isRequired,
+  updateLogInStatus: PropTypes.func.isRequired,
+  logOut: PropTypes.func.isRequired,
+  history: PropTypes.shape({ push: PropTypes.func.isRequired }).isRequired,
 }
 
-FrontPage.defaultProps = {
-  auth: null,
-}
+const mapStoreToProps = store => ({
+  authenticated: store.auth.authenticated,
+})
 
-export default connect(value => value)(withRouter(FrontPage))
+const mapDispatchToProps = dispatch => ({
+  updateLogInStatus: () => dispatch(authenticationActions.updateLogInStatus()),
+  logOut: () => dispatch(authenticationActions.logOut()),
+})
+
+export default connect(mapStoreToProps, mapDispatchToProps)(withRouter(FrontPage))
