@@ -1,93 +1,60 @@
 import PeerConnection from './peerConnection'
-
-const sessionDescriptionProtocolConstraints = {
-  mandatory: {
-    OfferToReceiveAudio: false,
-    OfferToReceiveVideo: false,
-  },
-}
-
-const peerConnectionConfig = {
-  iceServers: [
-    { url: 'stun:stun.services.mozilla.com' },
-    { url: 'stun:stun.l.google.com:19302' },
-  ],
-}
+import { ICE_CANDIDATE, actions as webSocketActions } from '../webSocket'
+import {
+  PEER_CONNECTION_ANSWER,
+  PEER_CONNECTION_OFFER,
+  REQUEST_NEW_PEER,
+  addRemoteDescriptionToPeer,
+  addPeer,
+} from './actions'
+import { peerConnectionConfig, sessionDescriptionProtocolConstraints } from './config'
 
 class DataChannelService {
-  constructor({ userId, wssAddress, peerConnections }) {
-    this.webSocket = new WebSocket(wssAddress)
-    this.userId = userId
-    this.peerConnections = peerConnections
+  constructor() {
+    this.peerConnections = null
     this.onMessageFunction = null
-
-    this.webSocket.onmessage = (event) => {
-      const message = JSON.parse(event.data)
-      if (message.peerId !== this.userId) return
-      switch (message.action) {
-        case 'REQUEST':
-          this.setUpNewPeerConnection(message)
-          break
-        case 'RESPONSE':
-          this.setUpRemotePeerConnection(message)
-          break
-        case 'ICE_CANDIDATE':
-          this.addIceCandidate(message)
-          break
-        default:
-          break
-      }
-    }
+    this.middleware = this.middleware.bind(this)
   }
 
   setOnMessageFunction(callback) {
     this.onMessageFunction = callback
   }
 
-  // 1
   requestNewPeerConnection(peerId) {
     const peer = new PeerConnection(sessionDescriptionProtocolConstraints, peerConnectionConfig)
-    peer.onIceCandidate(candidate => this.sendNegotiation('ICE_CANDIDATE', peerId, candidate))
+    peer.onIceCandidate(candidate => (
+      this.sendNegotiation({ type: ICE_CANDIDATE, peerId, candidate })
+    ))
     peer.onMessage(this.onMessageFunction)
-    peer.createOffer((sessionDescriptionProtocol) => {
-      this.sendNegotiation('REQUEST', peerId, sessionDescriptionProtocol)
-    })
-    this.peerConnections[peerId] = peer
+    peer.createOffer(localSessionDescription => (
+      this.sendNegotiation({
+        type: PEER_CONNECTION_OFFER,
+        peerId,
+        sessionDescription: localSessionDescription,
+      })
+    ))
+    this.addPeer(peerId, peer)
   }
 
-  // 2
-  setUpNewPeerConnection(peerConnectionRequestEvent) {
-    const peerId = peerConnectionRequestEvent.userId
+  onPeerConnectionOffer({ peerId, sessionDescription }) {
     const peer = new PeerConnection(sessionDescriptionProtocolConstraints, peerConnectionConfig)
-    peer.onIceCandidate(candidate => this.sendNegotiation('ICE_CANDIDATE', peerId, candidate))
+    peer.onIceCandidate(candidate => (
+      this.sendNegotiation({ type: ICE_CANDIDATE, peerId, candidate })
+    ))
     peer.onMessage(message => this.onMessageFunction(message))
-    peer.setRemoteDescription(new RTCSessionDescription(peerConnectionRequestEvent.data))
-    peer.createAnswer((sessionDescriptionProtocol) => {
-      this.sendNegotiation('RESPONSE', peerId, sessionDescriptionProtocol)
-    })
-    this.peerConnections[peerId] = peer
+    peer.setRemoteDescription(new RTCSessionDescription(sessionDescription))
+    peer.createAnswer(localDescription => (
+      this.sendNegotiation({
+        type: PEER_CONNECTION_ANSWER,
+        peerId,
+        sessionDescription: localDescription,
+      })
+    ))
+    this.addPeer(peerId, peer)
   }
 
-  // 3
-  setUpRemotePeerConnection(peerConnectionResponseEvent) {
-    const peerId = peerConnectionResponseEvent.userId
-    const { data } = peerConnectionResponseEvent
-    this.peerConnections[peerId].setRemoteDescription(new RTCSessionDescription(data))
-  }
-
-  addIceCandidate(event) {
-    const peerId = event.userId
-    const { data } = event
-    this.peerConnections[peerId].addIceCandidate(data)
-  }
-
-  sendNegotiation(type, peerId, data) {
-    this.webSocketServer.send(JSON.stringify({
-      userId: this.userId,
-      peerId,
-      action: type,
-      data,
-    }))
+  sendNegotiation({ type, peerId, ...data }) {
+    this.dispatch(webSocketActions.sendWebSocketMessage({ type, peerId, ...data }))
   }
 
   send(message) {
@@ -99,6 +66,46 @@ class DataChannelService {
   broadcast(data) {
     Object.entries(this.peerConnections)
       .forEach(([key, value]) => value.dataChannel.send(data)) // eslint-disable-line no-unused-vars
+  }
+
+  addPeer(peerId, peer) {
+    this.dispatch(addPeer(peerId, peer))
+  }
+
+  middleware({ getState, dispatch }) { // eslint-disable-line
+    this.dispatch = dispatch
+    return next => (action) => {
+      switch (action.type) {
+        case REQUEST_NEW_PEER: {
+          console.log(action)
+          const { peerId } = action
+          this.requestNewPeerConnection(peerId)
+          break
+        }
+        case PEER_CONNECTION_OFFER: {
+          console.log(action)
+          const { peerId, sessionDescription } = action
+          this.onPeerConnectionOffer({ peerId, sessionDescription })
+          break
+        }
+        case PEER_CONNECTION_ANSWER: {
+          console.log(action)
+          const { peerId, sessionDescription } = action
+          this.dispatch(
+            addRemoteDescriptionToPeer({ peerId, sessionDescription }),
+          )
+          break
+        }
+        // case NEW_PEERS: {
+        //   const { peerIds } = action
+        //   peerIds.map(peerId => this.requestNewPeerConnection(peerId))
+        //   break
+        // }
+        default:
+          break
+      }
+      return next(action)
+    }
   }
 }
 

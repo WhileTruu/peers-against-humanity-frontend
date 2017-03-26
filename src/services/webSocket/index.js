@@ -1,5 +1,5 @@
-import reducer from './reducer'
 import * as actions from './actions'
+import reducer from './reducer'
 
-export { reducer, actions }
+export { actions, reducer }
 export { default } from './WebSocketService'

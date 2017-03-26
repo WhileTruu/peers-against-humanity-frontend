@@ -1,25 +1,22 @@
-import { NEW_ROOM, REMOVE_ROOM } from './actions'
+import {
+  SOCKET_IS_OPEN,
+  SOCKET_IS_CLOSED,
+} from './actions'
 
 const initialState = {
-  rooms: {},
+  isOpen: false,
 }
 
-export default function webSocketService(state = initialState, result) {
+export default function socketService(state = initialState, result) {
   switch (result.type) {
-    case NEW_ROOM: {
+    case SOCKET_IS_OPEN: {
       return {
-        rooms: {
-          [result.peerId]: result.peer,
-          ...state,
-        },
-        ...state,
+        isOpen: true,
       }
     }
-    case REMOVE_ROOM: {
-      const { [result.roomId]: deletedRoom, ...rooms } = state
+    case SOCKET_IS_CLOSED: {
       return {
-        rooms,
-        ...state,
+        isOpen: false,
       }
     }
     default:
