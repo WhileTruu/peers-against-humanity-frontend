@@ -30,7 +30,8 @@ class Registration extends Component {
     const { username, password } = this.state
     ApiService.registerNewUserAccount(username, password)
       .then((response) => {
-        this.props.logIn(response.token)
+        const { token, id } = response
+        this.props.logIn({ token, userId: id, username })
         this.setState({ error: '', errorType: null })
         this.props.history.push('/')
       }).catch((error) => {

@@ -1,9 +1,9 @@
 export const LOG_IN = 'LOG_IN'
 export const LOG_OUT = 'LOG_OUT'
 
-export function logIn(token) {
+export function logIn({ token, userId, username }) {
   return (dispatch) => {
-    dispatch({ type: LOG_IN, token })
+    dispatch({ type: LOG_IN, token, userId, username })
   }
 }
 

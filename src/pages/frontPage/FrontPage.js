@@ -8,10 +8,6 @@ import Button from '../../common/formGroup/button'
 
 
 class FrontPage extends Component {
-  componentDidMount() {
-    this.props.updateLogInStatus()
-  }
-
   logOut() {
     this.props.logOut()
     this.props.history.push('/')
@@ -119,7 +115,6 @@ class FrontPage extends Component {
 
 FrontPage.propTypes = {
   authenticated: PropTypes.bool.isRequired,
-  updateLogInStatus: PropTypes.func.isRequired,
   logOut: PropTypes.func.isRequired,
   history: PropTypes.shape({ push: PropTypes.func.isRequired }).isRequired,
 }
