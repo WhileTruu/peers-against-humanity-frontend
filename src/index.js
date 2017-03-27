@@ -11,7 +11,7 @@ import rootReducer from './rootReducer'
 import './index.scss'
 
 // Subscribe my websocket service to the changes in store
-const webSocketService = new WebSocketService('localhost:8080/api/v1/rooms')
+const webSocketService = new WebSocketService()
 const dataChannelService = new DataChannelService()
 
 const devTools = window.devToolsExtension ? window.devToolsExtension() : variable => variable

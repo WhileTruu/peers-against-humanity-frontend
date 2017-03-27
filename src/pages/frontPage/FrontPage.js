@@ -124,7 +124,6 @@ const mapStoreToProps = store => ({
 })
 
 const mapDispatchToProps = dispatch => ({
-  updateLogInStatus: () => dispatch(authenticationActions.updateLogInStatus()),
   logOut: () => dispatch(authenticationActions.logOut()),
 })
 
