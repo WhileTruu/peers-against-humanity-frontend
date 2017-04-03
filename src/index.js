@@ -10,16 +10,12 @@ import Container from './Container'
 import rootReducer from './rootReducer'
 import './index.scss'
 
-// Subscribe my websocket service to the changes in store
-const dataChannelService = new DataChannelService()
-
 const devTools = window.devToolsExtension ? window.devToolsExtension() : variable => variable
-const finalCreateStore = compose(
-  applyMiddleware(thunk, dataChannelService.middleware), devTools,
-)(createStore)
+const finalCreateStore = compose(applyMiddleware(thunk), devTools)(createStore)
 const store = finalCreateStore(rootReducer)
 
 WebSocketService.dispatch = store.dispatch
+DataChannelService.dispatch = store.dispatch
 
 ReactDOM.render(
   <Provider store={store}>
@@ -27,15 +23,3 @@ ReactDOM.render(
   </Provider>,
   document.getElementById('root'),
 )
-
-/*
-ROUTE PLAN
-  /
-    cards/
-      new/
-      evaluation/
-    users/
-      registration/
-      authentication/
-    rooms/
-*/

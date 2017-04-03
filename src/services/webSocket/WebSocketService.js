@@ -1,16 +1,15 @@
 import {
   PEER_CONNECTION_ANSWER,
   PEER_CONNECTION_OFFER,
-  peerConnectionEstablishmentAnswer,
-  peerConnectionEstablishmentOffer,
   addICECandidateToPeer,
+  addRemoteDescriptionToPeer,
 } from '../webRTCDataChannel/actions'
 import {
-  ICE_CANDIDATE,
   socketConnectionIsOpen,
   socketConnectionIsClosed,
 } from './actions'
 import { actions as roomsActions } from '../../rooms'
+import DataChannelService from '../webRTCDataChannel'
 
 const UPDATE_ROOM = 'UPDATE_ROOM'
 const UPDATE_AVAILABLE_ROOMS = 'UPDATE_AVAILABLE_ROOMS'
@@ -44,23 +43,15 @@ class WebSocketService {
         }
         case PEER_CONNECTION_OFFER: {
           const { peerId, sessionDescription } = message
-          this.dispatch(peerConnectionEstablishmentOffer({
-            type: PEER_CONNECTION_OFFER,
-            peerId,
-            sessionDescription,
-          }))
+          DataChannelService.onPeerConnectionOffer({ peerId, sessionDescription })
           break
         }
         case PEER_CONNECTION_ANSWER: {
           const { peerId, sessionDescription } = message
-          this.dispatch(peerConnectionEstablishmentAnswer({
-            type: PEER_CONNECTION_ANSWER,
-            peerId,
-            sessionDescription,
-          }))
+          this.dispatch(addRemoteDescriptionToPeer({ peerId, sessionDescription }))
           break
         }
-        case ICE_CANDIDATE: {
+        case 'ICE_CANDIDATE': {
           const { peerId, candidate } = message
           this.dispatch(addICECandidateToPeer({ peerId, candidate }))
           break

@@ -20,7 +20,7 @@ export default function webRTCDataChannel(state = initialState, result) {
       }
     }
     case REMOVE_PEER: {
-      const { [result.peerId]: deletedPeer, ...peerConnections } = state.peerConnections
+      const { [`${result.peerId}`]: deletedPeer, ...peerConnections } = state.peerConnections
       return {
         peerConnections,
       }

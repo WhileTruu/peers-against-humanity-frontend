@@ -1,9 +1,14 @@
 class PeerConnection {
-  constructor(sessionDescriptionProtocolConstraints, peerConnectionConfig) {
+  constructor(id, sessionDescriptionProtocolConstraints, peerConnectionConfig) {
+    this.id = id
     this.sessionDescriptionProtocolConstraints = sessionDescriptionProtocolConstraints
     this.connection = {}
     this.peerConnection = new RTCPeerConnection(peerConnectionConfig, this.connection)
     this.dataChannel = this.peerConnection.createDataChannel('datachannel', { reliable: false })
+  }
+
+  close() {
+    this.peerConnection.close()
   }
 
   createOffer(callback) {
@@ -39,11 +44,17 @@ class PeerConnection {
     this.dataChannel.send(message)
   }
 
-  onMessage(callback) {
+  onDataChannel({ onMessageCallback, onCloseCallback }) {
     this.peerConnection.ondatachannel = (event) => {
       // TODO: Find out if there is an airbnb-eslint compliant way to do this
       event.channel.onmessage = (message) => { // eslint-disable-line no-param-reassign
-        callback(message)
+        onMessageCallback(message)
+      }
+      event.channel.onclose = () => { // eslint-disable-line no-param-reassign
+        onCloseCallback(this.id)
+      }
+      event.channel.onerror = (errorEvent) => { // eslint-disable-line no-param-reassign
+        console.log(errorEvent) // eslint-disable-line
       }
     }
   }
