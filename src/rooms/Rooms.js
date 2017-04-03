@@ -1,7 +1,6 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
-import { Route } from 'react-router-dom'
-import { withRouter } from 'react-router'
+import { Route, Redirect, withRouter } from 'react-router-dom'
 
 import RoomList from './roomList'
 import Room from './room'
@@ -16,16 +15,11 @@ class Rooms extends Component {
     if (token) WebSocketService.open('localhost:8080/api/v1/rooms', token)
   }
 
-  // componentWillReceiveProps(nextProps) {
-  //   if (nextProps.currentRoomId && this.props.location.pathname === '/rooms') {
-  //     this.props.history.replace(`${this.props.match.url}/${nextProps.currentRoomId}`)
-  //   }
-  // }
-
   render() {
     const { socketIsOpen, availableRooms, currentRoomId } = this.props
     return (
       <div>
+        {currentRoomId ? <Redirect to={`/rooms/${currentRoomId}`} /> : ''}
         <Route
           exact path="/rooms"
           component={() => (

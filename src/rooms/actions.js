@@ -31,17 +31,10 @@ export function createRoom() {
 }
 
 export function joinRoom(id) {
-  return (dispatch) => {
-    ApiService.joinRoom(id)
-      .then((room) => {
-        dispatch({ type: ROOMS_JOIN_ROOM, id: room.id })
-        // TODO: think about updating the room twice maybe?
-        // dispatch({ type: ROOMS_UPDATE_ROOM, room })
-      })
-      .catch(() => dispatch({ type: ROOMS_ERROR }))
-  }
+  return dispatch => (
+    dispatch({ type: ROOMS_JOIN_ROOM, id })
+  )
 }
-
 
 export function exitRoom(id) {
   return (dispatch) => {
@@ -53,4 +46,10 @@ export function exitRoom(id) {
       })
       .catch(() => dispatch({ type: ROOMS_ERROR }))
   }
+}
+
+export function roomError() {
+  return dispatch => (
+    dispatch({ type: ROOMS_ERROR })
+  )
 }

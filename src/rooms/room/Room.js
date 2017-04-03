@@ -1,7 +1,8 @@
 import React, { Component, PropTypes } from 'react'
-import { withRouter } from 'react-router'
+import { withRouter } from 'react-router-dom'
 import { connect } from 'react-redux'
 
+import ApiService from '../../services/apiService'
 import { actions } from '../'
 
 class Room extends Component {
@@ -11,12 +12,21 @@ class Room extends Component {
     this.exitRoom = this.exitRoom.bind(this)
   }
   componentDidMount() {
-    const { currentRoomId, joinRoom, match } = this.props
-    if (!currentRoomId) joinRoom(match.params.roomId)
+    const { currentRoomId, joinRoom, roomError, match } = this.props
+    if (!currentRoomId) {
+      ApiService.joinRoom(match.params.roomId)
+        .then((room) => {
+          joinRoom(room.id)
+        })
+        .catch(() => {
+          this.props.history.replace('/rooms')
+          roomError()
+        })
+    }
   }
 
   exitRoom() {
-    this.props.history.push('/rooms')
+    this.props.history.replace('/rooms')
     this.props.exitRoom(this.props.match.params.roomId)
   }
 
@@ -78,8 +88,10 @@ Room.propTypes = {
   /* eslint-enable */
   socketIsOpen: PropTypes.bool.isRequired,
   exitRoom: PropTypes.func.isRequired,
+  roomError: PropTypes.func.isRequired,
   history: PropTypes.shape({
     push: PropTypes.func.isRequired,
+    replace: PropTypes.func.isRequired,
   }).isRequired,
 }
 
@@ -98,6 +110,7 @@ const mapStoreToProps = store => ({
 const mapDispatchToProps = dispatch => ({
   joinRoom: id => dispatch(actions.joinRoom(id)),
   exitRoom: id => dispatch(actions.exitRoom(id)),
+  roomError: () => dispatch(actions.roomError()),
 })
 
 export default connect(mapStoreToProps, mapDispatchToProps)(withRouter(Room))
