@@ -69,3 +69,27 @@ export function cardEvaluationDownVote(cardId) {
     { headers: { Authorization: `Bearer ${token}` } },
   ) : authReject
 }
+
+export function joinRoom(roomId) {
+  const token = window.localStorage.getItem('token')
+  return fetch(`/api/v1/rooms/${roomId}/join`, {
+    method: 'PUT',
+    headers: { ...headers, Authorization: `Bearer ${token}` },
+  }).then(checkStatus).then(response => response.json())
+}
+
+export function exitRoom(roomId) {
+  const token = window.localStorage.getItem('token')
+  return fetch(`/api/v1/rooms/${roomId}/exit`, {
+    method: 'PUT',
+    headers: { ...headers, Authorization: `Bearer ${token}` },
+  }).then(checkStatus).then(response => response.json())
+}
+
+export function createRoom() {
+  const token = window.localStorage.getItem('token')
+  return fetch('/api/v1/rooms/new', {
+    method: 'POST',
+    headers: { ...headers, Authorization: `Bearer ${token}` },
+  }).then(checkStatus).then(response => response.json())
+}

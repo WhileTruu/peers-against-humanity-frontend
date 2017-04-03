@@ -11,14 +11,15 @@ import rootReducer from './rootReducer'
 import './index.scss'
 
 // Subscribe my websocket service to the changes in store
-const webSocketService = new WebSocketService()
 const dataChannelService = new DataChannelService()
 
 const devTools = window.devToolsExtension ? window.devToolsExtension() : variable => variable
 const finalCreateStore = compose(
-  applyMiddleware(thunk, webSocketService.middleware, dataChannelService.middleware), devTools,
+  applyMiddleware(thunk, dataChannelService.middleware), devTools,
 )(createStore)
 const store = finalCreateStore(rootReducer)
+
+WebSocketService.dispatch = store.dispatch
 
 ReactDOM.render(
   <Provider store={store}>

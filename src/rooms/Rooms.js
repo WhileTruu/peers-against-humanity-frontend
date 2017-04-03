@@ -1,137 +1,84 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
+import { Route } from 'react-router-dom'
+import { withRouter } from 'react-router'
 
-import { actions as socketActions } from '../services/webSocket'
+import RoomList from './roomList'
+import Room from './room'
+
+import WebSocketService from '../services/webSocket'
 import { actions as dataChannelActions } from '../services/webRTCDataChannel'
+import { actions as roomsActions } from '.'
 
 class Rooms extends Component {
-  constructor(props) {
-    super(props)
-    this.renderRooms = this.renderRooms.bind(this)
-    this.state = {
-      attemptedConnection: false,
-    }
-  }
-
   componentDidMount() {
-    this.connectWebsocketIfPossible(this.props.token)
+    const token = localStorage.getItem('token')
+    if (token) WebSocketService.open('localhost:8080/api/v1/rooms', token)
   }
 
-  componentWillReceiveProps(nextProps) {
-    this.connectWebsocketIfPossible(nextProps.token)
-  }
-
-  componentWillUnmount() {
-    if (this.props.socketIsOpen) this.props.closeSocketConnection()
-  }
-
-  connectWebsocketIfPossible(token) {
-    if (!!token && !this.props.socketIsOpen && !this.state.attemptedConnection) {
-      this.props.connectWebSocket('localhost:8080/api/v1/rooms', token)
-      this.setState({ attemptedConnection: true })
-    }
-  }
-
-  renderRooms() {
-    return Object.entries(this.props.availableRooms).map(([key, value]) => (
-      <div className="pb-3" key={key}>
-        <div className="card">
-          <div className="card-block">
-            <div className="form-inline justify-content-between">
-              <h4 className="card-title">{key}</h4>
-              <button className="btn btn-success">enter</button>
-            </div>
-            <p className="card-text">
-              Room created by {value.creator.username}
-            </p>
-            <p className="card-text">People in room: {Object.keys(value.members).length + 1}</p>
-          </div>
-        </div>
-      </div>
-    ))
-  }
+  // componentWillReceiveProps(nextProps) {
+  //   if (nextProps.currentRoomId && this.props.location.pathname === '/rooms') {
+  //     this.props.history.replace(`${this.props.match.url}/${nextProps.currentRoomId}`)
+  //   }
+  // }
 
   render() {
-    console.log(this.props.room)
-    const {
-      // requestNewPeerConnection,
-      socketIsOpen,
-      userId,
-      username,
-    } = this.props
+    const { socketIsOpen, availableRooms, currentRoomId } = this.props
     return (
       <div>
-        <div className="row">
-          <div className="col-12">
-            <div className="form-inline justify-content-between">
-              <h1 className="panel-heading">Rooms</h1>
-              <button
-                type="button"
-                className="btn btn-info mr-3"
-                onClick={() => this.props.createRoom(userId, username)}
-              >
-                Create Room
-              </button>
-            </div>
-          </div>
-        </div>
-        <div className="row">
-          <div className="col-12">
-            <h3
-              className={socketIsOpen ? 'text-info' : 'text-danger'}
-            >
-              SOCKET IS {socketIsOpen ? 'OPEN' : 'CLOSED'}
-            </h3>
-            {this.props.availableRooms ? this.renderRooms() : ''}
-          </div>
-        </div>
+        <Route
+          exact path="/rooms"
+          component={() => (
+            <RoomList
+              socketIsOpen={socketIsOpen}
+              currentRoomId={currentRoomId}
+              rooms={availableRooms}
+              createRoom={this.props.createRoom}
+            />
+          )}
+        />
+        <Route path="/rooms/:roomId" component={Room} />
       </div>
     )
   }
 }
 
 Rooms.propTypes = {
-  connectWebSocket: PropTypes.func.isRequired,
-  closeSocketConnection: PropTypes.func.isRequired,
-  // requestNewPeerConnection: PropTypes.func.isRequired,
-  createRoom: PropTypes.func.isRequired,
-  // peerConnections: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   socketIsOpen: PropTypes.bool.isRequired,
-  token: PropTypes.string,
-  username: PropTypes.string,
-  userId: PropTypes.number,
+  currentRoomId: PropTypes.number,
   availableRooms: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-  room: PropTypes.shape({
-    id: PropTypes.string,
-    creator: PropTypes.string,
-    members: PropTypes.object,
-  }),
+  createRoom: PropTypes.func.isRequired,
+  // history: PropTypes.shape({
+  //   push: PropTypes.func.isRequired,
+  //   replace: PropTypes.func.isRequired,
+  // }).isRequired,
+  // match: PropTypes.shape({
+  //   url: PropTypes.string.isRequired,
+  // }).isRequired,
+  // location: PropTypes.shape({
+  //   pathname: PropTypes.string.isRequired,
+  // }).isRequired,
 }
 
 Rooms.defaultProps = {
-  token: null,
-  username: null,
   userId: null,
   availableRooms: null,
-  room: null,
+  currentRoomId: null,
 }
 
 const mapStoreToProps = store => ({
   peerConnections: store.dataChannel.peerConnections,
   socketIsOpen: store.socketService.isOpen,
-  availableRooms: store.socketService.availableRooms,
-  room: store.socketService.room,
-  token: store.auth.token,
+  availableRooms: store.rooms.availableRooms,
   username: store.auth.username,
   userId: store.auth.userId,
+  currentRoomId: store.rooms.currentRoomId,
 })
 
 
 const mapDispatchToProps = dispatch => ({
-  connectWebSocket: (url, token) => dispatch(socketActions.connectWebSocket(url, token)),
-  closeSocketConnection: () => dispatch(socketActions.closeSocketConnection()),
   requestNewPeerConnection: peerId => dispatch(dataChannelActions.requestNewPeerConnection(peerId)),
-  createRoom: (userId, username) => dispatch(socketActions.createRoom(userId, username)),
+  createRoom: () => dispatch(roomsActions.createRoom()),
 })
 
-export default connect(mapStoreToProps, mapDispatchToProps)(Rooms)
+export default connect(mapStoreToProps, mapDispatchToProps)(withRouter(Rooms))

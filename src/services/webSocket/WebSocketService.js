@@ -6,25 +6,19 @@ import {
   addICECandidateToPeer,
 } from '../webRTCDataChannel/actions'
 import {
-  OPEN_WEBSOCKET,
-  CLOSE_WEBSOCKET,
-  SEND_WEBSOCKET_MESSAGE,
   ICE_CANDIDATE,
-  SOCKET_CREATE_ROOM,
-  SOCKET_JOIN_ROOM,
-  SOCKET_UPDATE_ROOM,
-  SOCKET_UPDATE_AVAILABLE_ROOMS,
-  updateRoom,
-  updateAvailableRooms,
   socketConnectionIsOpen,
   socketConnectionIsClosed,
 } from './actions'
+import { actions as roomsActions } from '../../rooms'
+
+const UPDATE_ROOM = 'UPDATE_ROOM'
+const UPDATE_AVAILABLE_ROOMS = 'UPDATE_AVAILABLE_ROOMS'
 
 class WebSocketService {
   constructor() {
     this.webSocket = null
     this.dispatch = null
-    this.middleware = this.middleware.bind(this)
   }
 
   close() {
@@ -39,14 +33,13 @@ class WebSocketService {
     this.webSocket.onclose = () => this.dispatch(socketConnectionIsClosed())
     this.webSocket.onmessage = (event) => {
       const message = JSON.parse(event.data)
-      console.log(message)
       switch (message.type) {
-        case SOCKET_UPDATE_AVAILABLE_ROOMS: {
-          this.dispatch(updateAvailableRooms(message.availableRooms))
+        case UPDATE_AVAILABLE_ROOMS: {
+          this.dispatch(roomsActions.updateAvailableRooms(message.availableRooms))
           break
         }
-        case SOCKET_UPDATE_ROOM: {
-          this.dispatch(updateRoom(message.room))
+        case UPDATE_ROOM: {
+          this.dispatch(roomsActions.updateRoom(message.room))
           break
         }
         case PEER_CONNECTION_OFFER: {
@@ -81,44 +74,8 @@ class WebSocketService {
   send(data) {
     this.webSocket.send(JSON.stringify(data))
   }
-
-  middleware({ getState, dispatch }) { // eslint-disable-line
-    this.dispatch = dispatch
-    return next => (action) => {
-      switch (action.type) {
-        case SEND_WEBSOCKET_MESSAGE: {
-          this.send(action.data)
-          break
-        }
-        case OPEN_WEBSOCKET: {
-          this.open(action.url, action.token)
-          break
-        }
-        case CLOSE_WEBSOCKET: {
-          this.close()
-          break
-        }
-        case SOCKET_CREATE_ROOM: {
-          this.send({ ...action })
-          break
-        }
-        case SOCKET_JOIN_ROOM: {
-          this.send({ ...action })
-          break
-        }
-        default:
-          break
-      }
-      // Call the next dispatch method in the middleware chain.
-      const returnValue = next(action)
-
-      // console.log('state after dispatch', getState())
-
-      // This will likely be the action itself, unless
-      // a middleware further in chain changed it.
-      return returnValue
-    }
-  }
 }
 
-export default WebSocketService
+const instance = new WebSocketService()
+
+export default instance
