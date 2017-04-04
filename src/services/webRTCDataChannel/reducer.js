@@ -3,16 +3,18 @@ import {
   REMOVE_PEER,
   ADD_REMOTE_DESCRIPTION_TO_PEER,
   ADD_ICE_CANDIDATE_TO_PEER,
+  BROADCAST_TO_DATA_CHANNEL,
 } from './actions'
 
 const initialState = {
-  peerConnections: {},
+  peerConnections: null,
 }
 
-export default function webRTCDataChannel(state = initialState, result) {
+export default function dataChannel(state = initialState, result) {
   switch (result.type) {
     case ADD_PEER: {
       return {
+        ...state,
         peerConnections: {
           ...state.peerConnections,
           [result.peerId]: result.peer,
@@ -22,6 +24,7 @@ export default function webRTCDataChannel(state = initialState, result) {
     case REMOVE_PEER: {
       const { [`${result.peerId}`]: deletedPeer, ...peerConnections } = state.peerConnections
       return {
+        ...state,
         peerConnections,
       }
     }
@@ -31,6 +34,14 @@ export default function webRTCDataChannel(state = initialState, result) {
     }
     case ADD_ICE_CANDIDATE_TO_PEER: {
       state.peerConnections[result.peerId].addIceCandidate(result.candidate)
+      return state
+    }
+    case BROADCAST_TO_DATA_CHANNEL: {
+      if (state.peerConnections) {
+        Object.keys(state.peerConnections).forEach((key) => {
+          state.peerConnections[key].send(result.message)
+        })
+      }
       return state
     }
     default:

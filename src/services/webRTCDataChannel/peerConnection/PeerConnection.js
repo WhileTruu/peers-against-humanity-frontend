@@ -40,15 +40,15 @@ class PeerConnection {
     return this.peerConnection.setRemoteDescription(sessionDescriptionProtocol)
   }
 
-  sendMessage(message) {
-    this.dataChannel.send(message)
+  send(message) {
+    this.dataChannel.send(JSON.stringify(message))
   }
 
   onDataChannel({ onMessageCallback, onCloseCallback }) {
     this.peerConnection.ondatachannel = (event) => {
       // TODO: Find out if there is an airbnb-eslint compliant way to do this
       event.channel.onmessage = (message) => { // eslint-disable-line no-param-reassign
-        onMessageCallback(message)
+        onMessageCallback(JSON.parse(message.data))
       }
       event.channel.onclose = () => { // eslint-disable-line no-param-reassign
         onCloseCallback(this.id)

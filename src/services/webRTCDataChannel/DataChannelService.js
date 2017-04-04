@@ -1,6 +1,12 @@
 import PeerConnection from './peerConnection'
 import WebSocketService from '../webSocket'
-import { PEER_CONNECTION_ANSWER, PEER_CONNECTION_OFFER, addPeer, removePeer } from './actions'
+import {
+  PEER_CONNECTION_ANSWER,
+  PEER_CONNECTION_OFFER,
+  addPeer,
+  removePeer,
+  onDataChannelMessage,
+} from './actions'
 import {
   peerConnectionConfig,
   sessionDescriptionProtocolConstraints as sdpConstraints,
@@ -8,7 +14,7 @@ import {
 
 class DataChannelService {
   constructor() {
-    this.onMessage = message => console.log(message)
+    this.onMessage = message => this.dispatch(onDataChannelMessage(message))
     this.onClose = id => this.dispatch(removePeer(id))
   }
 

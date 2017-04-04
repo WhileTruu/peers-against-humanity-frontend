@@ -6,6 +6,7 @@ import DataChannelService from '../../services/webRTCDataChannel'
 import ApiService from '../../services/apiService'
 import { actions } from '../'
 import MemberList from './memberList'
+import Chat from '../../chat'
 
 class Room extends Component {
   constructor(props) {
@@ -13,7 +14,6 @@ class Room extends Component {
     this.renderMembers = this.renderMembers.bind(this)
     this.exitRoom = this.exitRoom.bind(this)
     this.makePeerConnections = this.makePeerConnections.bind(this)
-    this.broadcastCrap = this.broadcastCrap.bind(this)
   }
   componentDidMount() {
     const { currentRoomId, joinRoom, roomError, match } = this.props
@@ -40,12 +40,6 @@ class Room extends Component {
           DataChannelService.requestNewPeerConnection(peerId)
         }
       })
-  }
-
-  broadcastCrap() {
-    Object.keys(this.props.peerConnections).forEach((key) => {
-      this.props.peerConnections[key].dataChannel.send('wooboobbo')
-    })
   }
 
   renderMembers() {
@@ -98,12 +92,7 @@ class Room extends Component {
             >
               connect
             </button>
-            <button
-              className="form-control btn-warning"
-              onClick={this.broadcastCrap}
-            >
-              send random bs message
-            </button>
+            <Chat />
           </div>
         </div>
       </div>

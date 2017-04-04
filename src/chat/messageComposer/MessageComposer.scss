@@ -1,0 +1,17 @@
+.message-composer-input {
+  resize: none;
+  border: none;
+  border-radius: 0 0 0 0.5rem !important;
+  word-wrap: break-word;
+}
+
+.message-composer-input-group {
+  position: absolute !important;
+  bottom: 0;
+  left: 0;
+}
+
+.message-composer-input-group-btn {
+  border-radius: 0 0 0.5rem !important;
+  border: 1px solid rgba(0, 0, 0, 0.15) !important;
+}
