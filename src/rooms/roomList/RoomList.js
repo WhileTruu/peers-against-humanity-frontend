@@ -9,7 +9,7 @@ const RoomList = ({ createRoom, socketIsOpen, currentRoomId, rooms, history, mat
           <h1 className="panel-heading">Rooms</h1>
           <button
             type="button"
-            className="btn btn-info mr-3"
+            className="btn btn-info"
             onClick={createRoom}
           >
             Create Room

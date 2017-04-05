@@ -63,7 +63,7 @@ class Room extends Component {
               <h1 className="panel-heading">Room {currentRoomId}</h1>
               <button
                 type="button"
-                className="btn btn-danger mr-3"
+                className="btn btn-danger"
                 onClick={this.exitRoom}
               >
                 exit room
