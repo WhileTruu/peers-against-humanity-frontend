@@ -16,25 +16,19 @@ const headers = {
 
 const authReject = () => Promise.reject({ message: 'You are not logged in!' })
 
-export function registerNewUserAccount(username, password) {
+export function registerUser({ username, password }) {
   return fetch('/api/v1/users/registration', {
     method: 'POST',
     headers,
-    body: JSON.stringify({
-      username,
-      plainTextPassword: password,
-    }),
+    body: JSON.stringify({ username, password }),
   }).then(checkStatus).then(response => response.json())
 }
 
-export function logInWithUserAccount(username, password) {
+export function loginUser({ username, password }) {
   return fetch('/api/v1/users/authentication', {
     method: 'POST',
     headers,
-    body: JSON.stringify({
-      username,
-      plainTextPassword: password,
-    }),
+    body: JSON.stringify({ username, password }),
   }).then(checkStatus).then(response => response.json())
 }
 

@@ -1,42 +1,52 @@
-import { LOG_IN, LOG_OUT, LOGGED_IN } from './actions'
+import { LOGIN_REQUEST, LOGIN_SUCCESS, LOGIN_FAILURE } from './actions'
 
 const initialState = {
-  token: null,
-  username: null,
-  userId: null,
-  authenticated: false,
+  isFetching: false,
+  isAuthenticated: false,
+  errorStatusCode: null,
+  user: {
+    token: null,
+    userId: null,
+    username: null,
+    password: null,
+  },
 }
 
 export default function authentication(state = initialState, result) {
   switch (result.type) {
-    case LOG_IN: {
-      localStorage.setItem('token', result.token)
-      localStorage.setItem('userId', result.userId)
-      localStorage.setItem('username', result.username)
+    case LOGIN_REQUEST: {
       return {
-        token: result.token,
-        username: result.username,
-        userId: parseInt(result.userId, 10),
-        authenticated: true,
+        ...initialState,
+        isFetching: true,
+        isAuthenticated: false,
+        errorStatusCode: null,
+        user: {
+          ...initialState.user,
+          username: result.username,
+          password: result.password,
+        },
       }
     }
-    case LOG_OUT: {
-      localStorage.removeItem('token')
-      localStorage.removeItem('userId')
-      localStorage.removeItem('username')
+    case LOGIN_SUCCESS: {
       return {
-        token: null,
-        username: null,
-        userId: null,
-        authenticated: false,
+        ...state,
+        isFetching: false,
+        isAuthenticated: true,
+        errorStatusCode: null,
+        user: {
+          ...state.user,
+          token: result.token,
+          userId: result.id,
+          username: result.username,
+        },
       }
     }
-    case LOGGED_IN: {
+    case LOGIN_FAILURE: {
       return {
-        token: result.token,
-        username: result.username,
-        userId: parseInt(result.userId, 10),
-        authenticated: true,
+        ...state,
+        isFetching: false,
+        isAuthenticated: false,
+        errorStatusCode: result.error.response.status,
       }
     }
     default:
