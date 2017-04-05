@@ -11,10 +11,10 @@ import Chat from '../../chat'
 class Room extends Component {
   constructor(props) {
     super(props)
-    this.renderMembers = this.renderMembers.bind(this)
     this.exitRoom = this.exitRoom.bind(this)
     this.makePeerConnections = this.makePeerConnections.bind(this)
   }
+
   componentDidMount() {
     const { currentRoomId, joinRoom, roomError, match } = this.props
     if (!currentRoomId) {
@@ -35,22 +35,12 @@ class Room extends Component {
   makePeerConnections() {
     const { currentRoomId, availableRooms } = this.props
     Object.keys(availableRooms[currentRoomId].members)
+      .filter(peerId => availableRooms[currentRoomId].members[peerId].active)
       .forEach((peerId) => {
         if (parseInt(peerId, 10) !== this.props.userId) {
           DataChannelService.requestNewPeerConnection(peerId)
         }
       })
-  }
-
-  renderMembers() {
-    const { currentRoomId, availableRooms } = this.props
-    return Object.keys(availableRooms[currentRoomId].members)
-      .filter(key => availableRooms[currentRoomId].members[key].active)
-      .map(key => (
-        <div key={key}>
-          {availableRooms[currentRoomId].members[key].username}
-        </div>
-      ))
   }
 
   render() {
@@ -135,7 +125,6 @@ const mapStoreToProps = store => ({
   socketIsOpen: store.socketService.isOpen,
   userId: store.auth.userId,
 })
-
 
 const mapDispatchToProps = dispatch => ({
   joinRoom: id => dispatch(actions.joinRoom(id)),
