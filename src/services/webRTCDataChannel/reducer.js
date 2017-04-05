@@ -4,6 +4,7 @@ import {
   ADD_REMOTE_DESCRIPTION_TO_PEER,
   ADD_ICE_CANDIDATE_TO_PEER,
   BROADCAST_TO_DATA_CHANNEL,
+  HAS_DATA_CHANNEL,
 } from './actions'
 
 const initialState = {
@@ -30,19 +31,32 @@ export default function dataChannel(state = initialState, result) {
     }
     case ADD_REMOTE_DESCRIPTION_TO_PEER: {
       state.peerConnections[result.peerId].setRemoteDescription(result.sessionDescription)
-      return state
+      return { ...state }
     }
     case ADD_ICE_CANDIDATE_TO_PEER: {
       state.peerConnections[result.peerId].addIceCandidate(result.candidate)
-      return state
+      return { ...state }
     }
     case BROADCAST_TO_DATA_CHANNEL: {
       if (state.peerConnections) {
         Object.keys(state.peerConnections).forEach((key) => {
+          console.log(key, state.peerConnections[key])
           state.peerConnections[key].send(result.message)
         })
       }
-      return state
+      return { ...state }
+    }
+    case HAS_DATA_CHANNEL: {
+      console.log(state.peerConnections)
+      return {
+        peerConnections: {
+          ...state.peerConnections,
+          [result.peerId]: {
+            hasDataChannel: true,
+            ...state.peerConnections[result.peerId],
+          },
+        },
+      }
     }
     default:
       return state

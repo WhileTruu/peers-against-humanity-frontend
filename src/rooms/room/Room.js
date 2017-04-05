@@ -71,6 +71,7 @@ class Room extends Component {
             {availableRooms && currentRoomId && !!availableRooms[currentRoomId] ?
               (
                 <MemberList
+                  userId={this.props.userId}
                   members={availableRooms[currentRoomId].members}
                   peerConnections={peerConnections}
                 />

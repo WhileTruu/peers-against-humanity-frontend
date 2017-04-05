@@ -6,6 +6,7 @@ import {
   addPeer,
   removePeer,
   onDataChannelMessage,
+  onDataChannel,
 } from './actions'
 import {
   peerConnectionConfig,
@@ -16,6 +17,8 @@ class DataChannelService {
   constructor() {
     this.onMessage = message => this.dispatch(onDataChannelMessage(message))
     this.onClose = id => this.dispatch(removePeer(id))
+    this.addPeer = (peerId, peer) => this.dispatch(addPeer(peerId, peer))
+    this.onDataChannel = id => this.dispatch(onDataChannel(id))
   }
 
   setOnMessageCallback(callback) {
@@ -30,6 +33,7 @@ class DataChannelService {
     peer.onDataChannel({
       onMessageCallback: this.onMessage,
       onCloseCallback: this.onClose,
+      onDataChannelCallback: this.onDataChannel,
     })
     peer.createOffer(localSessionDescription => (
       WebSocketService.send({
@@ -38,7 +42,7 @@ class DataChannelService {
         sessionDescription: localSessionDescription,
       })
     ))
-    this.dispatch(addPeer(peerId, peer))
+    this.addPeer(peerId, peer)
   }
 
   onPeerConnectionOffer({ peerId, sessionDescription }) {
@@ -49,6 +53,7 @@ class DataChannelService {
     peer.onDataChannel({
       onMessageCallback: this.onMessage,
       onCloseCallback: this.onClose,
+      onDataChannelCallback: this.onDataChannel,
     })
     peer.setRemoteDescription(new RTCSessionDescription(sessionDescription))
     peer.createAnswer(localDescription => (
@@ -58,7 +63,7 @@ class DataChannelService {
         sessionDescription: localDescription,
       })
     ))
-    this.dispatch(addPeer(peerId, peer))
+    this.addPeer(peerId, peer)
   }
 }
 

@@ -1,20 +1,25 @@
 /* eslint-disable */
 import React from 'react'
 
-const memberListItem = ({ member, peerConnections }) => {
+const memberListItem = ({ member, peerConnections, userId }) => {
   const memberConnection = peerConnections ? peerConnections[member.id] : null
   const dataChannel = memberConnection ? memberConnection.dataChannel : null
   return (
     <li className="list-group-item justify-content-between" key={member.id}>
       {member.username}
-      <span className={`badge badge-${dataChannel ? 'success' : 'info'} badge-pill`}>
-        {dataChannel ? dataChannel.readyState : 'none'}
-      </span>
+      {member.id !== userId ?
+        (<span className={`badge badge-${dataChannel ? 'success' : 'info'} badge-pill`}>
+          {memberConnection && memberConnection.hasDataChannel ? dataChannel.readyState : 'none'}
+        </span>) :
+        (<span className={`badge badge-primary badge-pill`}>
+          you
+        </span>)
+      }
     </li>
   )
 }
 
-export default ({ members, peerConnections }) => (
+export default ({ members, peerConnections, userId }) => (
   <div>
     <ul className="list-group">
       {Object.keys(members)
@@ -23,6 +28,7 @@ export default ({ members, peerConnections }) => (
           memberListItem({
             member: members[key],
             peerConnections,
+            userId,
           })
         ))
       }

@@ -11,8 +11,9 @@ import { actions as roomsActions } from '.'
 
 class Rooms extends Component {
   componentDidMount() {
-    const token = localStorage.getItem('token')
-    if (token) WebSocketService.open('localhost:8080/api/v1/rooms', token)
+    if (this.props.authenticated) {
+      WebSocketService.open('localhost:8080/api/v1/rooms', this.props.token)
+    }
   }
 
   render() {
@@ -42,16 +43,8 @@ Rooms.propTypes = {
   currentRoomId: PropTypes.number,
   availableRooms: PropTypes.object, // eslint-disable-line react/forbid-prop-types
   createRoom: PropTypes.func.isRequired,
-  // history: PropTypes.shape({
-  //   push: PropTypes.func.isRequired,
-  //   replace: PropTypes.func.isRequired,
-  // }).isRequired,
-  // match: PropTypes.shape({
-  //   url: PropTypes.string.isRequired,
-  // }).isRequired,
-  // location: PropTypes.shape({
-  //   pathname: PropTypes.string.isRequired,
-  // }).isRequired,
+  authenticated: PropTypes.bool.isRequired,
+  token: PropTypes.string.isRequired,
 }
 
 Rooms.defaultProps = {
@@ -61,6 +54,8 @@ Rooms.defaultProps = {
 }
 
 const mapStoreToProps = store => ({
+  authenticated: store.auth.authenticated,
+  token: store.auth.token,
   peerConnections: store.dataChannel.peerConnections,
   socketIsOpen: store.socketService.isOpen,
   availableRooms: store.rooms.availableRooms,
