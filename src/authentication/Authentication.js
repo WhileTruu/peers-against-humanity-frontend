@@ -54,10 +54,10 @@ class Authentication extends Component {
 
   render() {
     const { usernameError, passwordError } = this.state
-    const { errorStatusCode, isAuthenticated, isFetching } = this.props
+    const { errorStatusCode, isAuthenticated, isFetching, onSuccessRedirectTo } = this.props
     return (
       <div>
-        {isAuthenticated ? <Redirect to="/" /> : ''}
+        {isAuthenticated ? <Redirect to={onSuccessRedirectTo} /> : ''}
         <h1 className="panel-heading">Log in</h1>
         <form className="form">
           <div className={`form-group ${usernameError ? 'has-warning' : ''}`}>
@@ -110,6 +110,11 @@ Authentication.propTypes = {
   isFetching: PropTypes.bool.isRequired,
   requestLogin: PropTypes.func.isRequired,
   errorStatusCode: PropTypes.string.isRequired,
+  onSuccessRedirectTo: PropTypes.string,
+}
+
+Authentication.defaultProps = {
+  onSuccessRedirectTo: '/',
 }
 
 const mapDispatchToProps = dispatch => ({
