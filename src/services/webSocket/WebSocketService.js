@@ -11,9 +11,6 @@ import {
 import { actions as roomsActions } from '../../rooms'
 import DataChannelService from '../webRTCDataChannel'
 
-const UPDATE_ROOM = 'UPDATE_ROOM'
-const UPDATE_AVAILABLE_ROOMS = 'UPDATE_AVAILABLE_ROOMS'
-
 class WebSocketService {
   constructor() {
     this.webSocket = null
@@ -33,11 +30,11 @@ class WebSocketService {
     this.webSocket.onmessage = (event) => {
       const message = JSON.parse(event.data)
       switch (message.type) {
-        case UPDATE_AVAILABLE_ROOMS: {
-          this.dispatch(roomsActions.updateAvailableRooms(message.availableRooms))
+        case 'UPDATE_ROOMS': {
+          this.dispatch(roomsActions.updateRooms(message.availableRooms))
           break
         }
-        case UPDATE_ROOM: {
+        case 'UPDATE_ROOM': {
           this.dispatch(roomsActions.updateRoom(message.room))
           break
         }
