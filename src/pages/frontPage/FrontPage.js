@@ -2,10 +2,7 @@ import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 
-import { actions as authenticationActions } from '../../authentication'
-import FormGroup from '../../common/formGroup'
-import Button from '../../common/formGroup/button'
-
+import { actions as users } from '../../users'
 
 class FrontPage extends Component {
   logOut() {
@@ -14,18 +11,13 @@ class FrontPage extends Component {
   }
 
   renderAuthenticationButtons() {
+    const { history } = this.props
     return (
       <div className="form-inline justify-content-end">
-        <button
-          className="btn btn-success mb-3"
-          onClick={() => this.props.history.push('/login')}
-        >
+        <button className="btn btn-success mb-3" onClick={() => history.push('/login')}>
           Log in
         </button>
-        <button
-          className="btn btn-primary mb-3 ml-3"
-          onClick={() => this.props.history.push('/register')}
-        >
+        <button className="btn btn-primary mb-3 ml-3" onClick={() => history.push('/register')}>
           Register
         </button>
       </div>
@@ -35,10 +27,7 @@ class FrontPage extends Component {
   renderLogOutButton() {
     return (
       <div className="form-inline justify-content-end">
-        <button
-          className="btn btn-primary"
-          onClick={() => this.logOut()}
-        >
+        <button className="btn btn-primary" onClick={() => this.logOut()}>
           Log out
         </button>
       </div>
@@ -69,42 +58,17 @@ class FrontPage extends Component {
           <div className="row">
             <div className="col-12">
               <div className="form-group">
-                <label
-                  htmlFor="inputCardText"
-                  className="form-check-label"
-                >
-                  Shitty card maker for shitty people
+                <label htmlFor="roomsButton" className="form-check-label">
+                  Join a game!
                 </label>
                 <button
-                  className="form-control btn btn-primary"
-                  onClick={() => history.push('/cards/new')}
-                >
-                  Create a new card
-                </button>
-              </div>
-              <div className="form-group">
-                <label
-                  htmlFor="inputCardText"
-                  className="form-check-label"
-                >
-                  Judge cards other people have created!
-                </label>
-                <button
-                  className="form-control btn btn-primary"
-                  onClick={() => history.push('/cards/evaluation')}
-                >
-                  Evaluate cards
-                </button>
-              </div>
-              <FormGroup htmlFor={'roomsButton'} labelText={'Join a game!'}>
-                <Button
-                  id={'roomsButton'}
-                  type={'success'}
+                  id="roomsButton"
+                  className="form-control btn btn-success"
                   onClick={() => history.push('/rooms')}
                 >
-                  Available rooms
-                </Button>
-              </FormGroup>
+                  Available Rooms
+                </button>
+              </div>
             </div>
           </div>
           : '' }
@@ -120,11 +84,11 @@ FrontPage.propTypes = {
 }
 
 const mapStoreToProps = store => ({
-  authenticated: store.auth.authenticated,
+  authenticated: store.users.isAuthenticated,
 })
 
 const mapDispatchToProps = dispatch => ({
-  logOut: () => dispatch(authenticationActions.logOut()),
+  logOut: () => dispatch(users.logOut()),
 })
 
 export default connect(mapStoreToProps, mapDispatchToProps)(withRouter(FrontPage))

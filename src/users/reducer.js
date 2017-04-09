@@ -1,4 +1,4 @@
-import { LOGIN_REQUEST, LOGIN_SUCCESS, LOGIN_FAILURE } from './actions'
+import { LOGIN_REQUEST, LOGIN_SUCCESS, LOGIN_FAILURE, LOG_OUT } from './actions'
 
 const initialState = {
   isFetching: false,
@@ -14,6 +14,9 @@ const initialState = {
 
 export default function authentication(state = initialState, result) {
   switch (result.type) {
+    case LOG_OUT: {
+      return initialState
+    }
     case LOGIN_REQUEST: {
       return {
         ...initialState,

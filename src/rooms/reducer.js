@@ -1,47 +1,77 @@
 import {
-  ROOMS_UPDATE_ROOM,
-  ROOMS_UPDATE_AVAILABLE_ROOMS,
-  ROOMS_JOIN_ROOM,
-  ROOMS_EXIT_ROOM,
-  ROOMS_ERROR,
+  UPDATE_ROOM,
+  UPDATE_ROOMS,
+  ROOM_REQUEST,
+  ROOM_REQUEST_FAILURE,
+  CREATE_ROOM_SUCCESS,
+  JOIN_ROOM_SUCCESS,
+  EXIT_ROOM_SUCCESS,
 } from './actions'
 
 const initialState = {
+  isFetching: false,
   currentRoomId: null,
   availableRooms: null,
-  error: false,
+  errorStatusCode: null,
+}
+
+function updateRoom(state, room) {
+  if (state.availableRooms) {
+    const { [`${room.id}`]: deletedRoom, ...availableRooms } = state.availableRooms
+    if (room.finished) return { ...state, availableRooms }
+    return {
+      ...state,
+      availableRooms: { [`${room.id}`]: room, ...availableRooms },
+      errorStatusCode: null,
+      isFetching: false,
+    }
+  }
+  return {
+    ...state,
+    availableRooms: { [`${room.id}`]: room, ...state.availableRooms },
+    errorStatusCode: null,
+    isFetching: false,
+  }
 }
 
 export default function socketService(state = initialState, result) {
   switch (result.type) {
-    case ROOMS_UPDATE_ROOM: {
-      const { room } = result
-      if (state.availableRooms) {
-        const { [`${room.id}`]: deletedRoom, ...availableRooms } = state.availableRooms
-        if (room.finished) return { ...state, availableRooms }
-        return {
-          ...state,
-          availableRooms: { [`${room.id}`]: room, ...availableRooms },
-          error: false,
-        }
-      }
+    case ROOM_REQUEST: {
       return {
         ...state,
-        availableRooms: { [`${room.id}`]: room, ...state.availableRooms },
-        error: false,
+        isFetching: true,
       }
     }
-    case ROOMS_UPDATE_AVAILABLE_ROOMS: {
-      return { ...state, availableRooms: result.availableRooms, error: false }
+    case UPDATE_ROOM: {
+      return updateRoom(state, result.room)
     }
-    case ROOMS_JOIN_ROOM: {
-      return { ...state, currentRoomId: result.id, error: false }
+    case UPDATE_ROOMS: {
+      return {
+        ...state,
+        availableRooms: result.availableRooms,
+        errorStatusCode: null,
+        isFetching: false,
+      }
     }
-    case ROOMS_EXIT_ROOM: {
-      return { ...state, currentRoomId: null, error: false }
+    case JOIN_ROOM_SUCCESS: {
+      const newState = updateRoom(state, result.room)
+      return {
+        ...newState,
+        currentRoomId: result.room.id,
+      }
     }
-    case ROOMS_ERROR: {
-      return { ...state, error: true }
+    case CREATE_ROOM_SUCCESS: {
+      const newState = updateRoom(state, result.room)
+      return {
+        ...newState,
+        currentRoomId: result.room.id,
+      }
+    }
+    case EXIT_ROOM_SUCCESS: {
+      return { ...state, currentRoomId: null, errorStatusCode: null, isFetching: false }
+    }
+    case ROOM_REQUEST_FAILURE: {
+      return { ...state, errorStatusCode: result.error.response.status, isFetching: false }
     }
     default:
       return state

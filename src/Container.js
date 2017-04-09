@@ -3,8 +3,7 @@ import { connect } from 'react-redux'
 import { BrowserRouter as Router, Route } from 'react-router-dom'
 
 import FrontPage from './pages/frontPage'
-import Authentication from './authentication'
-import Registration from './registration'
+import { Authentication, Registration } from './users'
 import Rooms from './rooms'
 
 const Container = () => (

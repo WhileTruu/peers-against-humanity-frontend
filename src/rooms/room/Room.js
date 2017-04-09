@@ -3,7 +3,6 @@ import { withRouter } from 'react-router-dom'
 import { connect } from 'react-redux'
 
 import DataChannelService from '../../services/webRTCDataChannel'
-import ApiService from '../../services/apiService'
 import { actions } from '../'
 import MemberList from './memberList'
 import Chat from '../../chat'
@@ -16,20 +15,16 @@ class Room extends Component {
   }
 
   componentDidMount() {
-    const { currentRoomId, joinRoom, roomError, match } = this.props
+    const { currentRoomId, match, userId, token } = this.props
     if (!currentRoomId) {
-      ApiService.joinRoom(match.params.roomId)
-        .then(room => joinRoom(room.id))
-        .catch(() => {
-          this.props.history.replace('/rooms')
-          roomError()
-        })
+      this.props.joinRoom(match.params.roomId, userId, token)
     }
   }
 
   exitRoom() {
+    const { currentRoomId, userId, token } = this.props
     this.props.history.replace('/rooms')
-    this.props.exitRoom(this.props.match.params.roomId)
+    this.props.exitRoom(currentRoomId, userId, token)
   }
 
   makePeerConnections() {
@@ -104,12 +99,12 @@ Room.propTypes = {
   /* eslint-enable */
   socketIsOpen: PropTypes.bool.isRequired,
   exitRoom: PropTypes.func.isRequired,
-  roomError: PropTypes.func.isRequired,
   history: PropTypes.shape({
     push: PropTypes.func.isRequired,
     replace: PropTypes.func.isRequired,
   }).isRequired,
   userId: PropTypes.number,
+  token: PropTypes.string,
 }
 
 Room.defaultProps = {
@@ -117,6 +112,7 @@ Room.defaultProps = {
   currentRoomId: null,
   availableRooms: null,
   userId: null,
+  token: null,
 }
 
 const mapStoreToProps = store => ({
@@ -124,12 +120,13 @@ const mapStoreToProps = store => ({
   currentRoomId: store.rooms.currentRoomId,
   availableRooms: store.rooms.availableRooms,
   socketIsOpen: store.socketService.isOpen,
-  userId: store.auth.userId,
+  userId: store.users.user.userId,
+  token: store.users.user.token,
 })
 
 const mapDispatchToProps = dispatch => ({
-  joinRoom: id => dispatch(actions.joinRoom(id)),
-  exitRoom: id => dispatch(actions.exitRoom(id)),
+  joinRoom: (roomId, userId, token) => dispatch(actions.joinRoom(roomId, userId, token)),
+  exitRoom: (roomId, userId, token) => dispatch(actions.exitRoom(roomId, userId, token)),
   roomError: () => dispatch(actions.roomError()),
 })
 

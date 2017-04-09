@@ -2,8 +2,8 @@ import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 
-import Alert from '../common/alert'
-import { requestLogin } from './actions'
+import Alert from '../../common/alert'
+import { requestLogin } from '../actions'
 
 class Authentication extends Component {
   constructor(props) {
@@ -98,7 +98,7 @@ class Authentication extends Component {
               {isFetching ? 'loading...' : 'Log in'}
             </button>
           </div>
-          {errorStatusCode ? <div className="pt-3"><Alert type="danger">{errorStatusCode}</Alert></div> : ''}
+          {errorStatusCode ? <div className="pt-3"><Alert type="danger">{errorStatusCode.toString()}</Alert></div> : ''}
         </form>
       </div>
     )
@@ -109,12 +109,13 @@ Authentication.propTypes = {
   isAuthenticated: PropTypes.bool.isRequired,
   isFetching: PropTypes.bool.isRequired,
   requestLogin: PropTypes.func.isRequired,
-  errorStatusCode: PropTypes.string.isRequired,
+  errorStatusCode: PropTypes.number,
   onSuccessRedirectTo: PropTypes.string,
 }
 
 Authentication.defaultProps = {
   onSuccessRedirectTo: '/',
+  errorStatusCode: null,
 }
 
 const mapDispatchToProps = dispatch => ({
@@ -122,9 +123,9 @@ const mapDispatchToProps = dispatch => ({
 })
 
 const mapStoreToProps = store => ({
-  isAuthenticated: store.auth.isAuthenticated,
-  isFetching: store.auth.isFetching,
-  errorStatusCode: store.auth.errorStatusCode,
+  isAuthenticated: store.users.isAuthenticated,
+  isFetching: store.users.isFetching,
+  errorStatusCode: store.users.errorStatusCode,
 })
 
 

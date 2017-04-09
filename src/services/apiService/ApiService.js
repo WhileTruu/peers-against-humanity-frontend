@@ -1,4 +1,3 @@
-import http from 'axios'
 import 'whatwg-fetch'
 
 function checkStatus(response) {
@@ -14,17 +13,15 @@ const headers = {
   'Content-Type': 'application/json',
 }
 
-const authReject = () => Promise.reject({ message: 'You are not logged in!' })
-
-export function registerUser({ username, password }) {
-  return fetch('/api/v1/users/registration', {
+export function register({ username, password }) {
+  return fetch('/api/v1/users', {
     method: 'POST',
     headers,
     body: JSON.stringify({ username, password }),
   }).then(checkStatus).then(response => response.json())
 }
 
-export function loginUser({ username, password }) {
+export function login({ username, password }) {
   return fetch('/api/v1/users/authentication', {
     method: 'POST',
     headers,
@@ -32,58 +29,25 @@ export function loginUser({ username, password }) {
   }).then(checkStatus).then(response => response.json())
 }
 
-export function getAllTags() {
-  return http.get('/api/v1/tags/all')
-}
 
-export function getRandomCard() {
-  return http.get('/api/v1/cards/random')
-}
-
-export function createNewCard(cardData) {
-  const token = window.localStorage.getItem('token')
-  return token ? http.post('/api/v1/cards/new',
-    cardData,
-    { headers: { Authorization: `Bearer ${token}` } },
-  ) : authReject
-}
-
-export function cardEvaluationUpVote(cardId) {
-  const token = window.localStorage.getItem('token')
-  return token ? http.post(`/api/v1/cards/${cardId}/vote/up`,
-    cardId,
-    { headers: { Authorization: `Bearer ${token}` } },
-  ) : authReject
-}
-
-export function cardEvaluationDownVote(cardId) {
-  const token = window.localStorage.getItem('token')
-  return token ? http.post(`/api/v1/cards/${cardId}/vote/down`,
-    cardId,
-    { headers: { Authorization: `Bearer ${token}` } },
-  ) : authReject
-}
-
-export function joinRoom(roomId) {
-  const token = window.localStorage.getItem('token')
-  return fetch(`/api/v1/rooms/${roomId}/join`, {
-    method: 'PUT',
-    headers: { ...headers, Authorization: `Bearer ${token}` },
-  }).then(checkStatus).then(response => response.json())
-}
-
-export function exitRoom(roomId) {
-  const token = window.localStorage.getItem('token')
-  return fetch(`/api/v1/rooms/${roomId}/exit`, {
-    method: 'PUT',
-    headers: { ...headers, Authorization: `Bearer ${token}` },
-  }).then(checkStatus).then(response => response.json())
-}
-
-export function createRoom() {
-  const token = window.localStorage.getItem('token')
-  return fetch('/api/v1/rooms/new', {
+export function createRoom(token) {
+  return fetch('/api/v1/rooms', {
     method: 'POST',
+    headers: { ...headers, Authorization: `Bearer ${token}` },
+  }).then(checkStatus).then(response => response.json())
+}
+
+
+export function joinRoom(roomId, userId, token) {
+  return fetch(`/api/v1/rooms/${roomId}/members/${userId}`, {
+    method: 'PUT',
+    headers: { ...headers, Authorization: `Bearer ${token}` },
+  }).then(checkStatus).then(response => response.json())
+}
+
+export function exitRoom(roomId, userId, token) {
+  return fetch(`/api/v1/rooms/${roomId}/members/${userId}`, {
+    method: 'DELETE',
     headers: { ...headers, Authorization: `Bearer ${token}` },
   }).then(checkStatus).then(response => response.json())
 }

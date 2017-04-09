@@ -49,11 +49,10 @@
     "url-loader": "0.5.7",
     "webpack": "1.14.0",
     "webpack-dev-server": "1.16.2",
-    "webpack-manifest-plugin": "1.1.0",
-    "whatwg-fetch": "^2.0.3"
+    "webpack-manifest-plugin": "1.1.0"
   },
   "dependencies": {
-    "axios": "^0.15.3",
+    "whatwg-fetch": "^2.0.3",
     "bootstrap": "4.0.0-alpha.6",
     "font-awesome": "^4.7.0",
     "jsonwebtoken": "^7.2.1",
