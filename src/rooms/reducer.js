@@ -68,7 +68,8 @@ export default function socketService(state = initialState, result) {
       }
     }
     case EXIT_ROOM_SUCCESS: {
-      return { ...state, currentRoomId: null, errorStatusCode: null, isFetching: false }
+      const newState = updateRoom(state, result.room)
+      return { ...newState, currentRoomId: null, errorStatusCode: null, isFetching: false }
     }
     case ROOM_REQUEST_FAILURE: {
       return { ...state, errorStatusCode: result.error.response.status, isFetching: false }

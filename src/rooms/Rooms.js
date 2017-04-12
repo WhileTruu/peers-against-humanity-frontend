@@ -5,45 +5,80 @@ import { Route, Redirect, withRouter } from 'react-router-dom'
 import RoomList from './roomList'
 import Room from './room'
 
-import WebSocketService from '../services/webSocket'
+import { Authentication } from '../users'
+
+import { actions as socketActions } from '../services/webSocket'
 import { actions as roomsActions } from '.'
+
+const loginModal = ({ url }) => (
+  <div className="row">
+    <div className="col-12" style={{ position: 'absolute', zIndex: 2 }}>
+      <div className="card" style={{ backgroundColor: 'rgba(255, 255, 255, 0.9)' }}>
+        <div className="card-block">
+          <Authentication onSuccessRedirectTo={url} />
+        </div>
+      </div>
+    </div>
+  </div>
+)
+
+loginModal.propTypes = {
+  url: PropTypes.string.isRequired,
+}
 
 class Rooms extends Component {
   componentDidMount() {
     if (this.props.isAuthenticated) {
-      WebSocketService.open('localhost:8080/api/v1/rooms', this.props.token)
+      this.props.connect('localhost:8080/api/v1/rooms', this.props.token)
     }
   }
 
   render() {
-    const { socketIsOpen, availableRooms, currentRoomId, token } = this.props
+    const {
+      isAuthenticated,
+      socketIsOpen,
+      availableRooms,
+      currentRoomId,
+      token,
+      match,
+    } = this.props
+
     return (
       <div>
         {currentRoomId ? <Redirect to={`/rooms/${currentRoomId}`} /> : ''}
-        <Route
-          exact path="/rooms"
-          component={() => (
-            <RoomList
-              socketIsOpen={socketIsOpen}
-              currentRoomId={currentRoomId}
-              rooms={availableRooms}
-              createRoom={() => this.props.createRoom(token)}
+        {!isAuthenticated ? loginModal({ url: match.url }) : ''}
+        {isAuthenticated ?
+          <div>
+            <Route
+              exact path="/rooms"
+              component={() => (
+                <RoomList
+                  socketIsOpen={socketIsOpen}
+                  currentRoomId={currentRoomId}
+                  rooms={availableRooms}
+                  createRoom={() => this.props.createRoom(token)}
+                />
+              )}
             />
-          )}
-        />
-        <Route path="/rooms/:roomId" component={Room} />
+            <Route path="/rooms/:roomId" component={Room} />
+          </div>
+        : ''}
       </div>
     )
   }
 }
 
 Rooms.propTypes = {
+  connect: PropTypes.func.isRequired,
   socketIsOpen: PropTypes.bool.isRequired,
   currentRoomId: PropTypes.number,
   availableRooms: PropTypes.object, // eslint-disable-line react/forbid-prop-types
   createRoom: PropTypes.func.isRequired,
   isAuthenticated: PropTypes.bool.isRequired,
   token: PropTypes.string,
+  match: PropTypes.shape({
+    url: PropTypes.string.isRequired,
+  }).isRequired,
 }
 
 Rooms.defaultProps = {
@@ -67,6 +102,7 @@ const mapStoreToProps = store => ({
 
 const mapDispatchToProps = dispatch => ({
   createRoom: token => dispatch(roomsActions.createRoom(token)),
+  connect: (url, token) => dispatch(socketActions.connect(url, token)),
 })
 
 export default connect(mapStoreToProps, mapDispatchToProps)(withRouter(Rooms))

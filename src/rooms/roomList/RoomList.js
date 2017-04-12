@@ -7,13 +7,13 @@ const RoomList = ({ createRoom, socketIsOpen, currentRoomId, rooms, history, mat
       <div className="col-12">
         <div className="form-inline justify-content-between">
           <h1 className="panel-heading">Rooms</h1>
-          <button
+          {socketIsOpen ? (<button
             type="button"
             className="btn btn-info"
             onClick={createRoom}
           >
             Create Room
-          </button>
+          </button>) : ''}
         </div>
       </div>
     </div>
