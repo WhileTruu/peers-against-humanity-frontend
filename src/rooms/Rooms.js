@@ -27,9 +27,9 @@ loginModal.propTypes = {
 }
 
 class Rooms extends Component {
-  componentDidMount() {
-    if (this.props.isAuthenticated) {
-      this.props.connect('localhost:8080/api/v1/rooms', this.props.token)
+  componentWillReceiveProps(nextProps) {
+    if (!this.props.isAuthenticated && nextProps.isAuthenticated) {
+      this.props.connect('localhost:8080/api/v1/rooms', nextProps.token)
     }
   }
 
@@ -37,7 +37,7 @@ class Rooms extends Component {
     const {
       isAuthenticated,
       socketIsOpen,
-      availableRooms,
+      rooms,
       currentRoomId,
       token,
       match,
@@ -55,7 +55,7 @@ class Rooms extends Component {
                 <RoomList
                   socketIsOpen={socketIsOpen}
                   currentRoomId={currentRoomId}
-                  rooms={availableRooms}
+                  rooms={rooms}
                   createRoom={() => this.props.createRoom(token)}
                 />
               )}
@@ -72,7 +72,7 @@ Rooms.propTypes = {
   connect: PropTypes.func.isRequired,
   socketIsOpen: PropTypes.bool.isRequired,
   currentRoomId: PropTypes.number,
-  availableRooms: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+  rooms: PropTypes.object, // eslint-disable-line react/forbid-prop-types
   createRoom: PropTypes.func.isRequired,
   isAuthenticated: PropTypes.bool.isRequired,
   token: PropTypes.string,
@@ -83,7 +83,7 @@ Rooms.propTypes = {
 
 Rooms.defaultProps = {
   userId: null,
-  availableRooms: null,
+  rooms: null,
   currentRoomId: null,
   token: null,
 }
@@ -93,7 +93,7 @@ const mapStoreToProps = store => ({
   token: store.users.user.token,
   peerConnections: store.dataChannel.peerConnections,
   socketIsOpen: store.socketService.isOpen,
-  availableRooms: store.rooms.availableRooms,
+  rooms: store.rooms.rooms,
   username: store.users.user.username,
   userId: store.users.user.userId,
   currentRoomId: store.rooms.currentRoomId,

@@ -50,8 +50,8 @@ export function exitRoom(roomId, userId, token) {
   return (dispatch) => {
     dispatch(roomRequest())
     ApiService.exitRoom(roomId, userId, token)
-      .then(room => (
-        dispatch({ type: EXIT_ROOM_SUCCESS, room })
+      .then(() => (
+        dispatch({ type: EXIT_ROOM_SUCCESS })
       ))
       .catch(error => dispatch(roomRequestError(error)))
   }

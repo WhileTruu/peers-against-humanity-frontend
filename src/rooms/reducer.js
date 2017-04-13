@@ -1,3 +1,4 @@
+// import DataChannelService from '../services/webRTCDataCHannel'
 import {
   UPDATE_ROOM,
   UPDATE_ROOMS,
@@ -11,24 +12,24 @@ import {
 const initialState = {
   isFetching: false,
   currentRoomId: null,
-  availableRooms: null,
+  rooms: null,
   errorStatusCode: null,
 }
 
 function updateRoom(state, room) {
-  if (state.availableRooms) {
-    const { [`${room.id}`]: deletedRoom, ...availableRooms } = state.availableRooms
-    if (room.finished) return { ...state, availableRooms }
+  if (state.rooms) {
+    const { [`${room.id}`]: deletedRoom, ...rooms } = state.rooms
+    if (room.finished) return { ...state, rooms }
     return {
       ...state,
-      availableRooms: { [`${room.id}`]: room, ...availableRooms },
+      rooms: { [`${room.id}`]: room, ...rooms },
       errorStatusCode: null,
       isFetching: false,
     }
   }
   return {
     ...state,
-    availableRooms: { [`${room.id}`]: room, ...state.availableRooms },
+    rooms: { [`${room.id}`]: room, ...state.rooms },
     errorStatusCode: null,
     isFetching: false,
   }
@@ -48,7 +49,7 @@ export default function socketService(state = initialState, result) {
     case UPDATE_ROOMS: {
       return {
         ...state,
-        availableRooms: result.availableRooms,
+        rooms: result.rooms,
         errorStatusCode: null,
         isFetching: false,
       }
@@ -68,8 +69,7 @@ export default function socketService(state = initialState, result) {
       }
     }
     case EXIT_ROOM_SUCCESS: {
-      const newState = updateRoom(state, result.room)
-      return { ...newState, currentRoomId: null, errorStatusCode: null, isFetching: false }
+      return { ...state, currentRoomId: null, errorStatusCode: null, isFetching: false }
     }
     case ROOM_REQUEST_FAILURE: {
       return { ...state, errorStatusCode: result.error.response.status, isFetching: false }

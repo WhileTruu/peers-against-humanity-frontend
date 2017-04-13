@@ -1,8 +1,6 @@
 import PeerConnection from './peerConnection'
 import WebSocketService from '../webSocket'
 import {
-  PEER_CONNECTION_ANSWER,
-  PEER_CONNECTION_OFFER,
   addPeer,
   removePeer,
   onDataChannelMessage,
@@ -37,7 +35,7 @@ class DataChannelService {
     })
     peer.createOffer(localSessionDescription => (
       WebSocketService.send({
-        type: PEER_CONNECTION_OFFER,
+        type: 'PEER_CONNECTION_OFFER',
         peerId,
         sessionDescription: localSessionDescription,
       })
@@ -58,7 +56,7 @@ class DataChannelService {
     peer.setRemoteDescription(new RTCSessionDescription(sessionDescription))
     peer.createAnswer(localDescription => (
       WebSocketService.send({
-        type: PEER_CONNECTION_ANSWER,
+        type: 'PEER_CONNECTION_ANSWER',
         peerId,
         sessionDescription: localDescription,
       })

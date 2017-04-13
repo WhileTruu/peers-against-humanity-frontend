@@ -40,14 +40,12 @@ export default function dataChannel(state = initialState, result) {
     case BROADCAST_TO_DATA_CHANNEL: {
       if (state.peerConnections) {
         Object.keys(state.peerConnections).forEach((key) => {
-          console.log(key, state.peerConnections[key])
           state.peerConnections[key].send(result.message)
         })
       }
       return { ...state }
     }
     case HAS_DATA_CHANNEL: {
-      console.log(state.peerConnections)
       return {
         peerConnections: {
           ...state.peerConnections,

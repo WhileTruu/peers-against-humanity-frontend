@@ -2,7 +2,6 @@ import React, { Component, PropTypes } from 'react'
 import { withRouter } from 'react-router-dom'
 import { connect } from 'react-redux'
 
-import DataChannelService from '../../services/webRTCDataChannel'
 import { actions } from '../'
 import MemberList from './memberList'
 import Chat from '../../chat'
@@ -11,7 +10,6 @@ class Room extends Component {
   constructor(props) {
     super(props)
     this.exitRoom = this.exitRoom.bind(this)
-    this.makePeerConnections = this.makePeerConnections.bind(this)
   }
 
   componentDidMount() {
@@ -27,19 +25,8 @@ class Room extends Component {
     this.props.exitRoom(currentRoomId, userId, token)
   }
 
-  makePeerConnections() {
-    const { currentRoomId, availableRooms } = this.props
-    Object.keys(availableRooms[currentRoomId].members)
-      .filter(peerId => availableRooms[currentRoomId].members[peerId].active)
-      .forEach((peerId) => {
-        if (parseInt(peerId, 10) !== this.props.userId) {
-          DataChannelService.requestNewPeerConnection(peerId)
-        }
-      })
-  }
-
   render() {
-    const { availableRooms, currentRoomId, socketIsOpen, peerConnections } = this.props
+    const { rooms, currentRoomId, socketIsOpen, peerConnections } = this.props
     return (
       <div>
         <div className="row">
@@ -63,11 +50,11 @@ class Room extends Component {
             >
               SOCKET IS {socketIsOpen ? 'OPEN' : 'CLOSED'}
             </h3>
-            {availableRooms && currentRoomId && !!availableRooms[currentRoomId] ?
+            {rooms && currentRoomId && !!rooms[currentRoomId] ?
               (
                 <MemberList
                   userId={this.props.userId}
-                  members={availableRooms[currentRoomId].members}
+                  members={rooms[currentRoomId].members}
                   peerConnections={peerConnections}
                 />
               ) : ''
@@ -94,7 +81,7 @@ Room.propTypes = {
   currentRoomId: PropTypes.number,
   joinRoom: PropTypes.func.isRequired,
   /* eslint-disable */
-  availableRooms: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+  rooms: PropTypes.object, // eslint-disable-line react/forbid-prop-types
   peerConnections: PropTypes.object, // eslint-disable-line react/forbid-prop-types
   /* eslint-enable */
   socketIsOpen: PropTypes.bool.isRequired,
@@ -110,7 +97,7 @@ Room.propTypes = {
 Room.defaultProps = {
   peerConnections: null,
   currentRoomId: null,
-  availableRooms: null,
+  rooms: null,
   userId: null,
   token: null,
 }
@@ -118,7 +105,7 @@ Room.defaultProps = {
 const mapStoreToProps = store => ({
   peerConnections: store.dataChannel.peerConnections,
   currentRoomId: store.rooms.currentRoomId,
-  availableRooms: store.rooms.availableRooms,
+  rooms: store.rooms.rooms,
   socketIsOpen: store.socketService.isOpen,
   userId: store.users.user.userId,
   token: store.users.user.token,

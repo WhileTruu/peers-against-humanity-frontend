@@ -28,7 +28,7 @@ export function connect(url, token) {
       const message = JSON.parse(event.data)
       switch (message.type) {
         case 'UPDATE_ROOMS': {
-          dispatch(roomsActions.updateRooms(message.availableRooms))
+          dispatch(roomsActions.updateRooms(message.rooms))
           break
         }
         case 'UPDATE_ROOM': {

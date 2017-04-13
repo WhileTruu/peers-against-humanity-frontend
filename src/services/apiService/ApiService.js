@@ -49,5 +49,5 @@ export function exitRoom(roomId, userId, token) {
   return fetch(`/api/v1/rooms/${roomId}/members/${userId}`, {
     method: 'DELETE',
     headers: { ...headers, Authorization: `Bearer ${token}` },
-  }).then(checkStatus).then(response => response.json())
+  }).then(checkStatus)
 }
