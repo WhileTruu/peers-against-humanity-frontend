@@ -3,6 +3,7 @@ import {
   addRemoteDescriptionToPeer,
 } from '../webRTCDataChannel/actions'
 import { actions as roomsActions } from '../../rooms'
+import { actions as roomActions } from '../../rooms/room'
 import DataChannelService from '../webRTCDataChannel'
 import WebSocketService from './WebSocketService'
 
@@ -26,12 +27,17 @@ export function connect(url, token) {
     WebSocketService.webSocket.onclose = () => dispatch(isClosed())
     WebSocketService.webSocket.onmessage = (event) => {
       const message = JSON.parse(event.data)
+      console.log(message)
       switch (message.type) {
-        case 'UPDATE_ROOMS': {
+        case 'UPDATE_ROOM_MEMBERS': {
+          dispatch(roomActions.updateMembers(message.members))
+          break
+        }
+        case 'UPDATE_LIST_ROOMS': {
           dispatch(roomsActions.updateRooms(message.rooms))
           break
         }
-        case 'UPDATE_ROOM': {
+        case 'UPDATE_LIST_ROOM': {
           dispatch(roomsActions.updateRoom(message.room))
           break
         }

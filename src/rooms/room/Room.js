@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react'
 import { withRouter } from 'react-router-dom'
 import { connect } from 'react-redux'
 
-import { actions } from '../'
+import { actions } from '.'
 import MemberList from './memberList'
 import Chat from '../../chat'
 
@@ -13,26 +13,26 @@ class Room extends Component {
   }
 
   componentDidMount() {
-    const { currentRoomId, match, userId, token } = this.props
-    if (!currentRoomId) {
+    const { room, match, userId, token } = this.props
+    if (!room.id) {
       this.props.joinRoom(match.params.roomId, userId, token)
     }
   }
 
   exitRoom() {
-    const { currentRoomId, userId, token } = this.props
+    const { room, userId, token } = this.props
     this.props.history.replace('/rooms')
-    this.props.exitRoom(currentRoomId, userId, token)
+    this.props.exitRoom(room.id, userId, token)
   }
 
   render() {
-    const { rooms, currentRoomId, socketIsOpen, peerConnections } = this.props
+    const { room, members, socketIsOpen, peerConnections } = this.props
     return (
       <div>
         <div className="row">
           <div className="col-12">
             <div className="form-inline justify-content-between">
-              <h1 className="panel-heading">Room {currentRoomId}</h1>
+              <h1 className="panel-heading">Room {room.id}</h1>
               <button
                 type="button"
                 className="btn btn-danger"
@@ -50,21 +50,15 @@ class Room extends Component {
             >
               SOCKET IS {socketIsOpen ? 'OPEN' : 'CLOSED'}
             </h3>
-            {rooms && currentRoomId && !!rooms[currentRoomId] ?
+            {room.id && members ?
               (
                 <MemberList
                   userId={this.props.userId}
-                  members={rooms[currentRoomId].members}
+                  members={members}
                   peerConnections={peerConnections}
                 />
               ) : ''
             }
-            <button
-              className="form-control"
-              onClick={this.makePeerConnections}
-            >
-              connect
-            </button>
             <Chat />
           </div>
         </div>
@@ -78,10 +72,8 @@ Room.propTypes = {
     url: PropTypes.string.isRequired,
     params: PropTypes.shape({ roomId: PropTypes.string.isRequired }).isRequired,
   }).isRequired,
-  currentRoomId: PropTypes.number,
   joinRoom: PropTypes.func.isRequired,
   /* eslint-disable */
-  rooms: PropTypes.object, // eslint-disable-line react/forbid-prop-types
   peerConnections: PropTypes.object, // eslint-disable-line react/forbid-prop-types
   /* eslint-enable */
   socketIsOpen: PropTypes.bool.isRequired,
@@ -92,29 +84,41 @@ Room.propTypes = {
   }).isRequired,
   userId: PropTypes.number,
   token: PropTypes.string,
+  room: PropTypes.shape({
+    id: PropTypes.number,
+    creatorId: PropTypes.number,
+    ownerId: PropTypes.number,
+    started: PropTypes.bool,
+    finished: PropTypes.bool,
+    createdAt: PropTypes.string,
+    ownerUsername: PropTypes.string,
+  }).isRequired,
+  members: PropTypes.shape({
+    id: PropTypes.number,
+    username: PropTypes.string,
+    active: PropTypes.bool,
+  }),
 }
 
 Room.defaultProps = {
   peerConnections: null,
-  currentRoomId: null,
-  rooms: null,
   userId: null,
   token: null,
+  members: null,
 }
 
 const mapStoreToProps = store => ({
   peerConnections: store.dataChannel.peerConnections,
-  currentRoomId: store.rooms.currentRoomId,
-  rooms: store.rooms.rooms,
   socketIsOpen: store.socketService.isOpen,
   userId: store.users.user.userId,
   token: store.users.user.token,
+  room: store.room.room,
+  members: store.room.members,
 })
 
 const mapDispatchToProps = dispatch => ({
   joinRoom: (roomId, userId, token) => dispatch(actions.joinRoom(roomId, userId, token)),
   exitRoom: (roomId, userId, token) => dispatch(actions.exitRoom(roomId, userId, token)),
-  roomError: () => dispatch(actions.roomError()),
 })
 
 export default connect(mapStoreToProps, mapDispatchToProps)(withRouter(Room))

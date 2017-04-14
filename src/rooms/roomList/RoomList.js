@@ -43,12 +43,10 @@ const RoomList = ({ createRoom, socketIsOpen, currentRoomId, rooms, history, mat
                   </div>
                 </div>
                 <p className="card-text">
-                  Room created by {room.ownerUsername}
+                  Room owned by {room.ownerUsername}
                 </p>
                 <p className="card-text">
-                  People in room: {
-                    Object.values(room.members).filter(member => member.active).length
-                  }
+                  People in room: // TODO
                 </p>
               </div>
             </div>

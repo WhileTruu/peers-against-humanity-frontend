@@ -3,12 +3,11 @@ import { connect } from 'react-redux'
 import { Route, Redirect, withRouter } from 'react-router-dom'
 
 import RoomList from './roomList'
-import Room from './room'
 
 import { Authentication } from '../users'
 
 import { actions as socketActions } from '../services/webSocket'
-import { actions as roomsActions } from '.'
+import Room, { actions as roomActions } from './room'
 
 const loginModal = ({ url }) => (
   <div className="row">
@@ -27,6 +26,12 @@ loginModal.propTypes = {
 }
 
 class Rooms extends Component {
+  componentDidMount() {
+    if (this.props.isAuthenticated) {
+      this.props.connect('localhost:8080/api/v1/rooms', this.props.token)
+    }
+  }
+
   componentWillReceiveProps(nextProps) {
     if (!this.props.isAuthenticated && nextProps.isAuthenticated) {
       this.props.connect('localhost:8080/api/v1/rooms', nextProps.token)
@@ -101,7 +106,7 @@ const mapStoreToProps = store => ({
 
 
 const mapDispatchToProps = dispatch => ({
-  createRoom: token => dispatch(roomsActions.createRoom(token)),
+  createRoom: token => dispatch(roomActions.createRoom(token)),
   connect: (url, token) => dispatch(socketActions.connect(url, token)),
 })
 
