@@ -26,7 +26,7 @@ class Room extends Component {
   }
 
   render() {
-    const { room, members, socketIsOpen, peerConnections } = this.props
+    const { room, members, socketIsOpen, peers } = this.props
     return (
       <div>
         <div className="row">
@@ -55,7 +55,7 @@ class Room extends Component {
                 <MemberList
                   userId={this.props.userId}
                   members={members}
-                  peerConnections={peerConnections}
+                  peers={peers}
                 />
               ) : ''
             }
@@ -73,9 +73,13 @@ Room.propTypes = {
     params: PropTypes.shape({ roomId: PropTypes.string.isRequired }).isRequired,
   }).isRequired,
   joinRoom: PropTypes.func.isRequired,
-  /* eslint-disable */
-  peerConnections: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-  /* eslint-enable */
+  peers: PropTypes.shape({
+    [PropTypes.string]: PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      connected: PropTypes.bool.isRequired,
+      negotiating: PropTypes.bool.isRequired,
+    }),
+  }),
   socketIsOpen: PropTypes.bool.isRequired,
   exitRoom: PropTypes.func.isRequired,
   history: PropTypes.shape({
@@ -101,14 +105,14 @@ Room.propTypes = {
 }
 
 Room.defaultProps = {
-  peerConnections: null,
+  peers: null,
   userId: null,
   token: null,
   members: null,
 }
 
 const mapStoreToProps = store => ({
-  peerConnections: store.dataChannel.peerConnections,
+  peers: store.dataChannel.peers,
   socketIsOpen: store.socketService.isOpen,
   userId: store.users.user.userId,
   token: store.users.user.token,

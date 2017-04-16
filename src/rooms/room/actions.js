@@ -25,7 +25,7 @@ export function joinRoom(roomId, userId, token) {
         ApiService.getRoomMembers(room.id)
           .then((members) => {
             Object.keys(members)
-              .forEach(memberId => DataChannelService.requestNewPeerConnection(memberId))
+              .forEach(key => DataChannelService.requestNewPeerConnection(key))
           })
           .catch(error => console.log(error))
       })
@@ -57,6 +57,10 @@ export function createRoom(token) {
 
 export function updateMembers(members) {
   return (dispatch) => {
+    Object.keys(members)
+      .forEach((key) => {
+        if (!members[key].active) DataChannelService.removePeer(key)
+      })
     dispatch({ type: UPDATE_ROOM_MEMBERS, members })
   }
 }

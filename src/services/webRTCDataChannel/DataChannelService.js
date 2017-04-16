@@ -29,9 +29,19 @@ class DataChannelService {
   }
 
   removePeer(peerId) {
+    if (this.getState().users.user.userId === parseInt(peerId, 10)) return
     this.dispatch(removePeer(peerId))
     const { [`${peerId}`]: deletedPeer, ...peerConnections } = this.peerConnections
+    deletedPeer.close()
     this.peerConnections = peerConnections
+  }
+
+  // TODO: As of yet this is used nowhere. See if is useful on exit room.
+  removeAllPeers() {
+    Object.keys(this.peerConnections).forEach(key => (
+      this.peerConnections[key].close()
+    ))
+    this.peerConnections = null
   }
 
   requestNewPeerConnection(peerId) {
