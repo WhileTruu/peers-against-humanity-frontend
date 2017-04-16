@@ -1,4 +1,5 @@
 import ApiService from '../../services/apiService'
+import DataChannelService from '../../services/webRTCDataChannel'
 
 export const ROOM_REQUEST = 'ROOM_REQUEST'
 export const JOIN_ROOM_SUCCESS = 'JOIN_ROOM_SUCCESS'
@@ -19,9 +20,15 @@ export function joinRoom(roomId, userId, token) {
   return (dispatch) => {
     dispatch(roomRequest())
     ApiService.joinRoom(roomId, userId, token)
-      .then(room => (
+      .then((room) => {
         dispatch({ type: JOIN_ROOM_SUCCESS, room })
-      ))
+        ApiService.getRoomMembers(room.id)
+          .then((members) => {
+            Object.keys(members)
+              .forEach(memberId => DataChannelService.requestNewPeerConnection(memberId))
+          })
+          .catch(error => console.log(error))
+      })
       .catch(error => dispatch(roomRequestError(error)))
   }
 }
@@ -49,5 +56,7 @@ export function createRoom(token) {
 }
 
 export function updateMembers(members) {
-  return dispatch => dispatch({ type: UPDATE_ROOM_MEMBERS, members })
+  return (dispatch) => {
+    dispatch({ type: UPDATE_ROOM_MEMBERS, members })
+  }
 }

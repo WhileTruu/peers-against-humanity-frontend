@@ -1,7 +1,3 @@
-import {
-  addICECandidateToPeer,
-  addRemoteDescriptionToPeer,
-} from '../webRTCDataChannel/actions'
 import { actions as roomsActions } from '../../rooms'
 import { actions as roomActions } from '../../rooms/room'
 import DataChannelService from '../webRTCDataChannel'
@@ -48,12 +44,12 @@ export function connect(url, token) {
         }
         case 'PEER_CONNECTION_ANSWER': {
           const { peerId, sessionDescription } = message
-          dispatch(addRemoteDescriptionToPeer({ peerId, sessionDescription }))
+          DataChannelService.addRemoteDescriptionToPeer({ peerId, sessionDescription })
           break
         }
         case 'ICE_CANDIDATE': {
           const { peerId, candidate } = message
-          dispatch(addICECandidateToPeer({ peerId, candidate }))
+          DataChannelService.addICECandidateToPeer({ peerId, candidate })
           break
         }
         default:

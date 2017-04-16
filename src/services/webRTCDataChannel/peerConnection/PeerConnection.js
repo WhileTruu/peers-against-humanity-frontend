@@ -80,6 +80,7 @@ class PeerConnection {
   }
 
   addIceCandidate(candidate) {
+    console.log(candidate)
     this.peerConnection.addIceCandidate(new RTCIceCandidate(candidate))
       .catch((error) => { throw new Error(error) })
   }

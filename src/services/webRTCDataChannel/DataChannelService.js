@@ -3,8 +3,8 @@ import WebSocketService from '../webSocket'
 import {
   addPeer,
   removePeer,
-  onDataChannelMessage,
-  onDataChannel,
+  onMessage,
+  connected,
 } from './actions'
 import {
   peerConnectionConfig,
@@ -13,17 +13,33 @@ import {
 
 class DataChannelService {
   constructor() {
-    this.onMessage = message => this.dispatch(onDataChannelMessage(message))
+    this.peerConnections = null
+    this.onMessage = message => this.dispatch(onMessage(message))
     this.onClose = id => this.dispatch(removePeer(id))
-    this.addPeer = (peerId, peer) => this.dispatch(addPeer(peerId, peer))
-    this.onDataChannel = id => this.dispatch(onDataChannel(id))
+    this.onDataChannel = id => this.dispatch(connected(id))
   }
 
   setOnMessageCallback(callback) {
-    this.onMessageFunction = callback
+    this.onMessage = callback
+  }
+
+  addPeer(peerId, peer) {
+    this.dispatch(addPeer(peerId))
+    this.peerConnections = { ...this.peerConnections, [peerId]: peer }
+  }
+
+  removePeer(peerId) {
+    this.dispatch(removePeer(peerId))
+    const { [`${peerId}`]: deletedPeer, ...peerConnections } = this.peerConnections
+    this.peerConnections = peerConnections
   }
 
   requestNewPeerConnection(peerId) {
+    if (this.getState().users.user.userId === parseInt(peerId, 10)) return
+    if (this.peerConnections && Object.keys(this.peerConnections).includes(peerId.toString())) {
+      return
+    }
+
     const peer = new PeerConnection(peerId, sdpConstraints, peerConnectionConfig)
     peer.onIceCandidate(candidate => (
       WebSocketService.send({ type: 'ICE_CANDIDATE', peerId, candidate })
@@ -44,6 +60,10 @@ class DataChannelService {
   }
 
   onPeerConnectionOffer({ peerId, sessionDescription }) {
+    if (this.peerConnections && Object.keys(this.peerConnections).includes(peerId.toString())) {
+      return
+    }
+
     const peer = new PeerConnection(peerId, sdpConstraints, peerConnectionConfig)
     peer.onIceCandidate(candidate => (
       WebSocketService.send({ type: 'ICE_CANDIDATE', peerId, candidate })
@@ -62,6 +82,22 @@ class DataChannelService {
       })
     ))
     this.addPeer(peerId, peer)
+  }
+
+  addICECandidateToPeer({ peerId, candidate }) {
+    this.peerConnections[peerId].addIceCandidate(candidate)
+  }
+
+  addRemoteDescriptionToPeer({ peerId, sessionDescription }) {
+    this.peerConnections[peerId].setRemoteDescription(sessionDescription)
+  }
+
+  broadcastToDataChannel(message) {
+    if (this.peerConnections) {
+      Object.keys(this.peerConnections).forEach((key) => {
+        this.peerConnections[key].send(message)
+      })
+    }
   }
 }
 

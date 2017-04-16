@@ -51,3 +51,10 @@ export function exitRoom(roomId, userId, token) {
     headers: { ...headers, Authorization: `Bearer ${token}` },
   }).then(checkStatus)
 }
+
+export function getRoomMembers(roomId, token) {
+  return fetch(`/api/v1/rooms/${roomId}/members`, {
+    method: 'GET',
+    headers: { ...headers, Authorization: `Bearer ${token}` },
+  }).then(checkStatus).then(response => response.json())
+}

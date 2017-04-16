@@ -14,6 +14,7 @@ const finalCreateStore = compose(applyMiddleware(thunk), devTools)(createStore)
 const store = finalCreateStore(rootReducer)
 
 DataChannelService.dispatch = store.dispatch
+DataChannelService.getState = store.getState
 
 ReactDOM.render(
   <Provider store={store}>

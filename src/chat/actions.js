@@ -1,11 +1,11 @@
-import { actions } from '../services/webRTCDataChannel'
+import DataChannelService from '../services/webRTCDataChannel'
 
 export const CHAT_MESSAGE = 'CHAT_MESSAGE'
 
 export function sendMessage(data) {
   return (dispatch) => {
     const action = { type: CHAT_MESSAGE, data }
-    dispatch(actions.broadcastToDataChannel(action))
+    DataChannelService.broadcastToDataChannel(action)
     dispatch(action)
   }
 }
