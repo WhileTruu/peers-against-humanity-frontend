@@ -5,33 +5,21 @@ export const LOGIN_SUCCESS = 'LOGIN_SUCCESS'
 export const LOGIN_FAILURE = 'LOGIN_FAILURE'
 export const LOG_OUT = 'LOG_OUT'
 
-export function receiveLogin(user) {
-  return {
-    type: LOGIN_SUCCESS,
-    token: user.token,
-    username: user.username,
-    id: user.id,
-  }
+export function receiveLogin(result) {
+  return { type: LOGIN_SUCCESS, ...result }
 }
 
-export function loginRequest(username, password) {
-  return {
-    type: LOGIN_REQUEST,
-    username,
-    password,
-  }
+export function loginRequest() {
+  return { type: LOGIN_REQUEST }
 }
 
 export function loginError(error) {
-  return {
-    type: LOGIN_FAILURE,
-    error,
-  }
+  return { type: LOGIN_FAILURE, error }
 }
 
 export function requestLogin({ username, password }) {
   return (dispatch) => {
-    dispatch(loginRequest(username, password))
+    dispatch(loginRequest())
     ApiService.login({ username, password })
       .then(response => dispatch(receiveLogin(response)))
       .catch(error => dispatch(loginError(error)))
@@ -46,7 +34,7 @@ export function logOut() {
 
 export function register({ username, password }) {
   return (dispatch) => {
-    dispatch(loginRequest(username, password))
+    dispatch(loginRequest())
     ApiService.register({ username, password })
       .then(response => dispatch(receiveLogin(response)))
       .catch(error => dispatch(loginError(error)))

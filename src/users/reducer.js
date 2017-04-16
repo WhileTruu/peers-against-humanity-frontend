@@ -4,13 +4,17 @@ const initialState = {
   isFetching: false,
   isAuthenticated: false,
   errorStatusCode: null,
-  user: {
-    token: null,
-    userId: null,
-    username: null,
-    password: null,
-  },
+  token: null,
+  user: null,
 }
+
+// const initialUserState = {
+//   id: null,
+//   username: null,
+//   nickname: null,
+//   registered: true,
+// }
+
 
 export default function authentication(state = initialState, result) {
   switch (result.type) {
@@ -21,35 +25,26 @@ export default function authentication(state = initialState, result) {
       return {
         ...initialState,
         isFetching: true,
-        isAuthenticated: false,
-        errorStatusCode: null,
-        user: {
-          ...initialState.user,
-          username: result.username,
-          password: result.password,
-        },
+        user: null,
       }
     }
     case LOGIN_SUCCESS: {
+      const { id, username, registered, nickname } = result.user
       return {
-        ...state,
         isFetching: false,
         isAuthenticated: true,
         errorStatusCode: null,
-        user: {
-          ...state.user,
-          token: result.token,
-          userId: result.id,
-          username: result.username,
-        },
+        token: result.token,
+        user: { id, username, registered, nickname },
       }
     }
     case LOGIN_FAILURE: {
       return {
-        ...state,
         isFetching: false,
         isAuthenticated: false,
         errorStatusCode: result.error.response.status,
+        token: null,
+        user: null,
       }
     }
     default:

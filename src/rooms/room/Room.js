@@ -94,8 +94,8 @@ Room.defaultProps = {
 const mapStoreToProps = store => ({
   peers: store.dataChannel.peers,
   socketIsOpen: store.socketService.isOpen,
-  userId: store.users.user.userId,
-  token: store.users.user.token,
+  userId: store.users.user.id,
+  token: store.users.token,
   room: store.room.room,
   members: store.room.members,
 })

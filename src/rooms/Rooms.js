@@ -80,14 +80,13 @@ Rooms.propTypes = {
   rooms: PropTypes.object, // eslint-disable-line react/forbid-prop-types
   createRoom: PropTypes.func.isRequired,
   isAuthenticated: PropTypes.bool.isRequired,
-  token: PropTypes.string,
   match: PropTypes.shape({
     url: PropTypes.string.isRequired,
   }).isRequired,
+  token: PropTypes.string,
 }
 
 Rooms.defaultProps = {
-  userId: null,
   rooms: null,
   currentRoomId: null,
   token: null,
@@ -95,13 +94,11 @@ Rooms.defaultProps = {
 
 const mapStoreToProps = store => ({
   isAuthenticated: store.users.isAuthenticated,
-  token: store.users.user.token,
   peerConnections: store.dataChannel.peerConnections,
   socketIsOpen: store.socketService.isOpen,
   rooms: store.rooms.rooms,
-  username: store.users.user.username,
-  userId: store.users.user.userId,
   currentRoomId: store.rooms.currentRoomId,
+  token: store.users.token,
 })
 
 

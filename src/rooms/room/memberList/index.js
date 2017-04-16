@@ -5,7 +5,7 @@ const memberListItem = ({ member, peers, userId }) => {
   const peer = peers ? peers[member.id] : null
   return (
     <li className="list-group-item justify-content-between" key={member.id}>
-      {member.username}
+      {member.nickname || member.username}
       {member.id !== userId ?
         (<span className={`badge badge-${peer && peer.connected ? 'success' : 'info'} badge-pill`}>
           {peer && peer.connected ? 'connected' : 'negotiating'}

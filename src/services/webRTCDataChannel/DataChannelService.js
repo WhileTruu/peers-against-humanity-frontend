@@ -29,7 +29,9 @@ class DataChannelService {
   }
 
   removePeer(peerId) {
-    if (this.getState().users.user.userId === parseInt(peerId, 10)) return
+    if (this.getState().users.user.id === parseInt(peerId, 10) || !this.peerConnections[peerId]) {
+      return
+    }
     this.dispatch(removePeer(peerId))
     const { [`${peerId}`]: deletedPeer, ...peerConnections } = this.peerConnections
     deletedPeer.close()
@@ -45,7 +47,7 @@ class DataChannelService {
   }
 
   requestNewPeerConnection(peerId) {
-    if (this.getState().users.user.userId === parseInt(peerId, 10)) return
+    if (this.getState().users.user.id === parseInt(peerId, 10)) return
     if (this.peerConnections && Object.keys(this.peerConnections).includes(peerId.toString())) {
       return
     }
