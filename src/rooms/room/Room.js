@@ -1,4 +1,4 @@
-import React, { Component, PropTypes } from 'react'
+import React, { Component, PropTypes as Types } from 'react'
 import { withRouter } from 'react-router-dom'
 import { connect } from 'react-redux'
 
@@ -68,40 +68,20 @@ class Room extends Component {
 }
 
 Room.propTypes = {
-  match: PropTypes.shape({
-    url: PropTypes.string.isRequired,
-    params: PropTypes.shape({ roomId: PropTypes.string.isRequired }).isRequired,
+  match: Types.shape({
+    params: Types.shape({ roomId: Types.string.isRequired }).isRequired,
   }).isRequired,
-  joinRoom: PropTypes.func.isRequired,
-  peers: PropTypes.shape({
-    [PropTypes.string]: PropTypes.shape({
-      id: PropTypes.number.isRequired,
-      connected: PropTypes.bool.isRequired,
-      negotiating: PropTypes.bool.isRequired,
-    }),
+  history: Types.shape({ replace: Types.func.isRequired }).isRequired,
+  peers: Types.shape({
+    [Types.string]: Types.shape({ id: Types.number.isRequired, connected: Types.bool.isRequired }),
   }),
-  socketIsOpen: PropTypes.bool.isRequired,
-  exitRoom: PropTypes.func.isRequired,
-  history: PropTypes.shape({
-    push: PropTypes.func.isRequired,
-    replace: PropTypes.func.isRequired,
-  }).isRequired,
-  userId: PropTypes.number,
-  token: PropTypes.string,
-  room: PropTypes.shape({
-    id: PropTypes.number,
-    creatorId: PropTypes.number,
-    ownerId: PropTypes.number,
-    started: PropTypes.bool,
-    finished: PropTypes.bool,
-    createdAt: PropTypes.string,
-    ownerUsername: PropTypes.string,
-  }).isRequired,
-  members: PropTypes.shape({
-    id: PropTypes.number,
-    username: PropTypes.string,
-    active: PropTypes.bool,
-  }),
+  socketIsOpen: Types.bool.isRequired,
+  userId: Types.number,
+  token: Types.string,
+  room: Types.shape({ id: Types.number }).isRequired,
+  members: Types.shape({ id: Types.number, username: Types.string, active: Types.bool }),
+  joinRoom: Types.func.isRequired,
+  exitRoom: Types.func.isRequired,
 }
 
 Room.defaultProps = {
