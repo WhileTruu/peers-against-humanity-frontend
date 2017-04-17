@@ -4,26 +4,9 @@ import { Route, Redirect, withRouter } from 'react-router-dom'
 
 import RoomList from './roomList'
 
-import { Authentication } from '../users'
-
 import { actions as socketActions } from '../services/webSocket'
 import Room, { actions as roomActions } from './room'
-
-const loginModal = ({ url }) => (
-  <div className="row">
-    <div className="col-12" style={{ position: 'absolute', zIndex: 2 }}>
-      <div className="card" style={{ backgroundColor: 'rgba(255, 255, 255, 0.9)' }}>
-        <div className="card-block">
-          <Authentication onSuccessRedirectTo={url} />
-        </div>
-      </div>
-    </div>
-  </div>
-)
-
-loginModal.propTypes = {
-  url: PropTypes.string.isRequired,
-}
+import AuthOptions from '../users/authOptions'
 
 class Rooms extends Component {
   componentDidMount() {
@@ -51,7 +34,7 @@ class Rooms extends Component {
     return (
       <div>
         {currentRoomId ? <Redirect to={`/rooms/${currentRoomId}`} /> : ''}
-        {!isAuthenticated ? loginModal({ url: match.url }) : ''}
+        {!isAuthenticated ? <AuthOptions url={match.url} /> : ''}
         {isAuthenticated ?
           <div>
             <Route

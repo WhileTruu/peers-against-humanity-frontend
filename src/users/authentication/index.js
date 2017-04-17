@@ -128,5 +128,4 @@ const mapStoreToProps = store => ({
   errorStatusCode: store.users.errorStatusCode,
 })
 
-
 export default connect(mapStoreToProps, mapDispatchToProps)(Authentication)

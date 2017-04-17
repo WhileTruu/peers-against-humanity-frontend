@@ -54,24 +54,22 @@ class FrontPage extends Component {
             </div>
           </div>
         </div>
-        {authenticated ?
-          <div className="row">
-            <div className="col-12">
-              <div className="form-group">
-                <label htmlFor="roomsButton" className="form-check-label">
-                  Join a game!
-                </label>
-                <button
-                  id="roomsButton"
-                  className="form-control btn btn-success"
-                  onClick={() => history.push('/rooms')}
-                >
-                  Available Rooms
-                </button>
-              </div>
+        <div className="row">
+          <div className="col-12">
+            <div className="form-group">
+              <label htmlFor="roomsButton" className="form-check-label">
+                Join a game!
+              </label>
+              <button
+                id="roomsButton"
+                className="form-control btn btn-success"
+                onClick={() => history.push('/rooms')}
+              >
+                Available Rooms
+              </button>
             </div>
           </div>
-          : '' }
+        </div>
       </div>
     )
   }

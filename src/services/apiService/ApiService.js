@@ -29,7 +29,6 @@ export function login({ username, password }) {
   }).then(checkStatus).then(response => response.json())
 }
 
-
 export function createRoom(token) {
   return fetch('/api/v1/rooms', {
     method: 'POST',
@@ -56,5 +55,13 @@ export function getRoomMembers(roomId, token) {
   return fetch(`/api/v1/rooms/${roomId}/members`, {
     method: 'GET',
     headers: { ...headers, Authorization: `Bearer ${token}` },
+  }).then(checkStatus).then(response => response.json())
+}
+
+export function createTemporaryAccount(nickname) {
+  return fetch('/api/v1/users/temporary', {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({ nickname }),
   }).then(checkStatus).then(response => response.json())
 }

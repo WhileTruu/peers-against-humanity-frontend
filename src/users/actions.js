@@ -40,3 +40,12 @@ export function register({ username, password }) {
       .catch(error => dispatch(loginError(error)))
   }
 }
+
+export function createTemporaryAccount(nickname) {
+  return (dispatch) => {
+    dispatch(loginRequest())
+    ApiService.createTemporaryAccount(nickname)
+      .then(response => dispatch(receiveLogin(response)))
+      .catch(error => dispatch(loginError(error)))
+  }
+}
