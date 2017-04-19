@@ -48,7 +48,8 @@ class PeerConnection {
   }
 
   setRemoteDescription(sessionDescriptionProtocol) {
-    return this.peerConnection.setRemoteDescription(sessionDescriptionProtocol)
+    return this.peerConnection
+      .setRemoteDescription(new RTCSessionDescription(sessionDescriptionProtocol))
   }
 
   send(message) {
@@ -80,7 +81,6 @@ class PeerConnection {
   }
 
   addIceCandidate(candidate) {
-    console.log(candidate)
     this.peerConnection.addIceCandidate(new RTCIceCandidate(candidate))
       .catch((error) => { throw new Error(error) })
   }

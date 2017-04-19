@@ -27,7 +27,7 @@ export function joinRoom(roomId, userId, token) {
             Object.keys(members)
               .forEach(key => DataChannelService.requestNewPeerConnection(key))
           })
-          .catch(error => console.log(error))
+          .catch(error => dispatch(roomRequestError(error)))
       })
       .catch(error => dispatch(roomRequestError(error)))
   }

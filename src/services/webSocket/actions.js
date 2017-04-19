@@ -23,7 +23,6 @@ export function connect(url, token) {
     WebSocketService.webSocket.onclose = () => dispatch(isClosed())
     WebSocketService.webSocket.onmessage = (event) => {
       const message = JSON.parse(event.data)
-      console.log(message)
       switch (message.type) {
         case 'UPDATE_ROOM_MEMBERS': {
           dispatch(roomActions.updateMembers(message.members))
