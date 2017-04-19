@@ -12,7 +12,7 @@ class WebSocketService {
 
   open(token) {
     if (this.webSocket) this.webSocket.close()
-    this.webSocket = new WebSocket(`ws://${window.location.host}/api/v1/rooms`, token)
+    this.webSocket = new WebSocket(`wss://${window.location.host}/api/v1/rooms`, token)
   }
 
   send(data) {
