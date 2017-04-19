@@ -10,9 +10,9 @@ class WebSocketService {
     this.webSocket = null
   }
 
-  open(url, token) {
+  open(token) {
     if (this.webSocket) this.webSocket.close()
-    this.webSocket = new WebSocket(`ws://${url}`, token)
+    this.webSocket = new WebSocket(`ws://${window.location.host}/api/v1/rooms`, token)
   }
 
   send(data) {

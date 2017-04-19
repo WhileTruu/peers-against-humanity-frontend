@@ -15,10 +15,10 @@ export function isClosed() {
   return { type: SOCKET_IS_CLOSED }
 }
 
-export function connect(url, token) {
+export function connect(token) {
   return (dispatch) => {
     dispatch({ type: SOCKET_IS_CONNECTING })
-    WebSocketService.open(url, token)
+    WebSocketService.open(token)
     WebSocketService.webSocket.onopen = () => dispatch(isOpen())
     WebSocketService.webSocket.onclose = () => dispatch(isClosed())
     WebSocketService.webSocket.onmessage = (event) => {

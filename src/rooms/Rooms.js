@@ -11,13 +11,13 @@ import AuthOptions from '../users/authOptions'
 class Rooms extends Component {
   componentDidMount() {
     if (this.props.isAuthenticated) {
-      this.props.connect('localhost:8080/api/v1/rooms', this.props.token)
+      this.props.connect(this.props.token)
     }
   }
 
   componentWillReceiveProps(nextProps) {
     if (!this.props.isAuthenticated && nextProps.isAuthenticated) {
-      this.props.connect('localhost:8080/api/v1/rooms', nextProps.token)
+      this.props.connect(nextProps.token)
     }
   }
 
@@ -87,7 +87,7 @@ const mapStoreToProps = store => ({
 
 const mapDispatchToProps = dispatch => ({
   createRoom: token => dispatch(roomActions.createRoom(token)),
-  connect: (url, token) => dispatch(socketActions.connect(url, token)),
+  connect: token => dispatch(socketActions.connect(token)),
 })
 
 export default connect(mapStoreToProps, mapDispatchToProps)(withRouter(Rooms))
