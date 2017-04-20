@@ -19,11 +19,19 @@ export function connect(token) {
   return (dispatch) => {
     dispatch({ type: SOCKET_IS_CONNECTING })
     WebSocketService.open(token)
-    WebSocketService.webSocket.onopen = () => dispatch(isOpen())
+    WebSocketService.webSocket.onopen = () => WebSocketService.send({ type: 'VERIFY', token })
     WebSocketService.webSocket.onclose = () => dispatch(isClosed())
     WebSocketService.webSocket.onmessage = (event) => {
       const message = JSON.parse(event.data)
       switch (message.type) {
+        case 'VERIFIED': {
+          dispatch(isOpen())
+          break
+        }
+        case 'NOT_VERIFIED': {
+          dispatch(isClosed())
+          break
+        }
         case 'UPDATE_ROOM_MEMBERS': {
           dispatch(roomActions.updateMembers(message.members))
           break
