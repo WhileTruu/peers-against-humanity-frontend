@@ -9,7 +9,7 @@ const Message = ({ message, userId }) => {
       <div className={`px-2 py-1 message message-${side}`}>
         {message.text}
       </div>
-      <small className="text-muted">{message.username}</small>
+      <small className="text-muted">{message.nickname || message.username}</small>
     </div>
   )
 }
@@ -19,6 +19,7 @@ Message.propTypes = {
     text: PropTypes.string,
     timestamp: PropTypes.number,
     username: PropTypes.string,
+    nickname: PropTypes.string,
     userId: PropTypes.number,
   }).isRequired,
   userId: PropTypes.number,

@@ -36,11 +36,19 @@ class MessageComposer extends Component {
           ref={(input) => { this.textInput = input }}
           placeholder="Send a message..."
           onChange={event => this.onMessageChange(event.target.value)}
+          onKeyPress={(event) => { // eslint-disable-line
+            if (event.charCode === 13 && !event.shiftKey) {
+              event.preventDefault()
+              this.props.onSendMessage(this.state.message)
+              this.textInput.value = ''
+              this.onMessageChange('')
+            }
+          }}
         />
         <span className="input-group-btn">
           <button
             className="btn btn-primary message-composer-input-group-btn"
-            type="button"
+            type="submit"
             onClick={() => {
               this.props.onSendMessage(this.state.message)
               this.textInput.value = ''

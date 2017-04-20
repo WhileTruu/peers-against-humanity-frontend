@@ -1,29 +1,17 @@
 class PeerConnection {
-  constructor(id, sessionDescriptionProtocolConstraints, peerConnectionConfig) {
+  constructor(id, sdpConstraints, connectionConfig) {
     this.id = id
-    this.sessionDescriptionProtocolConstraints = sessionDescriptionProtocolConstraints
-    this.connection = {}
-    this.peerConnection = new RTCPeerConnection(peerConnectionConfig, this.connection)
-    this.dataChannel = this.peerConnection.createDataChannel('datachannel', { reliable: false })
-    this.hasDataChannel = false
-
-    this.close = this.close
-    this.createOffer = this.createOffer
-    this.createAnswer = this.createAnswer
-    this.setLocalDescription = this.setLocalDescription
-    this.setRemoteDescription = this.setRemoteDescription
-    this.send = this.send
-    this.onDataChannel = this.onDataChannel
-    this.onIceCandidate = this.onIceCandidate
-    this.addIceCandidate = this.addIceCandidate
+    this.sdpConstraints = sdpConstraints
+    this.connection = new RTCPeerConnection(connectionConfig)
+    this.dataChannel = this.connection.createDataChannel('datachannel', { reliable: false })
   }
 
   close() {
-    this.peerConnection.close()
+    this.connection.close()
   }
 
   createOffer(callback) {
-    this.peerConnection.createOffer(this.sessionDescriptionProtocolConstraints)
+    this.connection.createOffer(this.sdpConstraints)
       .then((sessionDescriptionProtocol) => {
         this.setLocalDescription(sessionDescriptionProtocol)
         callback(sessionDescriptionProtocol)
@@ -32,7 +20,7 @@ class PeerConnection {
   }
 
   createAnswer(callback) {
-    this.peerConnection.createAnswer(this.sessionDescriptionProtocolConstraints)
+    this.connection.createAnswer(this.sdpConstraints)
       .then((sessionDescriptionProtocol) => {
         this.setLocalDescription(sessionDescriptionProtocol)
           .then(() => {
@@ -44,11 +32,11 @@ class PeerConnection {
   }
 
   setLocalDescription(sessionDescriptionProtocol) {
-    return this.peerConnection.setLocalDescription(sessionDescriptionProtocol)
+    return this.connection.setLocalDescription(sessionDescriptionProtocol)
   }
 
   setRemoteDescription(sessionDescriptionProtocol) {
-    return this.peerConnection
+    return this.connection
       .setRemoteDescription(new RTCSessionDescription(sessionDescriptionProtocol))
   }
 
@@ -57,7 +45,7 @@ class PeerConnection {
   }
 
   onDataChannel({ onMessageCallback, onCloseCallback, onDataChannelCallback }) {
-    this.peerConnection.ondatachannel = (event) => {
+    this.connection.ondatachannel = (event) => {
       onDataChannelCallback(this.id)
       // TODO: Find out if there is an airbnb-eslint compliant way to do this
       event.channel.onmessage = (message) => { // eslint-disable-line no-param-reassign
@@ -73,15 +61,15 @@ class PeerConnection {
   }
 
   onIceCandidate(callback) {
-    this.peerConnection.onicecandidate = (event) => {
-      if (this.peerConnection && event && event.candidate) {
+    this.connection.onicecandidate = (event) => {
+      if (this.connection && event && event.candidate) {
         callback(event.candidate)
       }
     }
   }
 
   addIceCandidate(candidate) {
-    this.peerConnection.addIceCandidate(new RTCIceCandidate(candidate))
+    this.connection.addIceCandidate(new RTCIceCandidate(candidate))
       .catch((error) => { throw new Error(error) })
   }
 }

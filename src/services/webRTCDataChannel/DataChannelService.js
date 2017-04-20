@@ -1,11 +1,6 @@
 import PeerConnection from './peerConnection'
 import WebSocketService from '../webSocket'
-import {
-  addPeer,
-  removePeer,
-  onMessage,
-  connected,
-} from './actions'
+import { addPeer, removePeer, onMessage, connected } from './actions'
 import {
   peerConnectionConfig,
   sessionDescriptionProtocolConstraints as sdpConstraints,
@@ -28,7 +23,7 @@ class DataChannelService {
     this.peerConnections = { ...this.peerConnections, [peerId]: peer }
   }
 
-  removePeer(peerId) {
+  closePeerConnection(peerId) {
     if (this.getState().users.user.id === parseInt(peerId, 10) || !this.peerConnections[peerId]) {
       return
     }
@@ -38,17 +33,19 @@ class DataChannelService {
     this.peerConnections = peerConnections
   }
 
-  // TODO: As of yet this is used nowhere. See if is useful on exit room.
-  removeAllPeers() {
+  closeAllPeerConnections() {
+    if (!this.peerConnections) return
     Object.keys(this.peerConnections).forEach(key => (
       this.peerConnections[key].close()
     ))
-    this.peerConnections = null
   }
 
   requestNewPeerConnection(peerId) {
     if (this.getState().users.user.id === parseInt(peerId, 10)) return
-    if (this.peerConnections && Object.keys(this.peerConnections).includes(peerId.toString())) {
+    if (this.peerConnections &&
+      Object.keys(this.peerConnections).includes(peerId.toString()) &&
+      this.peerConnections[peerId].dataChannel.readyState !== 'closed'
+    ) {
       return
     }
 

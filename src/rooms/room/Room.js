@@ -96,7 +96,7 @@ const mapStoreToProps = store => ({
   socketIsOpen: store.socketService.isOpen,
   userId: store.users.user.id,
   token: store.users.token,
-  room: store.room.room,
+  room: store.room,
   members: store.room.members,
 })
 

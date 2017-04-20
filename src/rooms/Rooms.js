@@ -30,7 +30,6 @@ class Rooms extends Component {
       token,
       match,
     } = this.props
-
     return (
       <div>
         {currentRoomId ? <Redirect to={`/rooms/${currentRoomId}`} /> : ''}
@@ -80,7 +79,7 @@ const mapStoreToProps = store => ({
   peerConnections: store.dataChannel.peerConnections,
   socketIsOpen: store.socketService.isOpen,
   rooms: store.rooms.rooms,
-  currentRoomId: store.rooms.currentRoomId,
+  currentRoomId: store.room.id,
   token: store.users.token,
 })
 

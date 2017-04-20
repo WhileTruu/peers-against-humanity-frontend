@@ -36,21 +36,11 @@ export function joinRoom(roomId, userId, token) {
 export function exitRoom(roomId, userId, token) {
   return (dispatch) => {
     dispatch(roomRequest())
+    DataChannelService.closeAllPeerConnections()
     ApiService.exitRoom(roomId, userId, token)
-      .then(() => (
+      .then(() => {
         dispatch({ type: EXIT_ROOM_SUCCESS })
-      ))
-      .catch(error => dispatch(roomRequestError(error)))
-  }
-}
-
-export function createRoom(token) {
-  return (dispatch) => {
-    dispatch(roomRequest())
-    ApiService.createRoom(token)
-      .then(room => (
-        dispatch({ type: CREATE_ROOM_SUCCESS, room })
-      ))
+      })
       .catch(error => dispatch(roomRequestError(error)))
   }
 }
@@ -59,8 +49,22 @@ export function updateMembers(members) {
   return (dispatch) => {
     Object.keys(members)
       .forEach((key) => {
-        if (!members[key].active) DataChannelService.removePeer(key)
+        if (!members[key].active) DataChannelService.closePeerConnection(key)
       })
     dispatch({ type: UPDATE_ROOM_MEMBERS, members })
+  }
+}
+
+export function createRoom(token) {
+  return (dispatch) => {
+    dispatch(roomRequest())
+    ApiService.createRoom(token)
+      .then((room) => {
+        dispatch({ type: CREATE_ROOM_SUCCESS, room })
+        ApiService.getRoomMembers(room.id)
+          .then(members => dispatch(updateMembers(members)))
+          .catch(error => dispatch(roomRequestError(error)))
+      })
+      .catch(error => dispatch(roomRequestError(error)))
   }
 }

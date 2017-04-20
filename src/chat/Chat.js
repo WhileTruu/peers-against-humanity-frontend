@@ -28,6 +28,7 @@ class Chat extends Component {
       timestamp: new Date().getTime(), // eslint-disable-line
       userId: this.props.userId,
       username: this.props.username,
+      nickname: this.props.nickname,
     })
   }
 
@@ -64,6 +65,7 @@ class Chat extends Component {
 Chat.propTypes = {
   userId: PropTypes.number,
   username: PropTypes.string,
+  nickname: PropTypes.string,
   messages: PropTypes.array, // eslint-disable-line
   sendMessage: PropTypes.func.isRequired,
 }
@@ -72,12 +74,14 @@ Chat.propTypes = {
 Chat.defaultProps = {
   userId: null,
   username: null,
+  nickname: null,
   messages: null,
 }
 
 const mapStoreToProps = store => ({
-  userId: store.users.user.userId,
+  userId: store.users.user.id,
   username: store.users.user.username,
+  nickname: store.users.user.nickname,
   messages: store.chat.messages,
 })
 

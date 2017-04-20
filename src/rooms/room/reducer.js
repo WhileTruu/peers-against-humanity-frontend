@@ -8,15 +8,13 @@ import {
 } from './actions'
 
 const initialState = {
-  room: {
-    id: null,
-    creatorId: null,
-    ownerId: null,
-    started: false,
-    finished: false,
-    createdAt: null,
-    ownerUsername: null,
-  },
+  id: null,
+  creatorId: null,
+  ownerId: null,
+  started: false,
+  finished: false,
+  createdAt: null,
+  ownerUsername: null,
   members: null,
   isFetching: false,
   errorStatusCode: null,
@@ -27,11 +25,11 @@ export default function room(state = initialState, result) {
     case ROOM_REQUEST:
       return { ...state, isFetching: true }
     case JOIN_ROOM_SUCCESS:
-      return { ...state, room: result.room, isFetching: false, errorStatusCode: null }
+      return { ...state, ...result.room, isFetching: false, errorStatusCode: null }
     case EXIT_ROOM_SUCCESS:
       return initialState
     case CREATE_ROOM_SUCCESS:
-      return { ...state, room: result.room, isFetching: false, errorStatusCode: null }
+      return { ...state, ...result.room, isFetching: false, errorStatusCode: null }
     case ROOM_REQUEST_ERROR:
       return { ...state, isFetching: false, errorStatusCode: result.error.response.statusCode }
     case UPDATE_ROOM_MEMBERS:
