@@ -1,14 +1,13 @@
 /* eslint-disable */
 import React from 'react'
 
-const memberListItem = ({ member, peers, userId }) => {
-  const peer = peers ? peers[member.id] : null
+const memberListItem = ({ member, userId }) => {
   return (
     <li className="list-group-item justify-content-between" key={member.id}>
       {member.nickname || member.username}
       {member.id !== userId ?
-        (<span className={`badge badge-${peer && peer.connected ? 'success' : 'info'} badge-pill`}>
-          {peer && peer.connected ? 'connected' : 'negotiating'}
+        (<span className={`badge badge-${member.hasDataChannel ? 'success' : 'info'} badge-pill`}>
+          {member.hasDataChannel ? 'connected' : 'connecting...'}
         </span>) :
         (<span className={`badge badge-primary badge-pill`}>
           you
@@ -18,15 +17,13 @@ const memberListItem = ({ member, peers, userId }) => {
   )
 }
 
-export default ({ members, peers, userId }) => (
+export default ({ members, userId }) => (
   <div>
     <ul className="list-group">
       {Object.keys(members)
-        .filter(key => members[key].active)
         .map(key => (
           memberListItem({
             member: members[key],
-            peers,
             userId,
           })
         ))

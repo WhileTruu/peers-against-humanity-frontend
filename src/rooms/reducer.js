@@ -10,7 +10,7 @@ const initialState = {
 function updateRoom(state, room) {
   if (state.rooms) {
     const { [`${room.id}`]: deletedRoom, ...remainingRooms } = state.rooms
-    if (room.finished) return { ...state, rooms: remainingRooms }
+    if (!room.active) return { ...state, rooms: remainingRooms }
     return {
       ...state,
       rooms: { [`${room.id}`]: room, ...remainingRooms },

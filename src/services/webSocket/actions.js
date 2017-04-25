@@ -1,5 +1,4 @@
 import { actions as roomsActions } from '../../rooms'
-import { actions as roomActions } from '../../rooms/room'
 import DataChannelService from '../webRTCDataChannel'
 import WebSocketService from './WebSocketService'
 
@@ -32,10 +31,6 @@ export function connect(token) {
           dispatch(isClosed())
           break
         }
-        case 'UPDATE_ROOM_MEMBERS': {
-          dispatch(roomActions.updateMembers(message.members))
-          break
-        }
         case 'UPDATE_LIST_ROOMS': {
           dispatch(roomsActions.updateRooms(message.rooms))
           break
@@ -44,22 +39,8 @@ export function connect(token) {
           dispatch(roomsActions.updateRoom(message.room))
           break
         }
-        case 'PEER_CONNECTION_OFFER': {
-          const { peerId, sessionDescription } = message
-          DataChannelService.onPeerConnectionOffer({ peerId, sessionDescription })
-          break
-        }
-        case 'PEER_CONNECTION_ANSWER': {
-          const { peerId, sessionDescription } = message
-          DataChannelService.addRemoteDescriptionToPeer({ peerId, sessionDescription })
-          break
-        }
-        case 'ICE_CANDIDATE': {
-          const { peerId, candidate } = message
-          DataChannelService.addICECandidateToPeer({ peerId, candidate })
-          break
-        }
         default:
+          DataChannelService.onDataChannelMessage(message)
           break
       }
     }

@@ -6,8 +6,10 @@ class WebSocketService {
   }
 
   close() {
-    this.webSocket.close()
-    this.webSocket = null
+    if (this.webSocket) {
+      this.webSocket.close()
+      this.webSocket = null
+    }
   }
 
   open() {

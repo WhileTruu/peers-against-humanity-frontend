@@ -1,6 +1,6 @@
 import PeerConnection from './peerConnection'
 import WebSocketService from '../webSocket'
-import { addPeer, removePeer, onMessage, connected } from './actions'
+import { actions as roomActions } from '../../rooms/room'
 import {
   peerConnectionConfig,
   sessionDescriptionProtocolConstraints as sdpConstraints,
@@ -9,25 +9,27 @@ import {
 class DataChannelService {
   constructor() {
     this.peerConnections = null
-    this.onMessage = message => this.dispatch(onMessage(message))
-    this.onClose = id => this.dispatch(removePeer(id))
-    this.onDataChannel = id => this.dispatch(connected(id))
+    this.onClose = (id) => {
+      this.dispatch(roomActions.removeMember(id))
+      this.closePeerConnection(id)
+    }
+    this.onDataChannel = (id) => {
+      if (id === this.getState().room.ownerId) WebSocketService.close()
+      this.dispatch(roomActions.hasDataChannel(id))
+    }
   }
 
-  setOnMessageCallback(callback) {
-    this.onMessage = callback
-  }
-
-  addPeer(peerId, peer) {
-    this.dispatch(addPeer(peerId))
-    this.peerConnections = { ...this.peerConnections, [peerId]: peer }
+  addPeer(id, peer) {
+    this.peerConnections = { ...this.peerConnections, [id]: peer }
+    setTimeout(() => {
+      if (!peer.dataChannel.readyState === 'open') this.closePeerConnection(id)
+    }, 5000)
   }
 
   closePeerConnection(peerId) {
     if (this.getState().users.user.id === parseInt(peerId, 10) || !this.peerConnections[peerId]) {
       return
     }
-    this.dispatch(removePeer(peerId))
     const { [`${peerId}`]: deletedPeer, ...peerConnections } = this.peerConnections
     deletedPeer.close()
     this.peerConnections = peerConnections
@@ -36,76 +38,141 @@ class DataChannelService {
   closeAllPeerConnections() {
     if (!this.peerConnections) return
     Object.keys(this.peerConnections).forEach(key => (
-      this.peerConnections[key].close()
+      this.closePeerConnection(key)
     ))
   }
 
-  requestNewPeerConnection(peerId) {
-    if (this.getState().users.user.id === parseInt(peerId, 10)) return
+  requestNewPeerConnection(to) {
+    if (this.getState().users.user.id === parseInt(to, 10)) return
     if (this.peerConnections &&
-      Object.keys(this.peerConnections).includes(peerId.toString()) &&
-      this.peerConnections[peerId].dataChannel.readyState !== 'closed'
+      Object.keys(this.peerConnections).includes(to.toString()) &&
+      this.peerConnections[to].dataChannel.readyState !== 'closed'
     ) {
       return
     }
 
-    const peer = new PeerConnection(peerId, sdpConstraints, peerConnectionConfig)
+    const peer = new PeerConnection(to, sdpConstraints, peerConnectionConfig)
     peer.onIceCandidate(candidate => (
-      WebSocketService.send({ type: 'ICE_CANDIDATE', peerId, candidate })
+      this.send({
+        type: 'ICE_CANDIDATE',
+        from: this.getState().users.user.id,
+        to,
+        candidate,
+      })
     ))
     peer.onDataChannel({
-      onMessageCallback: this.onMessage,
-      onCloseCallback: this.onClose,
-      onDataChannelCallback: this.onDataChannel,
+      onMessageCallback: this.onDataChannelMessage.bind(this),
+      onCloseCallback: this.onClose.bind(this),
+      onDataChannelCallback: this.onDataChannel.bind(this),
     })
     peer.createOffer(localSessionDescription => (
-      WebSocketService.send({
+      this.send({
         type: 'PEER_CONNECTION_OFFER',
-        peerId,
+        from: this.getState().users.user.id,
+        to,
+        user: this.getState().users.user,
         sessionDescription: localSessionDescription,
       })
     ))
-    this.addPeer(peerId, peer)
+    this.addPeer(to, peer)
   }
 
-  onPeerConnectionOffer({ peerId, sessionDescription }) {
-    if (this.peerConnections && Object.keys(this.peerConnections).includes(peerId.toString())) {
+  onPeerConnectionOffer(message) {
+    const { from, sessionDescription } = message
+    if (this.peerConnections && Object.keys(this.peerConnections).includes(from.toString())) {
       return
     }
 
-    const peer = new PeerConnection(peerId, sdpConstraints, peerConnectionConfig)
-    peer.onIceCandidate(candidate => (
-      WebSocketService.send({ type: 'ICE_CANDIDATE', peerId, candidate })
-    ))
+    const peer = new PeerConnection(from, sdpConstraints, peerConnectionConfig)
+    peer.onIceCandidate((candidate) => {
+      this.send({
+        type: 'ICE_CANDIDATE',
+        from: this.getState().users.user.id,
+        to: from,
+        candidate,
+      })
+    })
     peer.onDataChannel({
-      onMessageCallback: this.onMessage,
-      onCloseCallback: this.onClose,
-      onDataChannelCallback: this.onDataChannel,
+      onMessageCallback: this.onDataChannelMessage.bind(this),
+      onCloseCallback: this.onClose.bind(this),
+      onDataChannelCallback: this.onDataChannel.bind(this),
     })
     peer.setRemoteDescription(new RTCSessionDescription(sessionDescription))
     peer.createAnswer(localDescription => (
-      WebSocketService.send({
+      this.send({
         type: 'PEER_CONNECTION_ANSWER',
-        peerId,
+        from: this.getState().users.user.id,
+        to: from,
+        user: this.getState().users.user,
         sessionDescription: localDescription,
       })
     ))
-    this.addPeer(peerId, peer)
+    this.dispatch(roomActions.addMember(message.user))
+    this.addPeer(from, peer)
   }
 
-  addICECandidateToPeer({ peerId, candidate }) {
-    this.peerConnections[peerId].addIceCandidate(candidate)
+  addICECandidateToPeer({ from, candidate }) {
+    this.peerConnections[from].addIceCandidate(candidate)
   }
 
-  addRemoteDescriptionToPeer({ peerId, sessionDescription }) {
-    this.peerConnections[peerId].setRemoteDescription(sessionDescription)
+  onPeerConnectionAnswer(message) {
+    this.peerConnections[message.from].setRemoteDescription(message.sessionDescription)
+    this.dispatch(roomActions.addMember(message.user))
   }
 
-  broadcastToDataChannel(message) {
+  broadcastToDataChannel(message, exclude = null) {
     if (this.peerConnections) {
       Object.keys(this.peerConnections).forEach((key) => {
-        this.peerConnections[key].send(message)
+        if (!(parseInt(key, 10) === exclude)) this.peerConnections[key].send(message)
       })
+    }
+  }
+
+  send(message) {
+    const { ownerId } = this.getState().room
+    if (this.peerConnections[ownerId] &&
+      this.peerConnections[ownerId].dataChannel.readyState === 'open'
+    ) {
+      this.peerConnections[this.getState().room.ownerId].send(message)
+    } else {
+      WebSocketService.send(message)
+    }
+  }
+
+  relayMessage(message) {
+    this.peerConnections[parseInt(message.to, 10)].send(message)
+  }
+
+  onPeerConnectionMessage(data, onMessageFunction) {
+    if (data.to === this.getState().users.user.id) {
+      onMessageFunction.bind(this)(data)
+    } else {
+      this.relayMessage(data)
+    }
+  }
+
+  onDataChannelMessage(message) {
+    switch (message.type) {
+      case 'CHAT_MESSAGE':
+        this.dispatch(message)
+        break
+      case 'PEER_CONNECTION_OFFER':
+        this.onPeerConnectionMessage(message, this.onPeerConnectionOffer)
+        break
+      case 'PEER_CONNECTION_ANSWER':
+        this.onPeerConnectionMessage(message, this.onPeerConnectionAnswer)
+        break
+      case 'ICE_CANDIDATE':
+        this.onPeerConnectionMessage(message, this.addICECandidateToPeer)
+        break
+      case 'ADD_MEMBER': {
+        if (this.peerConnections && this.peerConnections[message.user.id]) break
+        this.broadcastToDataChannel(message, message.user.id)
+        this.requestNewPeerConnection(message.user.id)
+        break
+      }
+      default:
+        break
     }
   }
 }

@@ -13,20 +13,27 @@ class Room extends Component {
   }
 
   componentDidMount() {
-    const { room, match, userId, token } = this.props
+    const { room, match, token } = this.props
     if (!room.id) {
-      this.props.joinRoom(match.params.roomId, userId, token)
+      this.props.joinRoom(match.params.roomId, token)
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (this.props.isFetching && !nextProps.isFetching && nextProps.errorStatusCode) {
+      this.props.history.replace('/rooms')
     }
   }
 
   exitRoom() {
-    const { room, userId, token } = this.props
+    const { room, token, user } = this.props
     this.props.history.replace('/rooms')
-    this.props.exitRoom(room.id, userId, token)
+    if (room.ownerId === user.id) this.props.ownerExitRoom(room.id, token)
+    else this.props.exitRoom()
   }
 
   render() {
-    const { room, members, socketIsOpen, peers } = this.props
+    const { room, members, socketIsOpen } = this.props
     return (
       <div>
         <div className="row">
@@ -50,15 +57,10 @@ class Room extends Component {
             >
               SOCKET IS {socketIsOpen ? 'OPEN' : 'CLOSED'}
             </h3>
-            {room.id && members ?
-              (
-                <MemberList
-                  userId={this.props.userId}
-                  members={members}
-                  peers={peers}
-                />
-              ) : ''
-            }
+            <MemberList
+              userId={this.props.user.id}
+              members={{ [this.props.user.id]: this.props.user, ...members }}
+            />
             <Chat />
           </div>
         </div>
@@ -72,37 +74,42 @@ Room.propTypes = {
     params: Types.shape({ roomId: Types.string.isRequired }).isRequired,
   }).isRequired,
   history: Types.shape({ replace: Types.func.isRequired }).isRequired,
-  peers: Types.shape({
-    [Types.string]: Types.shape({ id: Types.number.isRequired, connected: Types.bool.isRequired }),
-  }),
   socketIsOpen: Types.bool.isRequired,
-  userId: Types.number,
+  user: Types.shape({
+    id: Types.number,
+    nickname: Types.string,
+    username: Types.string,
+  }).isRequired,
   token: Types.string,
   room: Types.shape({ id: Types.number }).isRequired,
   members: Types.shape({ id: Types.number, username: Types.string, active: Types.bool }),
   joinRoom: Types.func.isRequired,
   exitRoom: Types.func.isRequired,
+  ownerExitRoom: Types.func.isRequired,
+  isFetching: Types.bool.isRequired,
+  errorStatusCode: Types.number, // eslint-disable-line
 }
 
 Room.defaultProps = {
-  peers: null,
-  userId: null,
   token: null,
   members: null,
+  errorStatusCode: null,
 }
 
 const mapStoreToProps = store => ({
-  peers: store.dataChannel.peers,
   socketIsOpen: store.socketService.isOpen,
-  userId: store.users.user.id,
+  user: store.users.user,
   token: store.users.token,
   room: store.room,
   members: store.room.members,
+  isFetching: store.room.isFetching,
+  errorStatusCode: store.room.errorStatusCode,
 })
 
 const mapDispatchToProps = dispatch => ({
-  joinRoom: (roomId, userId, token) => dispatch(actions.joinRoom(roomId, userId, token)),
-  exitRoom: (roomId, userId, token) => dispatch(actions.exitRoom(roomId, userId, token)),
+  joinRoom: (roomId, token) => dispatch(actions.joinRoom(roomId, token)),
+  exitRoom: (roomId, token) => dispatch(actions.exitRoom(roomId, token)),
+  ownerExitRoom: (roomId, token) => dispatch(actions.ownerExitRoom(roomId, token)),
 })
 
 export default connect(mapStoreToProps, mapDispatchToProps)(withRouter(Room))

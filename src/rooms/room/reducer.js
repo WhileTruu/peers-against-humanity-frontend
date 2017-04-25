@@ -4,17 +4,18 @@ import {
   EXIT_ROOM_SUCCESS,
   CREATE_ROOM_SUCCESS,
   ROOM_REQUEST_ERROR,
-  UPDATE_ROOM_MEMBERS,
+  ADD_MEMBER,
+  REMOVE_MEMBER,
+  HAS_DATA_CHANNEL,
 } from './actions'
 
 const initialState = {
   id: null,
-  creatorId: null,
   ownerId: null,
-  started: false,
-  finished: false,
+  active: false,
   createdAt: null,
   ownerUsername: null,
+  ownerNickname: null,
   members: null,
   isFetching: false,
   errorStatusCode: null,
@@ -23,6 +24,7 @@ const initialState = {
 export default function room(state = initialState, result) {
   switch (result.type) {
     case ROOM_REQUEST:
+      if (result.room) return { ...state, ...result.room, isFetching: true }
       return { ...state, isFetching: true }
     case JOIN_ROOM_SUCCESS:
       return { ...state, ...result.room, isFetching: false, errorStatusCode: null }
@@ -32,10 +34,25 @@ export default function room(state = initialState, result) {
       return { ...state, ...result.room, isFetching: false, errorStatusCode: null }
     case ROOM_REQUEST_ERROR:
       return { ...state, isFetching: false, errorStatusCode: result.error.response.statusCode }
-    case UPDATE_ROOM_MEMBERS:
+    case ADD_MEMBER:
       return {
         ...state,
-        members: result.members,
+        members: {
+          ...state.members,
+          [result.member.id]: { ...result.member, hasDataChannel: false },
+        },
+      }
+    case REMOVE_MEMBER: {
+      const { [`${result.id}`]: deletedMember, ...members } = state.members
+      return { ...state, members }
+    }
+    case HAS_DATA_CHANNEL:
+      return {
+        ...state,
+        members: {
+          ...state.members,
+          [result.id]: { ...state.members[result.id], hasDataChannel: true },
+        },
       }
     default:
       return state

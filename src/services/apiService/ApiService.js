@@ -36,26 +36,25 @@ export function createRoom(token) {
   }).then(checkStatus).then(response => response.json())
 }
 
+export function getRooms(token) {
+  return fetch('/api/v1/rooms', {
+    method: 'GET',
+    headers: { ...headers, Authorization: `Bearer ${token}` },
+  }).then(checkStatus).then(response => response.json())
+}
 
-export function joinRoom(roomId, userId, token) {
-  return fetch(`/api/v1/rooms/${roomId}/members/${userId}`, {
+export function joinRoom(roomId, token) {
+  return fetch(`/api/v1/rooms/${roomId}`, {
     method: 'PUT',
     headers: { ...headers, Authorization: `Bearer ${token}` },
   }).then(checkStatus).then(response => response.json())
 }
 
-export function exitRoom(roomId, userId, token) {
-  return fetch(`/api/v1/rooms/${roomId}/members/${userId}`, {
+export function exitRoom(roomId, token) {
+  return fetch(`/api/v1/rooms/${roomId}`, {
     method: 'DELETE',
     headers: { ...headers, Authorization: `Bearer ${token}` },
   }).then(checkStatus)
-}
-
-export function getRoomMembers(roomId, token) {
-  return fetch(`/api/v1/rooms/${roomId}/members`, {
-    method: 'GET',
-    headers: { ...headers, Authorization: `Bearer ${token}` },
-  }).then(checkStatus).then(response => response.json())
 }
 
 export function createTemporaryAccount(nickname) {
