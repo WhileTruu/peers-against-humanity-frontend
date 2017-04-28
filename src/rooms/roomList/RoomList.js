@@ -38,9 +38,6 @@ const RoomList = ({ createRoom, socket, room, rooms, history, match, token }) =>
                 <p className="card-text">
                   Room owned by {roomEntry.ownerNickname || roomEntry.ownerUsername}
                 </p>
-                <p className="card-text">
-                  People in room: // TODO
-                </p>
               </div>
             </div>
           </div>

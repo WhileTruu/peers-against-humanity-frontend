@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   id="svg761"
+   version="1.1"
+   viewBox="0 0 36.33619 19.360797"
+   height="19.360796mm"
+   width="36.336189mm">
+  <defs
+     id="defs755">
+    <clipPath
+       id="clipPath624"
+       clipPathUnits="userSpaceOnUse">
+      <path
+         id="path622"
+         d="M 97.3687,432.855 H 206.744 V 369.966 H 97.3687 Z" />
+    </clipPath>
+    <clipPath
+       id="clipPath608"
+       clipPathUnits="userSpaceOnUse">
+      <path
+         id="path606"
+         d="M 371.278,165.258 H 483.737 V 105.903 H 371.278 Z" />
+    </clipPath>
+    <clipPath
+       id="clipPath608-0"
+       clipPathUnits="userSpaceOnUse">
+      <path
+         id="path606-9"
+         d="M 371.278,165.258 H 483.737 V 105.903 H 371.278 Z" />
+    </clipPath>
+    <linearGradient
+       id="linearGradient574"
+       spreadMethod="pad"
+       gradientTransform="matrix(-2.4e-6,-54.880859,-54.880859,2.4e-6,580.87744,693.8252)"
+       gradientUnits="userSpaceOnUse"
+       y2="0"
+       x2="1"
+       y1="0"
+       x1="0">
+      <stop
+         id="stop568"
+         offset="0"
+         style="stop-opacity:1;stop-color:#2f2480" />
+      <stop
+         id="stop570"
+         offset="0.198822"
+         style="stop-opacity:1;stop-color:#2f2480" />
+      <stop
+         id="stop572"
+         offset="1"
+         style="stop-opacity:1;stop-color:#1c4432" />
+    </linearGradient>
+  </defs>
+  <metadata
+     id="metadata758">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     transform="translate(-145.19157,-58.705504)"
+     id="layer1">
+    <g
+       id="g556"
+       transform="matrix(0.35277777,0,0,-0.35277777,-41.560983,303.47154)">
+      <g
+         id="g558">
+        <g
+           id="g564">
+          <g
+             id="g566">
+            <path
+               id="path576"
+               style="fill:url(#linearGradient574);stroke:none"
+               d="m 584.64,692.579 c -14.354,-2.666 -41.071,-7.625 -51.162,-22.574 v 0 C 529.66,664.35 528.5,657.64 530.032,650.062 v 0 c 1.135,-5.61 27.837,-11.114 53.904,-11.118 v 0 h 0.011 c 22.656,0 39.229,4.113 45.467,11.285 v 0 c 2.387,2.739 3.337,5.967 2.832,9.594 v 0 l -0.055,0.387 v 0.002 c -3.349,22.3 -15.149,33.613 -35.069,33.613 v 0 c -3.837,0 -8.037,-0.42 -12.482,-1.246" />
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

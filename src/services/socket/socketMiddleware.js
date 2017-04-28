@@ -57,6 +57,7 @@ const socketMiddleware = (function(){
     switch (action.type) {
 
       case CONNECT:
+        if (store.getState().socket.connecting) return
         if (webSocket !== null) webSocket.close()
         store.dispatch(actions.connecting())
 
