@@ -1,30 +1,69 @@
-import React, { PropTypes } from 'react'
+import React, { Component, PropTypes as Types } from 'react'
 import { connect } from 'react-redux'
 import { Route, Redirect, withRouter } from 'react-router-dom'
 
 import RoomList from './roomList'
-
 import Room from './room'
 import AuthOptions from '../users/authOptions'
 
-const Rooms = ({ isAuthenticated, currentRoomId, match }) => (
-  <div>
-    {currentRoomId ? <Redirect to={`/rooms/${currentRoomId}`} /> : ''}
-    {!isAuthenticated ? <AuthOptions url={match.url} /> : ''}
-    {isAuthenticated ?
+import { actions as socketActions } from '../services/socket'
+
+class Rooms extends Component {
+  componentDidMount() {
+    if (this.props.isAuthenticated && !this.props.socket.connected) {
+      this.props.connect()
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if ((!this.props.isAuthenticated && nextProps.isAuthenticated)
+      && !this.props.socket.connected
+    ) {
+      this.props.connect()
+    }
+  }
+
+  render() {
+    const { isAuthenticated, currentRoomId, match, socket } = this.props
+
+    const socketState = (() => {
+      if (socket.connecting) return { text: 'CONNECTING', textStyle: 'text-info' }
+      if (socket.authenticating) return { text: 'AUTHENTICATING', textStyle: 'text-primary' }
+      if (socket.connected) return { text: 'CONNECTED', textStyle: 'text-success' }
+      return { text: 'DISCONNECTED', textStyle: 'text-danger' }
+    })()
+
+    return (
       <div>
-        <Route exact path="/rooms" component={RoomList} />
-        <Route path="/rooms/:roomId" component={Room} />
+        {currentRoomId ? <Redirect to={`/rooms/${currentRoomId}`} /> : ''}
+        {!isAuthenticated ? <AuthOptions url={match.url} /> : ''}
+        {isAuthenticated ?
+          <div>
+            <h3
+              className={`${socketState.textStyle}`}
+            >
+              SOCKET IS {socketState.text}
+            </h3>
+            <Route exact path="/rooms" component={RoomList} />
+            <Route path="/rooms/:roomId" component={Room} />
+          </div>
+        : ''}
       </div>
-    : ''}
-  </div>
-)
+    )
+  }
+}
 
 Rooms.propTypes = {
-  currentRoomId: PropTypes.number,
-  isAuthenticated: PropTypes.bool.isRequired,
-  match: PropTypes.shape({
-    url: PropTypes.string.isRequired,
+  connect: Types.func.isRequired,
+  currentRoomId: Types.number,
+  isAuthenticated: Types.bool.isRequired,
+  match: Types.shape({
+    url: Types.string.isRequired,
+  }).isRequired,
+  socket: Types.shape({
+    connecting: Types.bool.isRequired,
+    authenticating: Types.bool.isRequired,
+    connected: Types.bool.isRequired,
   }).isRequired,
 }
 
@@ -35,6 +74,11 @@ Rooms.defaultProps = {
 const mapStoreToProps = store => ({
   isAuthenticated: store.users.isAuthenticated,
   currentRoomId: store.room.id,
+  socket: store.socket,
 })
 
-export default connect(mapStoreToProps)(withRouter(Rooms))
+const mapDispatchToProps = dispatch => ({
+  connect: () => dispatch(socketActions.connect()),
+})
+
+export default connect(mapStoreToProps, mapDispatchToProps)(withRouter(Rooms))

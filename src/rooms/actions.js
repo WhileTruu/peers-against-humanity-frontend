@@ -1,10 +1,10 @@
-export const UPDATE_LIST_ROOM = 'UPDATE_LIST_ROOM'
-export const UPDATE_LIST_ROOMS = 'UPDATE_LIST_ROOMS'
+export const UPDATE_ROOM = 'UPDATE_ROOM'
+export const UPDATE_ROOMS = 'UPDATE_ROOMS'
 
 export function updateRoom(room) {
-  return { type: UPDATE_LIST_ROOM, room }
+  return { type: UPDATE_ROOM, room }
 }
 
 export function updateRooms(rooms) {
-  return { type: UPDATE_LIST_ROOMS, rooms }
+  return { type: UPDATE_ROOMS, rooms }
 }

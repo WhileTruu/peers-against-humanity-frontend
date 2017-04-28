@@ -1,6 +1,7 @@
 import PeerConnection from './peerConnection'
-import WebSocketService from '../webSocket'
+import { actions as socketActions } from '../socket'
 import { actions as roomActions } from '../../rooms/room'
+import { roomActionTypes } from '../../rooms/room/actions'
 import {
   peerConnectionConfig,
   sessionDescriptionProtocolConstraints as sdpConstraints,
@@ -12,10 +13,6 @@ class DataChannelService {
     this.onClose = (id) => {
       this.dispatch(roomActions.removeMember(id))
       this.closePeerConnection(id)
-    }
-    this.onDataChannel = (id) => {
-      if (id === this.getState().room.ownerId) WebSocketService.close()
-      this.dispatch(roomActions.hasDataChannel(id))
     }
   }
 
@@ -53,12 +50,12 @@ class DataChannelService {
 
     const peer = new PeerConnection(to, sdpConstraints, peerConnectionConfig)
     peer.onIceCandidate(candidate => (
-      this.send({
+      this.message({
         type: 'ICE_CANDIDATE',
         from: this.getState().users.user.id,
         to,
         candidate,
-      })
+      }).relay()
     ))
     peer.onDataChannel({
       onMessageCallback: this.onDataChannelMessage.bind(this),
@@ -66,13 +63,13 @@ class DataChannelService {
       onDataChannelCallback: this.onDataChannel.bind(this),
     })
     peer.createOffer(localSessionDescription => (
-      this.send({
+      this.message({
         type: 'PEER_CONNECTION_OFFER',
         from: this.getState().users.user.id,
         to,
         user: this.getState().users.user,
         sessionDescription: localSessionDescription,
-      })
+      }).relay()
     ))
     this.addPeer(to, peer)
   }
@@ -85,12 +82,12 @@ class DataChannelService {
 
     const peer = new PeerConnection(from, sdpConstraints, peerConnectionConfig)
     peer.onIceCandidate((candidate) => {
-      this.send({
+      this.message({
         type: 'ICE_CANDIDATE',
         from: this.getState().users.user.id,
         to: from,
         candidate,
-      })
+      }).relay()
     })
     peer.onDataChannel({
       onMessageCallback: this.onDataChannelMessage.bind(this),
@@ -99,13 +96,13 @@ class DataChannelService {
     })
     peer.setRemoteDescription(new RTCSessionDescription(sessionDescription))
     peer.createAnswer(localDescription => (
-      this.send({
+      this.message({
         type: 'PEER_CONNECTION_ANSWER',
         from: this.getState().users.user.id,
         to: from,
         user: this.getState().users.user,
         sessionDescription: localDescription,
-      })
+      }).relay()
     ))
     this.dispatch(roomActions.addMember(message.user))
     this.addPeer(from, peer)
@@ -120,59 +117,82 @@ class DataChannelService {
     this.dispatch(roomActions.addMember(message.user))
   }
 
-  broadcastToDataChannel(message, exclude = null) {
-    if (this.peerConnections) {
-      Object.keys(this.peerConnections).forEach((key) => {
-        if (!(parseInt(key, 10) === exclude)) this.peerConnections[key].send(message)
-      })
+  message(message) {
+    const broadcast = (userToExcludeId = null) => {
+      if (this.peerConnections) {
+        Object.keys(this.peerConnections).forEach((key) => {
+          if (!(parseInt(key, 10) === userToExcludeId)) this.peerConnections[key].send(message)
+        })
+      }
     }
-  }
-
-  send(message) {
-    const { ownerId } = this.getState().room
-    if (this.peerConnections[ownerId] &&
-      this.peerConnections[ownerId].dataChannel.readyState === 'open'
-    ) {
-      this.peerConnections[this.getState().room.ownerId].send(message)
-    } else {
-      WebSocketService.send(message)
+    const send = (userId) => {
+      this.peerConnections[parseInt(userId, 10)].send(message)
     }
-  }
-
-  relayMessage(message) {
-    this.peerConnections[parseInt(message.to, 10)].send(message)
-  }
-
-  onPeerConnectionMessage(data, onMessageFunction) {
-    if (data.to === this.getState().users.user.id) {
-      onMessageFunction.bind(this)(data)
-    } else {
-      this.relayMessage(data)
+    const relay = () => {
+      const { ownerId } = this.getState().room
+      if (this.peerConnections[ownerId] &&
+        this.peerConnections[ownerId].dataChannel.readyState === 'open'
+      ) {
+        this.peerConnections[this.getState().room.ownerId].send(message)
+      } else {
+        this.dispatch(socketActions.send(message))
+      }
+    }
+    return {
+      exclude: userToExcludeId => ({ broadcast() { broadcast(userToExcludeId) } }),
+      broadcast() { broadcast() },
+      relay() { relay(message) },
+      to: userId => ({ send() { send(userId) } }),
     }
   }
 
   onDataChannelMessage(message) {
+    const state = this.getState()
+    if (message.to && message.to !== state.users.user.id) {
+      this.message(message).to(message.to).send()
+      return
+    }
+
     switch (message.type) {
       case 'CHAT_MESSAGE':
         this.dispatch(message)
         break
       case 'PEER_CONNECTION_OFFER':
-        this.onPeerConnectionMessage(message, this.onPeerConnectionOffer)
+        this.onPeerConnectionOffer(message)
         break
       case 'PEER_CONNECTION_ANSWER':
-        this.onPeerConnectionMessage(message, this.onPeerConnectionAnswer)
+        this.onPeerConnectionAnswer(message)
         break
       case 'ICE_CANDIDATE':
-        this.onPeerConnectionMessage(message, this.addICECandidateToPeer)
+        this.addICECandidateToPeer(message)
         break
-      case 'ADD_MEMBER': {
-        if (this.peerConnections && this.peerConnections[message.user.id]) break
-        this.broadcastToDataChannel(message, message.user.id)
-        this.requestNewPeerConnection(message.user.id)
+      case 'NEW_MEMBER': {
+        if (this.peerConnections && this.peerConnections[message.from]) break
+        this.requestNewPeerConnection(message.from)
+        break
+      }
+      case 'JOINED_ROOM': {
+        this.dispatch(roomActions.joinedRoom(message.room))
         break
       }
       default:
+        if (roomActionTypes.includes(message.type)) this.dispatch(message)
         break
+    }
+  }
+
+  onDataChannel(id) {
+    const state = this.getState()
+
+    this.dispatch(roomActions.hasDataChannel(id))
+    if (state.users.user.id === state.room.ownerId) {
+      this.message({
+        type: 'JOINED_ROOM',
+        from: state.users.user.id,
+        to: id,
+        room: state.room,
+      }).to(id).send()
+      this.message({ type: 'NEW_MEMBER', from: id }).exclude(id).broadcast()
     }
   }
 }

@@ -1,39 +1,40 @@
+/* eslint-disable */
 import React, { Component, PropTypes as Types } from 'react'
 import { withRouter } from 'react-router-dom'
 import { connect } from 'react-redux'
 
-import { actions } from '.'
+import { actions as roomActions } from '.'
 import MemberList from './memberList'
 import Chat from '../../chat'
 
 class Room extends Component {
   constructor(props) {
     super(props)
-    this.exitRoom = this.exitRoom.bind(this)
+    this.state = {
+      counter: 0,
+    }
   }
 
   componentDidMount() {
-    const { room, match, token } = this.props
-    if (!room.id) {
+    const { room, match, token, isFetching, error, socket } = this.props
+    if (!room.id && socket.connected) {
       this.props.joinRoom(match.params.roomId, token)
     }
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.isFetching && !nextProps.isFetching && nextProps.errorStatusCode) {
+    const { room, socket, isFetching, error } = nextProps
+    if (error) {
       this.props.history.replace('/rooms')
+    } else if (!room.id && socket.connected && this.state.counter < 4) {// && !error  && !isFetching ) {
+      this.props.joinRoom(this.props.match.params.roomId, this.props.token)
+      this.setState({ counter: this.state.counter + 1 })
+      console.log(this.state.counter)
     }
   }
 
-  exitRoom() {
-    const { room, token, user } = this.props
-    this.props.history.replace('/rooms')
-    if (room.ownerId === user.id) this.props.ownerExitRoom(room.id, token)
-    else this.props.exitRoom()
-  }
-
   render() {
-    const { room, members, socketIsOpen } = this.props
+    const { room, members, exitRoom, socket, connectedExitRoom } = this.props
     return (
       <div>
         <div className="row">
@@ -43,7 +44,10 @@ class Room extends Component {
               <button
                 type="button"
                 className="btn btn-danger"
-                onClick={this.exitRoom}
+                onClick={() => {
+                  this.props.history.replace('/rooms')
+                  socket.connected ? connectedExitRoom(room.id) : exitRoom(room.id)
+                }}
               >
                 exit room
               </button>
@@ -52,11 +56,6 @@ class Room extends Component {
         </div>
         <div className="row">
           <div className="col-12">
-            <h3
-              className={socketIsOpen ? 'text-info' : 'text-danger'}
-            >
-              SOCKET IS {socketIsOpen ? 'OPEN' : 'CLOSED'}
-            </h3>
             <MemberList
               userId={this.props.user.id}
               members={{ [this.props.user.id]: this.props.user, ...members }}
@@ -74,7 +73,6 @@ Room.propTypes = {
     params: Types.shape({ roomId: Types.string.isRequired }).isRequired,
   }).isRequired,
   history: Types.shape({ replace: Types.func.isRequired }).isRequired,
-  socketIsOpen: Types.bool.isRequired,
   user: Types.shape({
     id: Types.number,
     nickname: Types.string,
@@ -85,9 +83,14 @@ Room.propTypes = {
   members: Types.shape({ id: Types.number, username: Types.string, active: Types.bool }),
   joinRoom: Types.func.isRequired,
   exitRoom: Types.func.isRequired,
-  ownerExitRoom: Types.func.isRequired,
+  connectedExitRoom: Types.func.isRequired,
   isFetching: Types.bool.isRequired,
-  errorStatusCode: Types.number, // eslint-disable-line
+  error: Types.string, // eslint-disable-line
+  socket: Types.shape({ // eslint-disable-line
+    connecting: Types.bool.isRequired,
+    authenticating: Types.bool.isRequired,
+    connected: Types.bool.isRequired,
+  }).isRequired,
 }
 
 Room.defaultProps = {
@@ -97,19 +100,19 @@ Room.defaultProps = {
 }
 
 const mapStoreToProps = store => ({
-  socketIsOpen: store.socketService.isOpen,
   user: store.users.user,
   token: store.users.token,
   room: store.room,
   members: store.room.members,
   isFetching: store.room.isFetching,
-  errorStatusCode: store.room.errorStatusCode,
+  error: store.room.error,
+  socket: store.socket,
 })
 
 const mapDispatchToProps = dispatch => ({
-  joinRoom: (roomId, token) => dispatch(actions.joinRoom(roomId, token)),
-  exitRoom: (roomId, token) => dispatch(actions.exitRoom(roomId, token)),
-  ownerExitRoom: (roomId, token) => dispatch(actions.ownerExitRoom(roomId, token)),
+  joinRoom: roomId => dispatch(roomActions.joinRoom(roomId)),
+  exitRoom: roomId => dispatch(roomActions.exitRoom(roomId)),
+  connectedExitRoom: roomId => dispatch(roomActions.connectedExitRoom(roomId))
 })
 
 export default connect(mapStoreToProps, mapDispatchToProps)(withRouter(Room))

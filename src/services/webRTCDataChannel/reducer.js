@@ -1,13 +1,9 @@
 import {
-  CREATE_ROOM,
-  JOIN_ROOM,
-  EXIT_ROOM,
-  ROOM_NOT_CREATED,
-  ROOM_NOT_JOINED,
-  ROOM_NOT_EXITED,
-  JOINED_ROOM,
-  EXITED_ROOM,
-  CREATED_ROOM,
+  ROOM_REQUEST,
+  JOIN_ROOM_SUCCESS,
+  EXIT_ROOM_SUCCESS,
+  CREATE_ROOM_SUCCESS,
+  ROOM_REQUEST_ERROR,
   ADD_MEMBER,
   REMOVE_MEMBER,
   HAS_DATA_CHANNEL,
@@ -27,20 +23,18 @@ const initialState = {
 
 export default function room(state = initialState, result) {
   switch (result.type) {
-    case JOIN_ROOM:
-      return { ...initialState, id: result.id, isFetching: true }
     case CREATE_ROOM:
-      return { ...initialState, isFetching: true }
+    case JOIN_ROOM:
     case EXIT_ROOM:
-      return { ...initialState, members: state.members, isFetching: true }
-    case ROOM_NOT_CREATED: case ROOM_NOT_JOINED: case ROOM_NOT_EXITED:
-      return { ...initialState, error: result.error }
+      return { ...state, isFetching: true }
     case JOINED_ROOM:
-      return { ...state, ...result.room, members: state.members, isFetching: false, error: null }
+      return { ...state, ...result.room, isFetching: false, error: null }
     case EXITED_ROOM:
-      return { ...initialState, members: state.members }
+      return initialState
     case CREATED_ROOM:
       return { ...state, ...result.room, isFetching: false, error: null }
+    case ERROR:
+      return { ...state, isFetching: false, error: result.error }
     case ADD_MEMBER:
       return {
         ...state,
