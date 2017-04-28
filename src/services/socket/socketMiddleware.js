@@ -27,13 +27,11 @@ const socketMiddleware = (function(){
   let webSocket = null
 
   const onOpen = (socket, store) => (event) => {
-    console.log(event)
     store.dispatch(actions.send({ type: 'AUTHENTICATE', token: store.getState().users.token }))
     store.dispatch(actions.authenticating())
   }
 
   const onClose = (socket, store) => (event) => {
-    console.log(event)
     store.dispatch(actions.disconnected())
   }
 

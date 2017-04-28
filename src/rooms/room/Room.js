@@ -1,4 +1,3 @@
-/* eslint-disable */
 import React, { Component, PropTypes as Types } from 'react'
 import { withRouter } from 'react-router-dom'
 import { connect } from 'react-redux'
@@ -8,33 +7,36 @@ import MemberList from './memberList'
 import Chat from '../../chat'
 
 class Room extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      counter: 0,
-    }
-  }
-
   componentDidMount() {
-    const { room, match, token, isFetching, error, socket } = this.props
+    const { room, match, token, socket } = this.props
     if (!room.id && socket.connected) {
       this.props.joinRoom(match.params.roomId, token)
     }
   }
 
   componentWillReceiveProps(nextProps) {
-    const { room, socket, isFetching, error } = nextProps
+    const { room, socket, error } = nextProps
     if (error) {
       this.props.history.replace('/rooms')
-    } else if (!room.id && socket.connected && this.state.counter < 4) {// && !error  && !isFetching ) {
+    } else if (!room.id && socket.connected) {
       this.props.joinRoom(this.props.match.params.roomId, this.props.token)
-      this.setState({ counter: this.state.counter + 1 })
-      console.log(this.state.counter)
+    }
+  }
+
+  componentWillUnmount() {
+    this.exitRoom()
+  }
+
+  exitRoom() {
+    if (this.props.socket.connected) {
+      this.props.connectedExitRoom(this.props.room.id)
+    } else {
+      this.props.exitRoom(this.props.room.id)
     }
   }
 
   render() {
-    const { room, members, exitRoom, socket, connectedExitRoom } = this.props
+    const { room, members } = this.props
     return (
       <div>
         <div className="row">
@@ -46,7 +48,7 @@ class Room extends Component {
                 className="btn btn-danger"
                 onClick={() => {
                   this.props.history.replace('/rooms')
-                  socket.connected ? connectedExitRoom(room.id) : exitRoom(room.id)
+                  this.exitRoom()
                 }}
               >
                 exit room
@@ -84,8 +86,7 @@ Room.propTypes = {
   joinRoom: Types.func.isRequired,
   exitRoom: Types.func.isRequired,
   connectedExitRoom: Types.func.isRequired,
-  isFetching: Types.bool.isRequired,
-  error: Types.string, // eslint-disable-line
+  error: Types.string,
   socket: Types.shape({ // eslint-disable-line
     connecting: Types.bool.isRequired,
     authenticating: Types.bool.isRequired,
@@ -96,7 +97,7 @@ Room.propTypes = {
 Room.defaultProps = {
   token: null,
   members: null,
-  errorStatusCode: null,
+  error: null,
 }
 
 const mapStoreToProps = store => ({
@@ -112,7 +113,7 @@ const mapStoreToProps = store => ({
 const mapDispatchToProps = dispatch => ({
   joinRoom: roomId => dispatch(roomActions.joinRoom(roomId)),
   exitRoom: roomId => dispatch(roomActions.exitRoom(roomId)),
-  connectedExitRoom: roomId => dispatch(roomActions.connectedExitRoom(roomId))
+  connectedExitRoom: roomId => dispatch(roomActions.connectedExitRoom(roomId)),
 })
 
 export default connect(mapStoreToProps, mapDispatchToProps)(withRouter(Room))
