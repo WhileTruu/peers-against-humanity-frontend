@@ -4,7 +4,7 @@ import React from 'react'
 const memberListItem = ({ member, userId }) => {
   return (
     <li className="list-group-item justify-content-between" key={member.id}>
-      {member.nickname || member.username}
+      {member.id + ' ' + (member.nickname || member.username)}
       {member.id !== userId ?
         (<span className={`badge badge-${member.hasDataChannel ? 'success' : 'info'} badge-pill`}>
           {member.hasDataChannel ? 'connected' : 'connecting...'}

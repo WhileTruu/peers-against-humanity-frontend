@@ -42,7 +42,7 @@ export default function authentication(state = initialState, result) {
       return {
         isFetching: false,
         isAuthenticated: false,
-        errorStatusCode: result.error.response.status,
+        errorStatusCode: result.error.toString(),
         token: null,
         user: null,
       }

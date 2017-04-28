@@ -1,6 +1,6 @@
 import {
-  UPDATE_LIST_ROOM,
-  UPDATE_LIST_ROOMS,
+  UPDATE_ROOM,
+  UPDATE_ROOMS,
 } from './actions'
 
 const initialState = {
@@ -28,10 +28,10 @@ function updateRoom(state, room) {
 
 export default function rooms(state = initialState, result) {
   switch (result.type) {
-    case UPDATE_LIST_ROOM: {
+    case UPDATE_ROOM: {
       return updateRoom(state, result.room)
     }
-    case UPDATE_LIST_ROOMS: {
+    case UPDATE_ROOMS: {
       return {
         ...state,
         rooms: result.rooms,
