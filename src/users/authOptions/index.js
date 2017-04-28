@@ -16,7 +16,7 @@ const AuthOptions = ({ url, isAuthenticated, createTemporaryAccount }) => (
               <div className="col-12 col-md-6">
                 <button
                   type="submit"
-                  className="form-control btn btn-primary"
+                  className="form-control btn btn-primary mb-3"
                   onClick={() => createTemporaryAccount(getRandomNickname())}
                 >
                   I want to be anonymous

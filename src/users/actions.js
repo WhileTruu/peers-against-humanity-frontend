@@ -5,8 +5,17 @@ export const LOGIN_SUCCESS = 'LOGIN_SUCCESS'
 export const LOGIN_FAILURE = 'LOGIN_FAILURE'
 export const LOG_OUT = 'LOG_OUT'
 
+function saveToLocalStorage(data) {
+  Object.keys(data).forEach(key => localStorage.setItem(key, data[key]))
+}
+
 export function receiveLogin(result) {
-  return { type: LOGIN_SUCCESS, ...result }
+  return (dispatch) => {
+    if (localStorage.getItem('rememberLogin')) {
+      saveToLocalStorage({ user: JSON.stringify(result.user), token: result.token })
+    }
+    dispatch({ type: LOGIN_SUCCESS, ...result })
+  }
 }
 
 export function loginRequest() {
@@ -28,6 +37,8 @@ export function requestLogin({ username, password }) {
 
 export function logOut() {
   return (dispatch) => {
+    localStorage.removeItem('user')
+    localStorage.removeItem('token')
     dispatch({ type: LOG_OUT })
   }
 }
@@ -47,5 +58,14 @@ export function createTemporaryAccount(nickname) {
     ApiService.createTemporaryAccount(nickname)
       .then(response => dispatch(receiveLogin(response)))
       .catch(error => dispatch(loginError(error)))
+  }
+}
+
+export function checkRememberedLogin() {
+  const user = JSON.parse(localStorage.getItem('user'))
+  const token = localStorage.getItem('token')
+  return (dispatch) => {
+    if (!user || !token) return //eslint-disable-line
+    dispatch(receiveLogin({ user, token }))
   }
 }

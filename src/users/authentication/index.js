@@ -11,11 +11,13 @@ class Authentication extends Component {
     this.onSubmit = this.onSubmit.bind(this)
     this.onUsernameChange = this.onUsernameChange.bind(this)
     this.onPasswordChange = this.onPasswordChange.bind(this)
+    this.onRememberLoginCheckChange = this.onRememberLoginCheckChange.bind(this)
     this.state = {
       username: null,
       password: null,
       usernameError: false,
       passwordError: false,
+      rememberLogin: localStorage.getItem('rememberLogin'),
     }
   }
 
@@ -52,6 +54,13 @@ class Authentication extends Component {
     }
   }
 
+  onRememberLoginCheckChange() {
+    const { rememberLogin } = this.state
+    this.setState({ rememberLogin: !rememberLogin })
+    if (!rememberLogin) localStorage.setItem('rememberLogin', true)
+    else localStorage.removeItem('rememberLogin')
+  }
+
   render() {
     const { usernameError, passwordError } = this.state
     const { errorStatusCode, isAuthenticated, isFetching, onSuccessRedirectTo } = this.props
@@ -62,7 +71,7 @@ class Authentication extends Component {
         <form className="form">
           <div className={`form-group ${usernameError ? 'has-warning' : ''}`}>
             <label htmlFor="usernameInput" className="form-check-label">
-              Insert username here
+              username
             </label>
             <input
               type="text"
@@ -74,7 +83,7 @@ class Authentication extends Component {
           </div>
           <div className={`form-group ${passwordError ? 'has-warning' : ''}`}>
             <label htmlFor="passwordInput" className="form-check-label">
-              Insert password here
+              password
             </label>
             <input
               type="password"
@@ -85,9 +94,7 @@ class Authentication extends Component {
             />
           </div>
           <div className={`form-group ${usernameError + 3 === 2 ? 'has-warning' : ''}`}>
-            <label htmlFor="loginButton" className="form-check-label">
-              Press the button below to log in
-            </label>
+            <label htmlFor="loginButton" className="form-check-label" />
             <button
               type="submit"
               disabled={isFetching}
@@ -98,6 +105,20 @@ class Authentication extends Component {
               {isFetching ? 'loading...' : 'Log in'}
             </button>
           </div>
+
+          <div className="form-check">
+            <input
+              type="checkbox"
+              id="rememberLoginCheckbox"
+              className="mr-1"
+              checked={this.state.rememberLogin}
+              onChange={this.onRememberLoginCheckChange}
+            />
+            <label htmlFor="rememberLoginCheckbox" className="form-check-label">
+              Remember me
+            </label>
+          </div>
+
           {errorStatusCode ? <div className="pt-3"><Alert type="danger">{errorStatusCode.toString()}</Alert></div> : ''}
         </form>
       </div>
