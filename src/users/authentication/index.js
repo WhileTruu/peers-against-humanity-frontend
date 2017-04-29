@@ -17,7 +17,7 @@ class Authentication extends Component {
       password: null,
       usernameError: false,
       passwordError: false,
-      rememberLogin: localStorage.getItem('rememberLogin'),
+      rememberLogin: localStorage.getItem('rememberLogin') || false,
     }
   }
 

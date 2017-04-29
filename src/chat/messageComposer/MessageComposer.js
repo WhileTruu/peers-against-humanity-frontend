@@ -18,12 +18,9 @@ class MessageComposer extends Component {
   onMessageChange(message) {
     this.setState({ message })
     this.textInput.style.height = 'auto'
-    this.textInput.style.height = `${Math.min(this.textInput.scrollHeight, 150) + 2}px`
+    this.textInput.style.height = `${Math.min(this.textInput.scrollHeight, 150)}px`
     this.textInput.scrollTop = this.textInput.scrollHeight
     this.props.changeComposerHeight(this.textInput.scrollHeight)
-    // TODO: See if this actually solves a potential page scrolling problem with a lot of text.
-    // Might not even appear in our case due to the limited textarea height.
-    window.scrollTo(window.scrollLeft, (this.textInput.scrollTop + this.textInput.scrollHeight))
   }
 
   render() {
@@ -45,10 +42,10 @@ class MessageComposer extends Component {
             }
           }}
         />
-        <span className="input-group-btn">
+        <div className="input-group-btn">
           <button
             className="btn btn-primary message-composer-input-group-btn"
-            type="submit"
+            type="button"
             onClick={() => {
               this.props.onSendMessage(this.state.message)
               this.textInput.value = ''
@@ -57,7 +54,7 @@ class MessageComposer extends Component {
           >
             Send!
           </button>
-        </span>
+        </div>
       </div>
     )
   }

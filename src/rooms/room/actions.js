@@ -40,7 +40,14 @@ export function hasDataChannel(id) {
 }
 
 export function createRoom() {
-  return socketActions.send({ type: CREATE_ROOM })
+  return (dispatch, getState) => {
+    if (getState().room.isFetching) {
+      throw new Error('Again same problem, pls find out what is wrong')
+    } else {
+      dispatch({ type: CREATE_ROOM })
+      dispatch(socketActions.send({ type: CREATE_ROOM }))
+    }
+  }
 }
 
 export function joinRoom(id) {
@@ -51,18 +58,14 @@ export function joinRoom(id) {
 }
 
 export function exitRoom(id) {
-  return (dispatch) => {
+  return (dispatch, getState) => {
     DataChannelService.closeAllPeerConnections()
-    dispatch(socketActions.connect())
     dispatch({ type: EXITED_ROOM, id })
-  }
-}
-
-export function connectedExitRoom(id) {
-  return (dispatch) => {
-    DataChannelService.closeAllPeerConnections()
-    dispatch({ type: EXIT_ROOM, id })
-    dispatch(socketActions.send({ type: EXIT_ROOM, id }))
+    if (getState().socket.connected) {
+      dispatch(socketActions.send({ type: EXIT_ROOM, id }))
+    } else {
+      dispatch(socketActions.connect())
+    }
   }
 }
 

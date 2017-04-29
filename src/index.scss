@@ -7,54 +7,27 @@
   padding-left: 0;
 }
 
-//body::after {
-//  z-index: -2;
-//  content: '';
-//  top: 20%;
-//  left: 20%;
-//  position: absolute;
-//  width: 100%;
-//  height: 100%;
-//  background-image: url("./../boulder1.svg");
-//  background-repeat: no-repeat;
-//  background-size: 750px;
-//  background-position: center top;
-//}
-//
-//body::before {
-//  z-index: -1;
-//  content: '';
-//  top: 5%;
-//  position: absolute;
-//  width: 100%;
-//  height: 100%;
-//  background-image: url("./../boulder2.svg");
-//  background-repeat: no-repeat;
-//  background-size: 750px;
-//  background-position: center top;
-//}
-
 .boulder-left {
-  width: 1350px;
-  position: absolute;
-  padding-top: 50px;
-  padding-right: 600px;
+  min-width: 750px;
+  margin-top: 50px;
+  margin-right: 600px;
+  min-height: 100%;
 }
 
 .boulder-right {
-  width: 1350px;
-  position: absolute;
-  padding-top: 150px;
-  padding-left: 600px;
+  min-width: 750px;
+  margin-top: 150px;
+  margin-left: 600px;
+  min-height: 500px;
 }
 
 .boulder-container {
   display: flex;
-  z-index: -1;
+  z-index: 0;
   position: absolute;
   width: 100%;
-  height: 100%;
+  min-height: 100%;
   align-items: baseline;
   justify-content: center;
-  overflow-x: hidden;
+  overflow: hidden;
 }

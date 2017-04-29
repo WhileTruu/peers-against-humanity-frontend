@@ -16,12 +16,12 @@ class Container extends Component {
       <Router>
         <div>
           <div className="boulder-container">
-            <img className="boulder-right" src="./boulder1.svg" alt="boulder" />
+            <img className="boulder-right" src="/boulder1.svg" alt="boulder" />
           </div>
           <div className="boulder-container">
-            <img className="boulder-left" src="./boulder2.svg" alt="boulder" />
+            <img className="boulder-left" src="/boulder2.svg" alt="boulder" />
           </div>
-          <div className="container p-5" style={{ minHeight: '100vh' }}>
+          <div className="container py-5" style={{ minHeight: '100vh' }}>
             <div className="row">
               <div className="col-12 col-md-10 offset-md-1 col-lg-8 offset-lg-2">
                 <Route exact path="/" component={FrontPage} />

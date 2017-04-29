@@ -1,9 +1,9 @@
+/* eslint-disable */
 import React, { PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 
 import { Authentication, actions } from '../'
-import getRandomNickname from './util'
 
 const AuthOptions = ({ url, isAuthenticated, createTemporaryAccount }) => (
   <div>
@@ -15,9 +15,9 @@ const AuthOptions = ({ url, isAuthenticated, createTemporaryAccount }) => (
             <div className="row">
               <div className="col-12 col-md-6">
                 <button
-                  type="submit"
+                  type="button"
                   className="form-control btn btn-primary mb-3"
-                  onClick={() => createTemporaryAccount(getRandomNickname())}
+                  onClick={createTemporaryAccount}
                 >
                   I want to be anonymous
                 </button>
@@ -44,7 +44,7 @@ const mapStoreToProps = store => ({
 })
 
 const mapDispatchToProps = dispatch => ({
-  createTemporaryAccount: nickname => dispatch(actions.createTemporaryAccount(nickname)),
+  createTemporaryAccount: () => dispatch(actions.createTemporaryAccount()),
 })
 
 export default connect(mapStoreToProps, mapDispatchToProps)(AuthOptions)

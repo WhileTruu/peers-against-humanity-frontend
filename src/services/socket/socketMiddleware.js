@@ -37,18 +37,23 @@ const socketMiddleware = (function(){
 
   const onMessage = (socket, store) => (event) => {
     const message = JSON.parse(event.data)
-    if (roomActionTypes.includes(message.type)) {
-      store.dispatch(message)
-      return
-    }
     switch (message.type) {
 
       case 'AUTHENTICATED':
         store.dispatch(actions.connected())
         break
 
+      case 'CREATED_ROOM':
+        store.dispatch(roomActions.createdRoom(message.room))
+        break
+
       default:
-        DataChannelService.onDataChannelMessage(message)
+        if (roomActionTypes.includes(message.type)) {
+          store.dispatch(message)
+          return
+        } else {
+          DataChannelService.onDataChannelMessage(message)
+        }
         break
     }
   }
@@ -80,6 +85,7 @@ const socketMiddleware = (function(){
 
       default:
         next(action)
+        break
     }
   }
 })()

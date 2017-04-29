@@ -114,7 +114,7 @@ export default class Card extends Component {
                   x="39.524704"
                   fontFamily="&apos;Nunito Sans&apos;"
                   fill={foregroundColor}
-                >Sockets Against Humanity</tspan>
+                >Peers Against Humanity</tspan>
               </text>
             </g>
             {color === this.colors.white ? '' : this.footer()}

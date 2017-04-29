@@ -42,7 +42,7 @@ class FrontPage extends Component {
         <div className="row">
           <div className="col-6">
             <h1 className="panel-heading">
-              Sockets<br />Against<br />Humanity
+              Peers<br />Against<br />Humanity
             </h1>
           </div>
           <div className="col-6">

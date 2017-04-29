@@ -24,15 +24,7 @@ class Room extends Component {
   }
 
   componentWillUnmount() {
-    this.exitRoom()
-  }
-
-  exitRoom() {
-    if (this.props.socket.connected) {
-      this.props.connectedExitRoom(this.props.room.id)
-    } else {
-      this.props.exitRoom(this.props.room.id)
-    }
+    this.props.exitRoom(this.props.room.id)
   }
 
   render() {
@@ -46,10 +38,7 @@ class Room extends Component {
               <button
                 type="button"
                 className="btn btn-danger"
-                onClick={() => {
-                  this.props.history.replace('/rooms')
-                  this.exitRoom()
-                }}
+                onClick={() => this.props.history.replace('/rooms')}
               >
                 exit room
               </button>
@@ -85,7 +74,6 @@ Room.propTypes = {
   members: Types.shape({ id: Types.number, username: Types.string, active: Types.bool }),
   joinRoom: Types.func.isRequired,
   exitRoom: Types.func.isRequired,
-  connectedExitRoom: Types.func.isRequired,
   error: Types.string,
   socket: Types.shape({ // eslint-disable-line
     connecting: Types.bool.isRequired,
@@ -113,7 +101,6 @@ const mapStoreToProps = store => ({
 const mapDispatchToProps = dispatch => ({
   joinRoom: roomId => dispatch(roomActions.joinRoom(roomId)),
   exitRoom: roomId => dispatch(roomActions.exitRoom(roomId)),
-  connectedExitRoom: roomId => dispatch(roomActions.connectedExitRoom(roomId)),
 })
 
 export default connect(mapStoreToProps, mapDispatchToProps)(withRouter(Room))

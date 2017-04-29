@@ -10,9 +10,11 @@ class MessageArea extends Component {
     if (this.props.composerHeight === nextProps.composerHeight) return
     const composerHeight = nextProps.composerHeight || 0
     this.messageArea.style.bottom = `${Math.min(composerHeight, 150)}px`
+    // this.messageArea.style.top = `${document.querySelector('.chat-header').scrollHeight}px`
   }
 
   componentDidUpdate() {
+    this.messageArea.style.top = `${document.querySelector('.chat-header').scrollHeight}px`
     this.messageArea.scrollTop = this.messageArea.scrollHeight
   }
 

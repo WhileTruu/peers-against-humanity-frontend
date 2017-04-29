@@ -35,7 +35,7 @@ export default function authentication(state = initialState, result) {
         isAuthenticated: true,
         errorStatusCode: null,
         token: result.token,
-        user: { id, username, registered, nickname },
+        user: { id: parseInt(id, 10), username, registered, nickname },
       }
     }
     case LOGIN_FAILURE: {

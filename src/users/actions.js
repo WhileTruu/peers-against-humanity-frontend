@@ -1,4 +1,5 @@
 import ApiService from '../services/apiService'
+import getRandomNickname from './authOptions/util'
 
 export const LOGIN_REQUEST = 'LOGIN_REQUEST'
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS'
@@ -52,12 +53,17 @@ export function register({ username, password }) {
   }
 }
 
-export function createTemporaryAccount(nickname) {
-  return (dispatch) => {
-    dispatch(loginRequest())
-    ApiService.createTemporaryAccount(nickname)
-      .then(response => dispatch(receiveLogin(response)))
-      .catch(error => dispatch(loginError(error)))
+export function createTemporaryAccount() {
+  return (dispatch, getState) => {
+    const nickname = getRandomNickname()
+    if (!getState().users.isFetching) {
+      dispatch(loginRequest())
+      ApiService.createTemporaryAccount(nickname)
+        .then(response => dispatch(receiveLogin(response)))
+        .catch(error => dispatch(loginError(error)))
+    } else {
+      throw new Error('Was already fetching an user account, pls find out what might go wrong')
+    }
   }
 }
 

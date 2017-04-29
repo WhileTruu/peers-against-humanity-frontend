@@ -11,6 +11,7 @@ class Chat extends Component {
     super(props)
     this.changeComposerHeight = this.changeComposerHeight.bind(this)
     this.sendMessage = this.sendMessage.bind(this)
+    this.toggleOpen = this.toggleOpen.bind(this)
     this.state = {
       composerHeight: null,
       isOpen: false,
@@ -32,12 +33,30 @@ class Chat extends Component {
     })
   }
 
+  toggleOpen() {
+    const { isOpen } = this.state
+    if (!isOpen) document.querySelector('body').classList.add('modal-open')
+    else document.querySelector('body').classList.remove('modal-open')
+    this.setState({ isOpen: !isOpen })
+  }
+
   render() {
     return (
       <div>
-        <div className="chat-container" style={{ position: 'absolute' }}>
+        <div className="chat-container">
           <div className={`chat-frame ${this.state.isOpen ? '' : 'hidden'}`}>
+            <div className="boulder-container">
+              <img className="boulder-right" src="/boulder4.svg" alt="boulder" />
+            </div>
+            <div className="boulder-container">
+              <img className="boulder-left" src="/boulder3.svg" alt="boulder" />
+            </div>
             <div className="chat-components-container">
+              <div className="chat-header">
+                <button className="btn btn-danger chat-header-button" onClick={this.toggleOpen}>
+                  close
+                </button>
+              </div>
               <MessageArea
                 userId={this.props.userId}
                 messages={this.props.messages}
@@ -51,11 +70,8 @@ class Chat extends Component {
             </div>
           </div>
         </div>
-        <button
-          className="chat-button btn btn-primary"
-          onClick={() => this.setState({ isOpen: !this.state.isOpen })}
-        >
-          chat
+        <button className="chat-button btn btn-primary" onClick={this.toggleOpen}>
+          chat over webRTC
         </button>
       </div>
     )

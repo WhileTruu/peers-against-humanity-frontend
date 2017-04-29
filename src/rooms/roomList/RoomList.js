@@ -4,14 +4,14 @@ import { connect } from 'react-redux'
 
 import { actions as roomActions } from '../room'
 
-const RoomList = ({ createRoom, socket, room, rooms, history, match, token }) => (
+const RoomList = ({ createRoom, socket, room, rooms, history, match }) => (
   <div>
     <div className="row">
       <div className="col-12">
         <div className="form-inline justify-content-between">
           <h1 className="panel-heading">Rooms</h1>
           {socket.connected ? (
-            <button type="button" className="btn btn-info" onClick={() => createRoom(token)}>
+            <button type="button" className="btn btn-info" onClick={() => createRoom()}>
               Create Room
             </button>
           ) : ''}
@@ -58,12 +58,10 @@ RoomList.propTypes = {
     connecting: Types.bool.isRequired,
   }).isRequired,
   createRoom: Types.func.isRequired,
-  token: Types.string,
 }
 
 RoomList.defaultProps = {
   rooms: null,
-  token: null,
 }
 
 
@@ -72,7 +70,6 @@ const mapStoreToProps = store => ({
   socket: store.socket,
   rooms: store.rooms.rooms,
   room: store.room,
-  token: store.users.token,
 })
 
 const mapDispatchToProps = dispatch => ({
