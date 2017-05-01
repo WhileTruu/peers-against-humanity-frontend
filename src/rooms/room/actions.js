@@ -1,5 +1,5 @@
-import DataChannelService from '../../services/webRTCDataChannel'
-import { actions as socketActions } from '../../services/socket'
+import DataChannelService from '../../common/RTCDataChannel'
+import { actions as socketActions } from '../../common/socket'
 
 export const ADD_MEMBER = 'ADD_MEMBER'
 export const REMOVE_MEMBER = 'REMOVE_MEMBER'

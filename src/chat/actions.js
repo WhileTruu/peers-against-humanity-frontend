@@ -1,4 +1,4 @@
-import DataChannelService from '../services/webRTCDataChannel'
+import DataChannelService from '../common/RTCDataChannel'
 
 export const CHAT_MESSAGE = 'CHAT_MESSAGE'
 

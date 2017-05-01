@@ -24,7 +24,7 @@ class DataChannelService {
   }
 
   closePeerConnection(peerId) {
-    if (this.getState().users.user.id === parseInt(peerId, 10) || !this.peerConnections[peerId]) {
+    if (this.getState().user.user.id === parseInt(peerId, 10) || !this.peerConnections[peerId]) {
       return
     }
     const { [`${peerId}`]: deletedPeer, ...peerConnections } = this.peerConnections
@@ -40,7 +40,7 @@ class DataChannelService {
   }
 
   requestNewPeerConnection(to) {
-    if (this.getState().users.user.id === parseInt(to, 10)) return
+    if (this.getState().user.user.id === parseInt(to, 10)) return
     if (this.peerConnections &&
       Object.keys(this.peerConnections).includes(to.toString()) &&
       this.peerConnections[to].dataChannel.readyState !== 'closed'
@@ -52,7 +52,7 @@ class DataChannelService {
     peer.onIceCandidate(candidate => (
       this.message({
         type: 'ICE_CANDIDATE',
-        from: this.getState().users.user.id,
+        from: this.getState().user.user.id,
         to,
         candidate,
       }).relay()
@@ -65,9 +65,9 @@ class DataChannelService {
     peer.createOffer(localSessionDescription => (
       this.message({
         type: 'PEER_CONNECTION_OFFER',
-        from: this.getState().users.user.id,
+        from: this.getState().user.user.id,
         to,
-        user: this.getState().users.user,
+        user: this.getState().user.user,
         sessionDescription: localSessionDescription,
       }).relay()
     ))
@@ -84,7 +84,7 @@ class DataChannelService {
     peer.onIceCandidate((candidate) => {
       this.message({
         type: 'ICE_CANDIDATE',
-        from: this.getState().users.user.id,
+        from: this.getState().user.user.id,
         to: from,
         candidate,
       }).relay()
@@ -98,9 +98,9 @@ class DataChannelService {
     peer.createAnswer(localDescription => (
       this.message({
         type: 'PEER_CONNECTION_ANSWER',
-        from: this.getState().users.user.id,
+        from: this.getState().user.user.id,
         to: from,
-        user: this.getState().users.user,
+        user: this.getState().user.user,
         sessionDescription: localDescription,
       }).relay()
     ))
@@ -148,7 +148,7 @@ class DataChannelService {
 
   onDataChannelMessage(message) {
     const state = this.getState()
-    if (message.to && message.to !== state.users.user.id) {
+    if (message.to && message.to !== state.user.user.id) {
       this.message(message).to(message.to).send()
       return
     }
@@ -185,10 +185,10 @@ class DataChannelService {
     const state = this.getState()
 
     this.dispatch(roomActions.hasDataChannel(id))
-    if (state.users.user.id === state.room.ownerId) {
+    if (state.user.user.id === state.room.ownerId) {
       this.message({
         type: 'JOINED_ROOM',
-        from: state.users.user.id,
+        from: state.user.user.id,
         to: id,
         room: state.room,
       }).to(id).send()

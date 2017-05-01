@@ -1,6 +1,6 @@
 import reducer from './reducer'
 import * as actions from './actions'
-import Authentication from './authentication'
+import LoginForm from './loginForm'
 import Registration from './registration'
 
-export { actions, reducer, Authentication, Registration }
+export { actions, reducer, LoginForm, Registration }

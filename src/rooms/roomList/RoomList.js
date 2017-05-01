@@ -66,7 +66,7 @@ RoomList.defaultProps = {
 
 
 const mapStoreToProps = store => ({
-  isAuthenticated: store.users.isAuthenticated,
+  isAuthenticated: store.user.isLoggedIn,
   socket: store.socket,
   rooms: store.rooms.rooms,
   room: store.room,

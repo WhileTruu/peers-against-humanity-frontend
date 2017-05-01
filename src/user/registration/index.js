@@ -3,21 +3,19 @@ import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 
 import Alert from '../../common/alert'
-import { requestLogin } from '../actions'
+import { register } from '../actions'
 
-class Authentication extends Component {
+class Registration extends Component {
   constructor(props) {
     super(props)
     this.onSubmit = this.onSubmit.bind(this)
     this.onUsernameChange = this.onUsernameChange.bind(this)
     this.onPasswordChange = this.onPasswordChange.bind(this)
-    this.onRememberLoginCheckChange = this.onRememberLoginCheckChange.bind(this)
     this.state = {
       username: null,
       password: null,
       usernameError: false,
       passwordError: false,
-      rememberLogin: localStorage.getItem('rememberLogin') || false,
     }
   }
 
@@ -35,7 +33,7 @@ class Authentication extends Component {
     if (usernameError || passwordError) {
       return
     }
-    this.props.requestLogin({ username, password })
+    this.props.register(username, password)
   }
 
   onPasswordChange(event) {
@@ -54,24 +52,17 @@ class Authentication extends Component {
     }
   }
 
-  onRememberLoginCheckChange() {
-    const { rememberLogin } = this.state
-    this.setState({ rememberLogin: !rememberLogin })
-    if (!rememberLogin) localStorage.setItem('rememberLogin', true)
-    else localStorage.removeItem('rememberLogin')
-  }
-
   render() {
     const { usernameError, passwordError } = this.state
     const { errorStatusCode, isAuthenticated, isFetching, onSuccessRedirectTo } = this.props
     return (
       <div>
         {isAuthenticated ? <Redirect to={onSuccessRedirectTo} /> : ''}
-        <h1 className="panel-heading">Log in</h1>
+        <h1 className="panel-heading">Register</h1>
         <form className="form">
           <div className={`form-group ${usernameError ? 'has-warning' : ''}`}>
             <label htmlFor="usernameInput" className="form-check-label">
-              username
+              Insert username here
             </label>
             <input
               type="text"
@@ -83,7 +74,7 @@ class Authentication extends Component {
           </div>
           <div className={`form-group ${passwordError ? 'has-warning' : ''}`}>
             <label htmlFor="passwordInput" className="form-check-label">
-              password
+              Insert password here
             </label>
             <input
               type="password"
@@ -94,7 +85,9 @@ class Authentication extends Component {
             />
           </div>
           <div className={`form-group ${usernameError + 3 === 2 ? 'has-warning' : ''}`}>
-            <label htmlFor="loginButton" className="form-check-label" />
+            <label htmlFor="loginButton" className="form-check-label">
+              Press the button below to register
+            </label>
             <button
               type="submit"
               disabled={isFetching}
@@ -102,23 +95,9 @@ class Authentication extends Component {
               id="loginButton"
               onClick={this.onSubmit}
             >
-              {isFetching ? 'loading...' : 'Log in'}
+              {isFetching ? 'loading...' : 'Register'}
             </button>
           </div>
-
-          <div className="form-check">
-            <input
-              type="checkbox"
-              id="rememberLoginCheckbox"
-              className="mr-1"
-              checked={this.state.rememberLogin}
-              onChange={this.onRememberLoginCheckChange}
-            />
-            <label htmlFor="rememberLoginCheckbox" className="form-check-label">
-              Remember me
-            </label>
-          </div>
-
           {errorStatusCode ? <div className="pt-3"><Alert type="danger">{errorStatusCode.toString()}</Alert></div> : ''}
         </form>
       </div>
@@ -126,21 +105,21 @@ class Authentication extends Component {
   }
 }
 
-Authentication.propTypes = {
+Registration.propTypes = {
   isAuthenticated: PropTypes.bool.isRequired,
   isFetching: PropTypes.bool.isRequired,
-  requestLogin: PropTypes.func.isRequired,
+  register: PropTypes.func.isRequired,
   errorStatusCode: PropTypes.number,
   onSuccessRedirectTo: PropTypes.string,
 }
 
-Authentication.defaultProps = {
+Registration.defaultProps = {
   onSuccessRedirectTo: '/',
   errorStatusCode: null,
 }
 
 const mapDispatchToProps = dispatch => ({
-  requestLogin: credentials => dispatch(requestLogin(credentials)),
+  register: (username, password) => dispatch(register(username, password)),
 })
 
 const mapStoreToProps = store => ({
@@ -149,4 +128,5 @@ const mapStoreToProps = store => ({
   errorStatusCode: store.users.errorStatusCode,
 })
 
-export default connect(mapStoreToProps, mapDispatchToProps)(Authentication)
+
+export default connect(mapStoreToProps, mapDispatchToProps)(Registration)
