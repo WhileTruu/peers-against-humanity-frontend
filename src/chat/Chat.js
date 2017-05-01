@@ -95,9 +95,9 @@ Chat.defaultProps = {
 }
 
 const mapStoreToProps = store => ({
-  userId: store.user.user.id,
-  username: store.user.user.username,
-  nickname: store.user.user.nickname,
+  userId: store.user.id,
+  username: store.user.username,
+  nickname: store.user.nickname,
   messages: store.chat.messages,
 })
 

@@ -13,11 +13,19 @@ const headers = {
   'Content-Type': 'application/json',
 }
 
-export function register(username, password) {
+export function register(nickname, username, password) {
   return fetch('/api/v1/users', {
     method: 'POST',
     headers,
-    body: JSON.stringify({ username, password }),
+    body: JSON.stringify({ nickname, username, password }),
+  }).then(transformResponse)
+}
+
+export function registerTemporary(id, nickname, username, password, token) {
+  return fetch(`/api/v1/users/temporary/${id}`, {
+    method: 'PUT',
+    headers: { ...headers, Authorization: `Bearer ${token}` },
+    body: JSON.stringify({ nickname, username, password }),
   }).then(transformResponse)
 }
 

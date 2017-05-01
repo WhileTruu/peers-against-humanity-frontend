@@ -4,8 +4,8 @@ import { connect } from 'react-redux'
 import { Redirect } from 'react-router-dom'
 
 import ErrorAlert from '../../common/errorAlert'
-import { logIn, toggleRememberLogin } from '../actions'
-import { changeUsername, changePassword } from './actions'
+import { register, toggleRememberLogin } from '../actions'
+import { changeNickname, changeUsername, changePassword } from './actions'
 import translations from '../../translations'
 
 function withPreventDefault(fn) {
@@ -15,8 +15,10 @@ function withPreventDefault(fn) {
   }
 }
 
-export const LoginForm = ({
+export const RegistrationForm = ({
   isLoggedIn,
+  isRegistered,
+  nickname,
   username,
   password,
   errorCode,
@@ -24,18 +26,30 @@ export const LoginForm = ({
   rememberLogin,
   redirectUrl,
   strings,
+  onNicknameChange,
   onUsernameChange,
   onPasswordChange,
   onRememberLoginChange,
   onSubmit,
 }) => (
   <div>
-    {isLoggedIn ? <Redirect to={redirectUrl} /> : ''}
+    {isLoggedIn && isRegistered ? <Redirect to={redirectUrl} /> : ''}
     <h1 className="panel-heading">{strings.title}</h1>
     <form
       className="form"
-      onSubmit={withPreventDefault(() => onSubmit(username, password))}
+      onSubmit={withPreventDefault(() => onSubmit(nickname, username, password))}
     >
+      <div className={`form-group ${!!errorCode && 'has-warning'}`}>
+        <label htmlFor="nickname-input" className="form-check-label">{strings.nickname}</label>
+        <input
+          id="nickname-input"
+          type="text"
+          className="form-control"
+          value={nickname}
+          placeholder={`${strings.nickname}...`}
+          onChange={event => onNicknameChange(event.target.value)}
+        />
+      </div>
       <div className={`form-group ${!!errorCode && 'has-warning'}`}>
         <label htmlFor="username-input" className="form-check-label">{strings.username}</label>
         <input
@@ -88,32 +102,38 @@ export const LoginForm = ({
   </div>
 )
 
-LoginForm.propTypes = {
+RegistrationForm.propTypes = {
+  nickname: Types.string,
   username: Types.string,
   password: Types.string,
   isLoggedIn: Types.bool,
+  isRegistered: Types.bool,
   errorCode: Types.number,
   redirectUrl: Types.string,
   loading: Types.bool,
   rememberLogin: Types.bool,
   strings: Types.shape({}),
 
+  onNicknameChange: Types.func,
   onUsernameChange: Types.func,
   onPasswordChange: Types.func,
   onRememberLoginChange: Types.func,
   onSubmit: Types.func,
 }
 
-LoginForm.defaultProps = {
+RegistrationForm.defaultProps = {
+  nickname: '',
   username: '',
   password: '',
   isLoggedIn: false,
+  isRegistered: false,
   errorCode: null,
   redirectUrl: '/',
   loading: false,
   rememberLogin: false,
-  strings: translations.en.loginForm,
+  strings: translations.en.registrationForm,
 
+  onNicknameChange: () => null,
   onUsernameChange: () => null,
   onPasswordChange: () => null,
   onRememberLoginChange: () => null,
@@ -121,19 +141,22 @@ LoginForm.defaultProps = {
 }
 
 const mapStoreToProps = store => ({
-  username: store.loginForm.username,
-  password: store.loginForm.password,
+  nickname: store.registrationForm.nickname,
+  username: store.registrationForm.username,
+  password: store.registrationForm.password,
   rememberLogin: store.user.rememberLogin,
   loading: store.user.loading,
   errorCode: store.user.error,
   isLoggedIn: store.user.isLoggedIn,
+  isRegistered: store.user.registered,
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators({
+  onNicknameChange: changeNickname,
   onUsernameChange: changeUsername,
   onPasswordChange: changePassword,
   onRememberLoginChange: toggleRememberLogin,
-  onSubmit: logIn,
+  onSubmit: register,
 }, dispatch)
 
-export default connect(mapStoreToProps, mapDispatchToProps)(LoginForm)
+export default connect(mapStoreToProps, mapDispatchToProps)(RegistrationForm)

@@ -10,13 +10,21 @@ class FrontPage extends Component {
     this.props.history.push('/')
   }
 
-  renderAuthenticationButtons() {
+  renderLoginButton() {
     const { history } = this.props
     return (
-      <div className="form-inline justify-content-end">
+      <div>
         <button className="btn btn-success mb-3" onClick={() => history.push('/login')}>
           log in
         </button>
+      </div>
+    )
+  }
+
+  renderRegistrationButton() {
+    const { history } = this.props
+    return (
+      <div>
         <button className="btn btn-primary mb-3 ml-3" onClick={() => history.push('/register')}>
           register
         </button>
@@ -26,8 +34,8 @@ class FrontPage extends Component {
 
   renderLogOutButton() {
     return (
-      <div className="form-inline justify-content-end">
-        <button className="btn btn-primary" onClick={() => this.logOut()}>
+      <div>
+        <button className="btn btn-primary mb-3" onClick={() => this.logOut()}>
           log out
         </button>
       </div>
@@ -35,8 +43,7 @@ class FrontPage extends Component {
   }
 
   render() {
-    const { isLoggedIn } = this.props
-    const { history } = this.props
+    const { isLoggedIn, isRegistered, history } = this.props
     return (
       <div>
         <div className="row">
@@ -46,7 +53,10 @@ class FrontPage extends Component {
             </h1>
           </div>
           <div className="col-6">
-            {isLoggedIn ? this.renderLogOutButton() : this.renderAuthenticationButtons()}
+            <div className="form-inline justify-content-end">
+              {isLoggedIn ? this.renderLogOutButton() : this.renderLoginButton()}
+              {!isRegistered && this.renderRegistrationButton()}
+            </div>
           </div>
           <div className="col-12">
             <div className="py-3">
@@ -76,13 +86,19 @@ class FrontPage extends Component {
 }
 
 FrontPage.propTypes = {
+  isRegistered: PropTypes.bool,
   isLoggedIn: PropTypes.bool.isRequired,
   logOut: PropTypes.func.isRequired,
   history: PropTypes.shape({ push: PropTypes.func.isRequired }).isRequired,
 }
 
+FrontPage.defaultProps = {
+  isRegistered: false,
+}
+
 const mapStoreToProps = store => ({
   isLoggedIn: store.user.isLoggedIn,
+  isRegistered: store.user.registered,
 })
 
 const mapDispatchToProps = dispatch => ({

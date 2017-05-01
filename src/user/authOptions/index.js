@@ -5,7 +5,7 @@ import { Redirect } from 'react-router-dom'
 import { LoginForm, actions } from '../'
 import generateRandomNickname from './util'
 
-const AuthOptions = ({ url, isAuthenticated, temporaryRegister }) => (
+const AuthOptions = ({ url, isAuthenticated, temporaryLogin }) => (
   <div>
     {isAuthenticated ? <Redirect to={url} /> : ''}
     <div className="row">
@@ -17,7 +17,7 @@ const AuthOptions = ({ url, isAuthenticated, temporaryRegister }) => (
                 <button
                   type="button"
                   className="form-control btn btn-primary mb-3"
-                  onClick={() => temporaryRegister(generateRandomNickname())}
+                  onClick={() => temporaryLogin(generateRandomNickname())}
                 >
                   I want to be anonymous
                 </button>
@@ -36,7 +36,7 @@ const AuthOptions = ({ url, isAuthenticated, temporaryRegister }) => (
 AuthOptions.propTypes = {
   url: PropTypes.string.isRequired,
   isAuthenticated: PropTypes.bool.isRequired,
-  temporaryRegister: PropTypes.func.isRequired,
+  temporaryLogin: PropTypes.func.isRequired,
 }
 
 const mapStoreToProps = store => ({
@@ -44,7 +44,7 @@ const mapStoreToProps = store => ({
 })
 
 const mapDispatchToProps = dispatch => ({
-  temporaryRegister: nickname => dispatch(actions.temporaryRegister(nickname)),
+  temporaryLogin: nickname => dispatch(actions.temporaryLogin(nickname)),
 })
 
 export default connect(mapStoreToProps, mapDispatchToProps)(AuthOptions)

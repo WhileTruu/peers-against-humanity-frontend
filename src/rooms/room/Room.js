@@ -89,7 +89,7 @@ Room.defaultProps = {
 }
 
 const mapStoreToProps = store => ({
-  user: store.user.user,
+  user: store.user,
   token: store.user.token,
   room: store.room,
   members: store.room.members,

@@ -1,0 +1,32 @@
+{
+  "loginForm": {
+    "title": "log in",
+    "username": "username",
+    "password": "password",
+    "submit": "log in",
+    "loading": "loading",
+    "rememberMe": "remember me",
+    "error": {
+      "400": "something is wrong with the username or password",
+      "401": "invalid username or password",
+      "500": "server error, please try again",
+      "default": "something went wrong, I guess"
+    }
+  },
+  "registrationForm": {
+    "title": "register",
+    "nickname": "nickname",
+    "username": "username",
+    "password": "password",
+    "submit": "register",
+    "loading": "loading",
+    "rememberMe": "remember me",
+    "error": {
+      "400": "something is wrong with the username or password",
+      "401": "invalid username or password",
+      "403": "you are not authorized to register that user",
+      "500": "server error, please try again",
+      "default": "something went wrong, I guess"
+    }
+  }
+}
