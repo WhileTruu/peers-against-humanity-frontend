@@ -1,31 +1,40 @@
 import 'whatwg-fetch'
 
-function checkStatus(response) {
-  if (response.status >= 200 && response.status < 400) return response
-
-  const error = new Error(response.statusText)
-  error.response = response
-  throw error
+function transformResponse(response) {
+  if (response.ok && response.status < 400) return response.json()
+  else if (response.status >= 400) {
+    const error = { status: response.status }
+    throw error
+  }
+  throw response
 }
 
 const headers = {
   'Content-Type': 'application/json',
 }
 
-export function register({ username, password }) {
+export function register(nickname, username, password) {
   return fetch('/api/v1/users', {
     method: 'POST',
     headers,
-    body: JSON.stringify({ username, password }),
-  }).then(checkStatus).then(response => response.json())
+    body: JSON.stringify({ nickname, username, password }),
+  }).then(transformResponse)
 }
 
-export function login({ username, password }) {
+export function registerTemporary(id, nickname, username, password, token) {
+  return fetch(`/api/v1/users/temporary/${id}`, {
+    method: 'PUT',
+    headers: { ...headers, Authorization: `Bearer ${token}` },
+    body: JSON.stringify({ nickname, username, password }),
+  }).then(transformResponse)
+}
+
+export function login(username, password) {
   return fetch('/api/v1/users/authentication', {
     method: 'POST',
     headers,
     body: JSON.stringify({ username, password }),
-  }).then(checkStatus).then(response => response.json())
+  }).then(transformResponse)
 }
 
 // export function createRoom(token) {
@@ -61,5 +70,5 @@ export function createTemporaryAccount(nickname) {
     method: 'POST',
     headers,
     body: JSON.stringify({ nickname }),
-  }).then(checkStatus).then(response => response.json())
+  }).then(transformResponse)
 }

@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 import webSocketUrl from './config'
 import { actions } from '.'
 import {
@@ -8,10 +6,9 @@ import {
   SOCKET_SEND as SEND,
 } from './actions'
 
-import { actions as roomsActions } from '../../rooms'
 import { actions as roomActions } from '../../rooms/room'
 
-import DataChannelService from '../webRTCDataChannel'
+import DataChannelService from '../RTCDataChannel'
 
 const roomActionTypes = [
   'UPDATE_ROOMS',
@@ -23,15 +20,15 @@ const roomActionTypes = [
   'ROOM_NOT_CREATED',
 ]
 
-const socketMiddleware = (function(){
+const socketMiddleware = (() => {
   let webSocket = null
 
-  const onOpen = (socket, store) => (event) => {
-    store.dispatch(actions.send({ type: 'AUTHENTICATE', token: store.getState().users.token }))
+  const onOpen = (socket, store) => (event) => { // eslint-disable-line
+    store.dispatch(actions.send({ type: 'AUTHENTICATE', token: store.getState().user.token }))
     store.dispatch(actions.authenticating())
   }
 
-  const onClose = (socket, store) => (event) => {
+  const onClose = (socket, store) => (event) => { // eslint-disable-line
     store.dispatch(actions.disconnected())
   }
 
@@ -50,7 +47,6 @@ const socketMiddleware = (function(){
       default:
         if (roomActionTypes.includes(message.type)) {
           store.dispatch(message)
-          return
         } else {
           DataChannelService.onDataChannelMessage(message)
         }

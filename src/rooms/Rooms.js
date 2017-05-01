@@ -4,9 +4,9 @@ import { Route, Redirect, withRouter } from 'react-router-dom'
 
 import RoomList from './roomList'
 import Room from './room'
-import AuthOptions from '../users/authOptions'
+import AuthOptions from '../user/authOptions'
 
-import { actions as socketActions } from '../services/socket'
+import { actions as socketActions } from '../common/socket'
 
 class Rooms extends Component {
   componentDidMount() {
@@ -72,7 +72,7 @@ Rooms.defaultProps = {
 }
 
 const mapStoreToProps = store => ({
-  isAuthenticated: store.users.isAuthenticated,
+  isAuthenticated: store.user.isLoggedIn,
   currentRoomId: store.room.id,
   socket: store.socket,
 })
