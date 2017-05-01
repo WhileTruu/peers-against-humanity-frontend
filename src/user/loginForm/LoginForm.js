@@ -18,6 +18,7 @@ const login = {
     400: 'something is wrong with the username or password',
     401: 'invalid username or password',
     500: 'server error, please try again',
+    default: 'something went wrong, I guess',
   },
 }
 
@@ -46,7 +47,7 @@ export const LoginForm = ({
     <h1 className="panel-heading">{login.title}</h1>
     <form
       className="form"
-      onSubmit={withPreventDefault(onSubmit)}
+      onSubmit={withPreventDefault(() => onSubmit(username, password))}
     >
       <div className={`form-group ${!!errorCode && 'has-warning'}`}>
         <label htmlFor="username-input" className="form-check-label">{login.username}</label>
@@ -72,9 +73,10 @@ export const LoginForm = ({
       </div>
       <div className={`form-group ${!!errorCode && 'has-warning'}`}>
         <button
+          id="login-submit"
           type="submit"
-          disabled={!username || !password || loading}
           className="btn btn-success btn-block"
+          disabled={!username || !password || loading}
         >
           {loading ? login.loading : login.submit}
         </button>
@@ -92,31 +94,38 @@ export const LoginForm = ({
         </label>
       </div>
     </form>
-    { errorCode ? <ErrorAlert error={login.error[errorCode]} /> : '' }
+    { errorCode && <ErrorAlert error={login.error[errorCode] || login.error.default} /> }
   </div>
 )
 
 LoginForm.propTypes = {
   username: Types.string,
   password: Types.string,
-  isLoggedIn: Types.bool.isRequired,
+  isLoggedIn: Types.bool,
   errorCode: Types.number,
   redirectUrl: Types.string,
-  loading: Types.bool.isRequired,
-  rememberLogin: Types.bool.isRequired,
+  loading: Types.bool,
+  rememberLogin: Types.bool,
 
-  onUsernameChange: Types.func.isRequired,
-  onPasswordChange: Types.func.isRequired,
-  onRememberLoginChange: Types.func.isRequired,
-  onSubmit: Types.func.isRequired,
+  onUsernameChange: Types.func,
+  onPasswordChange: Types.func,
+  onRememberLoginChange: Types.func,
+  onSubmit: Types.func,
 }
 
 LoginForm.defaultProps = {
   username: '',
   password: '',
-  token: '',
+  isLoggedIn: false,
   errorCode: null,
   redirectUrl: '/',
+  loading: false,
+  rememberLogin: false,
+
+  onUsernameChange: () => null,
+  onPasswordChange: () => null,
+  onRememberLoginChange: () => null,
+  onSubmit: () => null,
 }
 
 const mapStoreToProps = store => ({

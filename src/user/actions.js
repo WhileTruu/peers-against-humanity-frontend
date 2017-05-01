@@ -6,11 +6,11 @@ import {
 } from './constants'
 import { api } from '../common'
 
-export function logIn() {
-  return (dispatch, getState) => {
+export function logIn(username, password) {
+  return (dispatch) => {
     dispatch({ type: GET_USER_START })
     api
-      .login(getState().loginForm.username, getState().loginForm.password)
+      .login(username, password)
       .then((response) => {
         dispatch({ type: GET_USER_SUCCESS, user: response.user, token: response.token })
       })
