@@ -35,7 +35,7 @@ class FrontPage extends Component {
   renderLogOutButton() {
     return (
       <div>
-        <button className="btn btn-primary mb-3" onClick={() => this.logOut()}>
+        <button className="btn btn-info mb-3" onClick={() => this.logOut()}>
           log out
         </button>
       </div>
