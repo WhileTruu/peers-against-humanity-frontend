@@ -1,0 +1,34 @@
+.sah-card {
+  will-change: auto;
+  user-select: none;
+  filter: drop-shadow(0 4px 6px rgba(50,50,93,.11)) drop-shadow(0 1px 3px rgba(0,0,0,.08));
+  // box-shadow: 0 4px 6px rgba(50,50,93,.11), 0 1px 3px rgba(0,0,0,.08);
+  transition: all .2s ease-in-out;
+  display: flex;
+  position: relative;
+}
+
+.sah-card:hover {
+  transform: translateY(-1%);
+  filter: drop-shadow(0 7px 14px rgba(50,50,93,.1)) drop-shadow(0 3px 6px rgba(0,0,0,.08));
+}
+
+.sah-card:active {
+  transform: translateY(0);
+  filter: drop-shadow(0 7px 14px rgba(50,50,93,.1)) drop-shadow(0 3px 6px rgba(0,0,0,.08));
+}
+
+.sah-card.selected {
+  filter: sepia(1);
+}
+
+.sah-card > .selected {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
