@@ -35,8 +35,8 @@ class Chat extends Component {
 
   toggleOpen() {
     const { isOpen } = this.state
-    if (!isOpen) document.querySelector('body').classList.add('modal-open')
-    else document.querySelector('body').classList.remove('modal-open')
+    if (!isOpen) document.querySelector('body').classList.add('chat-open')
+    else document.querySelector('body').classList.remove('chat-open')
     this.setState({ isOpen: !isOpen })
   }
 
