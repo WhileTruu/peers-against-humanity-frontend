@@ -2,7 +2,7 @@ import React, { PropTypes as Types } from 'react'
 import './card.scss'
 
 export const Card = ({ children, backgroundColor, foregroundColor, selected, number }) => (
-  <div className={`sah-card m-2 ${selected && 'selected'}`} style={{ display: 'inline-flex', maxWidth: '100%', height: '150px' }}>
+  <div className={`sah-card m-2 ${selected && 'selected'}`} style={{ display: 'inline-flex', maxWidth: '100%', height: '200px' }}>
     { selected && <div className="selected"><h1>{number}</h1></div> }
     <svg
       id="svg2"

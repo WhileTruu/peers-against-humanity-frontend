@@ -6,6 +6,8 @@ import { actions as roomActions } from '.'
 import MemberList from './memberList'
 import Chat from '../../chat'
 
+import Game, { actions as gameActions } from '../../game'
+
 class Room extends Component {
   componentDidMount() {
     const { room, match, token, socket } = this.props
@@ -35,18 +37,30 @@ class Room extends Component {
           <div className="col-12">
             <div className="form-inline justify-content-between">
               <h1 className="panel-heading">Room {room.id}</h1>
-              <button
-                type="button"
-                className="btn btn-danger"
-                onClick={() => this.props.history.replace('/rooms')}
-              >
-                exit room
-              </button>
+              <div>
+                {
+                  (this.props.user.id === room.ownerId) &&
+                  <button
+                    className="btn btn-outline-success ml-2"
+                    onClick={this.props.startGame}
+                  >
+                    start game
+                  </button>
+                }
+                <button
+                  type="button"
+                  className="btn btn-danger ml-2"
+                  onClick={() => this.props.history.replace('/rooms')}
+                >
+                  exit room
+                </button>
+              </div>
             </div>
           </div>
         </div>
         <div className="row">
           <div className="col-12">
+            { this.props.gameStarted && <Game /> }
             <MemberList
               userId={this.props.user.id}
               members={{ [this.props.user.id]: this.props.user, ...members }}
@@ -74,18 +88,21 @@ Room.propTypes = {
   members: Types.shape({ id: Types.number, username: Types.string, active: Types.bool }),
   joinRoom: Types.func.isRequired,
   exitRoom: Types.func.isRequired,
+  startGame: Types.func.isRequired,
   error: Types.string,
   socket: Types.shape({ // eslint-disable-line
     connecting: Types.bool.isRequired,
     authenticating: Types.bool.isRequired,
     connected: Types.bool.isRequired,
   }).isRequired,
+  gameStarted: Types.bool,
 }
 
 Room.defaultProps = {
   token: null,
   members: null,
   error: null,
+  gameStarted: false,
 }
 
 const mapStoreToProps = store => ({
@@ -96,11 +113,13 @@ const mapStoreToProps = store => ({
   isFetching: store.room.isFetching,
   error: store.room.error,
   socket: store.socket,
+  gameStarted: store.game.started,
 })
 
 const mapDispatchToProps = dispatch => ({
   joinRoom: roomId => dispatch(roomActions.joinRoom(roomId)),
   exitRoom: roomId => dispatch(roomActions.exitRoom(roomId)),
+  startGame: () => dispatch(gameActions.startGame()),
 })
 
 export default connect(mapStoreToProps, mapDispatchToProps)(withRouter(Room))

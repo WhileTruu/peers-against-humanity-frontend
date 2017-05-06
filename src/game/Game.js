@@ -1,56 +1,28 @@
 import React, { PropTypes as Types } from 'react'
-import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 
-// import Evaluation from './evaluation'
 import Main from './main'
-import { getCards, startRound } from './actions'
+import Evaluation from './evaluation'
 
-export const Game = ({
-  onGetCards,
-  onStartRound,
-  currentBlackCard,
-  currentWhiteCards,
-}) => (
+const Game = ({ isEvaluator, hasSubmitted }) => (
   <div>
-    <button
-      className="btn btn-outline-primary"
-      onClick={() => onGetCards(10, 100)}
-    >
-      get cards
-    </button>
-    <button
-      className="btn btn-outline-success"
-      onClick={onStartRound}
-    >
-      start round
-    </button>
-    <Main blackCard={currentBlackCard} whiteCards={currentWhiteCards} />
+    { (isEvaluator || hasSubmitted) ? <Evaluation /> : <Main /> }
   </div>
 )
 
 Game.propTypes = {
-  currentBlackCard: Types.shape({}),
-  currentWhiteCards: Types.arrayOf(Types.shape({})),
-  onGetCards: Types.func,
-  onStartRound: Types.func,
+  hasSubmitted: Types.bool,
+  isEvaluator: Types.bool,
 }
 
 Game.defaultProps = {
-  currentBlackCard: null,
-  currentWhiteCards: null,
-  onGetCards: () => null,
-  onStartRound: () => null,
+  hasSubmitted: false,
+  isEvaluator: false,
 }
 
 const mapStoreToProps = store => ({
-  currentBlackCard: store.game.currentBlackCard,
-  currentWhiteCards: store.game.currentWhiteCards,
+  hasSubmitted: store.game.submitted,
+  isEvaluator: store.user.id === store.game.evaluatorId,
 })
 
-const mapDispatchToProps = dispatch => bindActionCreators({
-  onGetCards: getCards,
-  onStartRound: startRound,
-}, dispatch)
-
-export default connect(mapStoreToProps, mapDispatchToProps)(Game)
+export default connect(mapStoreToProps)(Game)

@@ -45,13 +45,15 @@ export function createRoom() {
       throw new Error('Again same problem, pls find out what is wrong')
     } else {
       dispatch({ type: CREATE_ROOM })
+      dispatch(addMember(getState().user))
       dispatch(socketActions.send({ type: CREATE_ROOM }))
     }
   }
 }
 
 export function joinRoom(id) {
-  return (dispatch) => {
+  return (dispatch, getState) => {
+    dispatch(addMember(getState().user))
     dispatch({ type: JOIN_ROOM, id: parseInt(id, 10) })
     dispatch(socketActions.send({ type: JOIN_ROOM, id: parseInt(id, 10) }))
   }

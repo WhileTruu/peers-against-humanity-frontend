@@ -1,6 +1,7 @@
 import {
   SELECT_CARD,
   DESELECT_CARD,
+  DESELECT_ALL_CARDS,
 } from './constants'
 
 const initialState = {
@@ -26,6 +27,9 @@ export default function gameMain(state = initialState, action) {
         selectedCardIds: selectedCardIds.filter(id => id !== action.id),
       }
     }
+
+    case DESELECT_ALL_CARDS:
+      return initialState
 
     default:
       return state

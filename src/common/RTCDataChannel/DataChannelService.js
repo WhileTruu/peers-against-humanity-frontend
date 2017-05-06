@@ -1,6 +1,7 @@
 import PeerConnection from './peerConnection'
 import { actions as socketActions } from '../socket'
 import { actions as roomActions } from '../../rooms/room'
+import { actions as gameActions } from '../../game'
 import { roomActionTypes } from '../../rooms/room/actions'
 import {
   peerConnectionConfig,
@@ -147,6 +148,7 @@ class DataChannelService {
   }
 
   onDataChannelMessage(message) {
+    console.log(message)
     const state = this.getState()
     if (message.to && message.to !== state.user.id) {
       this.message(message).to(message.to).send()
@@ -173,6 +175,26 @@ class DataChannelService {
       }
       case 'JOINED_ROOM': {
         this.dispatch(roomActions.joinedRoom(message.room))
+        break
+      }
+      case '@game/START_GAME': {
+        this.dispatch(gameActions.startGameMessage(message))
+        break
+      }
+      case '@game/START_ROUND': {
+        this.dispatch(message)
+        break
+      }
+      case '@game/PLAYER_READY': {
+        this.dispatch(gameActions.readyCheck(message.from))
+        break
+      }
+      case '@game/SUBMIT_CARDS': {
+        this.dispatch(message)
+        break
+      }
+      case '@game/BEST_SUBMISSION': {
+        this.dispatch(message)
         break
       }
       default:

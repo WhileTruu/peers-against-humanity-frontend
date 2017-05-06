@@ -1,5 +1,9 @@
 import React, { PropTypes as Types } from 'react'
 
+function createMarkup(text) {
+  return { __html: text }
+}
+
 const CardText = ({ text, color }) => (
   <foreignObject
     id="tspan4232"
@@ -13,9 +17,10 @@ const CardText = ({ text, color }) => (
     fill="#ffffff"
     style={{ wordSpacing: '0px', letterSpacing: '0px' }}
   >
-    <div style={{ color }} xmlns="http://www.w3.org/1999/xhtml">
-      {text}
-    </div>
+    <div
+      style={{ color }} xmlns="http://www.w3.org/1999/xhtml"
+      dangerouslySetInnerHTML={createMarkup(text)}
+    />
   </foreignObject>
 )
 
