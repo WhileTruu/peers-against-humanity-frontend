@@ -15,7 +15,7 @@ const Container = () => (
       <div className="boulder-container">
         <img className="boulder-left" src="/boulder2.svg" alt="boulder" />
       </div>
-      <div className="container-fluid py-5" style={{ minHeight: '100vh' }}>
+      <div className="container-fluid" style={{ minHeight: '100vh' }}>
         <div className="row">
           <div className="col-12 col-lg-10 offset-lg-1 col-xl-8 offset-xl-2">
             <Route exact path="/" component={FrontPage} />

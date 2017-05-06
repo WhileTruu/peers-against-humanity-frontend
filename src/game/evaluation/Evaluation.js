@@ -26,42 +26,39 @@ export const Evaluation = ({
   onSelectBestSubmission,
   onNextRound,
   players,
-}) => {
-  const blackCard = blackCards && blackCards.filter(card => card.id === currentBlackCardId)[0]
-  return (
+}) => (
+  <div>
+    <h2>{heading(players, submittedCards, evaluator)}</h2>
     <div>
-      <h2>{heading(players, submittedCards, evaluator)}</h2>
-      <div>
-        {submittedCards && Object.keys(submittedCards).map(key => (
-          /* eslint-disable */
-          <div key={key} onClick={() => onSelectBestSubmission(parseInt(key, 10))}>
-            <BlackCard text={blackCard.text} pick={blackCard.pick} />
-            {submittedCards[key].map((id) => {
-              const card = whiteCards.reduce((accumulator, current) => {
-                if (current.id === id) {
-                  return current
-                }
-                return accumulator
-              }, null)
-              return <WhiteCard text={card.text} key={card.id} />
-            })}
-          </div>
-        ))}
-        {evaluator && (
-          <button className="btn btn-default btn-block" onClick={onNextRound}>
-            next round
-          </button>
-        )}
-      </div>
-      {/* eslint-enable */}
+      {/* eslint-disable */}
+      {submittedCards && Object.keys(submittedCards).map(key => (
+        <div key={key} onClick={() => onSelectBestSubmission(parseInt(key, 10))}>
+          <BlackCard
+            text={blackCards[currentBlackCardId].text}
+            pick={blackCards[currentBlackCardId].pick}
+          />
+          {
+            submittedCards[key].map((id) => (
+              <WhiteCard text={whiteCards[id].text} key={id} />
+            ))
+          }
+        </div>
+      ))}
+      {evaluator && (
+        <button className="btn btn-default btn-block" onClick={onNextRound}>
+          next round
+        </button>
+      )}
     </div>
-  )
-}
+    {/* eslint-enable */}
+  </div>
+)
+
 
 Evaluation.propTypes = {
   currentBlackCardId: Types.number,
-  whiteCards: Types.arrayOf(Types.shape({})),
-  blackCards: Types.arrayOf(Types.shape({})),
+  whiteCards: Types.shape({}),
+  blackCards: Types.shape({}),
   players: Types.shape({}),
   evaluator: Types.bool,
   submittedCards: Types.shape({}),

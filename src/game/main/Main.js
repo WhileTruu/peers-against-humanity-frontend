@@ -16,64 +16,48 @@ export const Main = ({
   selectedCardIds,
   onSubmitCards,
   onToggleCardSelected,
-}) => {
-  const blackCard = blackCards && blackCards.filter(card => card.id === currentBlackCardId)[0]
-  return (
-    <div>
-      <div className="black-card-container justify-content-center d-flex">
-        {
-          blackCard &&
-          <BlackCard
-            text={blackCard.text}
-            pick={blackCard.pick}
-          />
-        }
-        {
-          // whiteCards &&
-          // whiteCards
-          //   .filter(whiteCard => selectedCardIds.includes(whiteCard.id))
-          //   .sort((x, y) => selectedCardIds.indexOf(x.id) > selectedCardIds.indexOf(y.id))
-          //   .map(whiteCard => (
-          //     <div key={whiteCard.id}>
-          //       <WhiteCard key={whiteCard.id} text={whiteCard.text} />
-          //     </div>
-          //   ))
-        }
-      </div>
-      <div className="white-card-container justify-content-center d-flex flex-wrap">
-        {
-          /* eslint-disable */
-          (whiteCards && currentWhiteCardIds) &&
-          whiteCards
-            .filter(whiteCard => currentWhiteCardIds.includes(whiteCard.id))
-            .map(whiteCard => (
-              <div
-                key={whiteCard.id}
-                onClick={() => onToggleCardSelected(whiteCard.id, blackCard.pick)}
-              >
-                <WhiteCard
-                  key={whiteCard.id}
-                  text={whiteCard.text}
-                  number={selectedCardIds && selectedCardIds.indexOf(whiteCard.id) + 1}
-                  selected={selectedCardIds && selectedCardIds.includes(whiteCard.id)}
-                />
-              </div>
-            ))
-          /* eslint-enable */
-        }
-      </div>
-      <div>
-        <button className="btn btn-default btn-block" onClick={onSubmitCards}>
-          submit cards
-        </button>
-      </div>
+}) => (
+  <div>
+    <div className="black-card-container justify-content-center d-flex">
+      {
+        (blackCards !== null && currentBlackCardId !== null) &&
+        <BlackCard
+          text={blackCards[currentBlackCardId].text}
+          pick={blackCards[currentBlackCardId].pick}
+        />
+      }
     </div>
-  )
-}
+    <div className="white-card-container justify-content-center d-flex flex-wrap">
+      {
+        /* eslint-disable */
+        (whiteCards && currentWhiteCardIds) &&
+        currentWhiteCardIds.map(id => (
+          <div
+            key={id}
+            onClick={() => onToggleCardSelected(id, blackCards[currentBlackCardId].pick)}
+          >
+            <WhiteCard
+              text={whiteCards[id].text}
+              number={selectedCardIds && selectedCardIds.indexOf(id) + 1}
+              selected={selectedCardIds && selectedCardIds.includes(id)}
+            />
+          </div>
+        ))
+        /* eslint-enable */
+      }
+    </div>
+    <div>
+      <button className="btn btn-default btn-block" onClick={onSubmitCards}>
+        submit cards
+      </button>
+    </div>
+  </div>
+)
+
 
 Main.propTypes = {
-  blackCards: Types.arrayOf(Types.shape({})),
-  whiteCards: Types.arrayOf(Types.shape({})),
+  blackCards: Types.shape({}),
+  whiteCards: Types.shape({}),
   currentWhiteCardIds: Types.arrayOf(Types.number),
   currentBlackCardId: Types.number,
 

@@ -6,10 +6,24 @@ import {
   SUBMIT_CARDS,
   SUBMITTED,
   BEST_SUBMISSION,
+  PLAYER_EXITED,
 } from './constants'
 import DataChannelService from '../common/RTCDataChannel'
 import { actions as gameMainActions } from './main'
 import { api } from '../common'
+
+function reduceArrayToObject(array) {
+  return Promise.resolve(array
+    .reduce((accumulator, currentElement, currentIndex) => {
+      const key = currentElement.id || currentIndex
+      return ({ ...accumulator, [key]: currentElement })
+    }, {}),
+  )
+}
+
+function randomElement(array) {
+  return array[Math.floor(Math.random() * array.length)]
+}
 
 export function selectBestSubmission(id) {
   return (dispatch) => {
@@ -50,31 +64,30 @@ export function removeBlackCard(id) {
   return { type: REMOVE_BLACK_CARD, id }
 }
 
+function getNextEvaluatorId(evaluatorId, players) {
+  if (evaluatorId === null) {
+    const activePlayerIds = Object.keys(players).filter(id => players[id].active)
+    return parseInt(randomElement(activePlayerIds), 10)
+  }
+  const nextEvaluatorIndex = (players[evaluatorId].index + 1) % Object.keys(players).length
+  const nextEvaluatorId = Object.keys(players).reduce((accumulator, key) => (
+    (players[key].index === nextEvaluatorIndex) ? parseInt(key, 10) : accumulator
+  ), null)
+  if (nextEvaluatorId && players[nextEvaluatorId].active) return nextEvaluatorId
+  return getNextEvaluatorId(nextEvaluatorId, players)
+}
+
 export function startRound() {
   return (dispatch, getState) => {
     const state = getState()
     const { game } = state
-    const blackCardId = state.game.playerBlackCardIds[
-      Math.floor(Math.random() * state.game.playerBlackCardIds.length)
-    ]
-
-    const evaluatorIndex = (
-      game.evaluatorIndex !== null &&
-      (game.evaluatorIndex + 1) % Object.keys(game.players).length
-    ) || 0
-
-    const evaluatorId = Object.keys(game.players).reduce((accumulator, currentKey) => {
-      if (game.players[currentKey].index === evaluatorIndex) {
-        return parseInt(currentKey, 10)
-      }
-      return accumulator
-    }, null)
+    const blackCardId = randomElement(game.allocatedBlackCardIds)
 
     const startRoundMessage = {
       type: START_ROUND,
       from: state.user.id,
-      evaluatorIndex,
-      evaluatorId,
+      roundNumber: state.game.roundNumber + 1,
+      evaluatorId: getNextEvaluatorId(game.evaluatorId, game.players),
       blackCardId,
     }
     DataChannelService.message(startRoundMessage).broadcast()
@@ -104,66 +117,50 @@ export function readyCheck(id) {
   }
 }
 
-function getSliceOfArray(toDivideBy, sliceNumber, arrayToSlice) {
-  const numberOfSlices = Math.floor(arrayToSlice.length / toDivideBy)
-  const start = numberOfSlices * sliceNumber
-  const end = numberOfSlices * (sliceNumber + 1)
-  return arrayToSlice.slice(start, end)
-}
-
 export function getCards(blackCardLimit, whiteCardLimit) {
-  return Promise.all([api.getBlackCards(blackCardLimit), api.getWhiteCards(whiteCardLimit)])
+  return Promise.all([
+    api.getBlackCards(blackCardLimit).then(reduceArrayToObject),
+    api.getWhiteCards(whiteCardLimit).then(reduceArrayToObject),
+  ])
 }
 
-function distributeCards(dispatch, state, players, blackCards, whiteCards) {
-  Object.keys(players).forEach((id, i, array) => {
-    const playerWhiteCards = getSliceOfArray(array.length, players[id].index, whiteCards)
-    const playerBlackCards = getSliceOfArray(array.length, players[id].index, blackCards)
-    const startGameAction = {
-      type: START_GAME,
-      to: players[id].id,
-      from: state.user.id,
-      whiteCards,
-      blackCards,
-      players,
-      playerWhiteCardIds: playerWhiteCards.map(card => card.id),
-      playerBlackCardIds: playerBlackCards.map(card => card.id),
-    }
-
-    if (players[id].id === state.user.id) {
-      dispatch(startGameAction)
-      dispatch({ type: PLAYER_READY, id: state.user.id })
-    } else {
-      DataChannelService.message(startGameAction).to(players[id].id).send()
-      DataChannelService.message({ type: PLAYER_READY, from: state.user.id }).to(players[id].id)
-        .send()
-    }
-  })
+function startGame(to, from, whiteCards, blackCards, players) {
+  return { type: START_GAME, to, from, whiteCards, blackCards, players }
 }
 
-export function startGame() {
+export function initializeGame() {
   return (dispatch, getState) => {
-    const state = getState()
-    const players = Object.keys(state.room.members)
-      .map(id => parseInt(id, 10))
-      .filter(id => state.room.members[id].hasDataChannel || id === state.user.id)
-      .reduce((accumulator, currentKey, index) => (
-        {
-          ...accumulator,
-          [currentKey]: {
-            active: true,
-            ready: false,
-            points: 0,
-            id: currentKey,
-            index,
-          },
-        }
+    const { room, user } = getState()
+    const players = Object.keys(room.members).map(memberId => parseInt(memberId, 10))
+      .filter(id => room.members[id].hasDataChannel || id === user.id)
+      .reduce((accumulator, id, index) => (
+        { ...accumulator, [id]: { active: true, ready: false, points: 0, id, index } }
       ), {})
 
     getCards(10, 100)
-      .then(([blackCards, whiteCards]) => (
-        distributeCards(dispatch, state, players, blackCards, whiteCards)
-      ))
+      .then(([blackCards, whiteCards]) => {
+        dispatch(startGame(user.id, user.id, whiteCards, blackCards, players))
+        dispatch({ type: PLAYER_READY, id: user.id })
+        Object.keys(players).forEach((strId) => {
+          const id = parseInt(strId, 10)
+          if (id === user.id) return
+          DataChannelService
+            .message(startGame(id, user.id, whiteCards, blackCards, players)).to(id).send()
+          DataChannelService.message({ type: PLAYER_READY, to: id, from: user.id }).to(id).send()
+        })
+      })
       .catch(console.log) // eslint-disable-line
   }
+}
+
+export function joinGame(id) {
+  return (dispatch, getState) => {
+    const { user, game } = getState()
+    DataChannelService
+      .message(startGame(id, user.id, game.whiteCards, game.blackCards, game.players)).to(id).send()
+  }
+}
+
+export function playerExited(id) {
+  return { type: PLAYER_EXITED, id }
 }

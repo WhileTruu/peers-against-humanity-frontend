@@ -53,9 +53,13 @@ class Chat extends Component {
             </div>
             <div className="chat-components-container">
               <div className="chat-header">
-                <button className="btn btn-danger chat-header-button" onClick={this.toggleOpen}>
-                  close
-                </button>
+                <span
+                  onClick={this.toggleOpen}
+                  className="chat-header-button p-2 m-1"
+                  aria-hidden="true"
+                >
+                  <i className="fa fa-times" style={{ position: 'absolute' }} aria-hidden="true" />
+                </span>
               </div>
               <MessageArea
                 userId={this.props.userId}

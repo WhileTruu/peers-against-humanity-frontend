@@ -2,6 +2,7 @@ import {
   START_GAME,
   START_ROUND,
   PLAYER_READY,
+  PLAYER_EXITED,
   REMOVE_BLACK_CARD,
   SUBMIT_CARDS,
   SUBMITTED,
@@ -15,9 +16,8 @@ const initialState = {
   blackCards: null,
   players: null,
   evaluatorId: null,
-  evaluatorIndex: null,
-  playerWhiteCardIds: null,
-  playerBlackCardIds: null,
+  allocatedWhiteCardIds: null,
+  allocatedBlackCardIds: null,
   currentBlackCardId: null,
   currentWhiteCardIds: null,
   submittedCards: null,
@@ -30,32 +30,43 @@ function rearrangeCards({ allCardIds, currentCardIds }) {
   for (let i = 0; i < numberOfCardsToTake; i += 1) {
     newCurrentCardIds.push(allCardIds.pop())
   }
-  return { playerWhiteCardIds: allCardIds, currentWhiteCardIds: newCurrentCardIds }
+  return { allocatedWhiteCardIds: allCardIds, currentWhiteCardIds: newCurrentCardIds }
 }
 
 export default function game(state = initialState, action) {
   switch (action.type) {
-    case START_GAME:
+    case START_GAME: {
+      const { blackCards, whiteCards, players, to } = action
+      const blackCardIds = Object.keys(blackCards).map(id => parseInt(id, 10))
+      const whiteCardIds = Object.keys(whiteCards).map(id => parseInt(id, 10))
+      const blackCardSliceSize = Math.floor(blackCardIds.length / Object.keys(players).length)
+      const whiteCardSliceSize = Math.floor(whiteCardIds.length / Object.keys(players).length)
       return {
         ...state,
         started: true,
         whiteCards: action.whiteCards,
         blackCards: action.blackCards,
         players: action.players,
-        playerWhiteCardIds: action.playerWhiteCardIds,
-        playerBlackCardIds: action.playerBlackCardIds,
+        allocatedWhiteCardIds: (
+          whiteCardIds.slice(whiteCardSliceSize * players[to].index,
+            whiteCardSliceSize * (players[to].index + 1))
+        ),
+        allocatedBlackCardIds: (
+          blackCardIds.slice(blackCardSliceSize * players[to].index,
+            blackCardSliceSize * (players[to].index + 1))
+        ),
       }
+    }
     case START_ROUND: {
       return {
         ...state,
-        roundNumber: state.roundNumber + 1,
+        roundNumber: action.roundNumber,
         ...rearrangeCards({
-          allCardIds: state.playerWhiteCardIds,
+          allCardIds: state.allocatedWhiteCardIds,
           currentCardIds: state.currentWhiteCardIds,
         }),
         currentBlackCardId: action.blackCardId,
         evaluatorId: action.evaluatorId,
-        evaluatorIndex: action.evaluatorIndex,
         submittedCards: null,
         submitted: false,
       }
@@ -71,14 +82,22 @@ export default function game(state = initialState, action) {
         ...state,
         players: {
           ...state.players,
-          [action.id]: { ...state.players[action.id], ready: true },
+          [action.id]: { ...state.players[action.id], ready: true, active: true },
         },
       }
     }
+    case PLAYER_EXITED:
+      return {
+        ...state,
+        players: {
+          ...state.players,
+          [action.id]: { ...state.players[action.id], active: false, ready: false },
+        },
+      }
     case REMOVE_BLACK_CARD:
       return {
         ...state,
-        playerBlackCardIds: state.playerBlackCardIds.filter(id => id !== action.id),
+        allocatedBlackCardIds: state.allocatedBlackCardIds.filter(id => id !== action.id),
       }
     case SUBMITTED:
       return {

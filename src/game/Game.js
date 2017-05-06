@@ -4,23 +4,27 @@ import { connect } from 'react-redux'
 import Main from './main'
 import Evaluation from './evaluation'
 
-const Game = ({ isEvaluator, hasSubmitted }) => (
+const Game = ({ isEvaluator, hasSubmitted, roundNumber }) => (
   <div>
+    { roundNumber && <h2>{ `Round number ${roundNumber}` }</h2> }
     { (isEvaluator || hasSubmitted) ? <Evaluation /> : <Main /> }
   </div>
 )
 
 Game.propTypes = {
+  roundNumber: Types.number,
   hasSubmitted: Types.bool,
   isEvaluator: Types.bool,
 }
 
 Game.defaultProps = {
+  roundNumber: null,
   hasSubmitted: false,
   isEvaluator: false,
 }
 
 const mapStoreToProps = store => ({
+  roundNumber: store.game.roundNumber,
   hasSubmitted: store.game.submitted,
   isEvaluator: store.user.id === store.game.evaluatorId,
 })

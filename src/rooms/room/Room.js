@@ -119,7 +119,7 @@ const mapStoreToProps = store => ({
 const mapDispatchToProps = dispatch => ({
   joinRoom: roomId => dispatch(roomActions.joinRoom(roomId)),
   exitRoom: roomId => dispatch(roomActions.exitRoom(roomId)),
-  startGame: () => dispatch(gameActions.startGame()),
+  startGame: () => dispatch(gameActions.initializeGame()),
 })
 
 export default connect(mapStoreToProps, mapDispatchToProps)(withRouter(Room))
