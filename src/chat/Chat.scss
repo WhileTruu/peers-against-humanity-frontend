@@ -38,7 +38,6 @@
 
 @media only screen and (max-device-width: 667px), screen and (max-width: 450px) {
   body.chat-open {
-    background-color: red !important;
     overflow: hidden;
     position: fixed;
   }
@@ -65,15 +64,8 @@
 }
 
 .chat-header-button {
-  color: white;
-  border-radius: 50%;
-  width: 2px;
-  height: 2px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.chat-header-button:hover {
-  color: #333;
+  border: none !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
 }

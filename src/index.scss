@@ -3,6 +3,8 @@
 
 @import "~bootstrap/scss/bootstrap.scss";
 
+button:hover { cursor: pointer; }
+
 .form-check-label {
   padding-left: 0;
 }

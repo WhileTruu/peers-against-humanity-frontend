@@ -1,26 +1,26 @@
 $body-bg: #f3f3f3;
-$enable-flex:        true;
-$font-family-base:   'Aino', sans-serif;
+$enable-flex: true;
+$font-family-base: 'Aino', sans-serif;
 $font-size-h1: 3.5rem;
 $headings-font-family: 'Aino Headline', sans-serif;
 $headings-color: #0000f0;
 
 @font-face {
-	font-family: "Aino";
-	font-weight: bold;
-	src: url("fonts/Aino-Bold.otf") format("otf"),
-	     url("fonts/Aino-Bold.woff") format("woff");
+  font-family: "Aino";
+  font-weight: bold;
+  src: url("fonts/Aino-Bold.otf") format("otf"),
+       url("fonts/Aino-Bold.woff") format("woff");
 }
 
 @font-face {
-	font-family: "Aino";
-	font-weight: normal;
-	src: url("fonts/Aino-Regular.otf") format("otf"),
-	     url("fonts/Aino-Regular.woff") format("woff");
+  font-family: "Aino";
+  font-weight: normal;
+  src: url("fonts/Aino-Regular.otf") format("otf"),
+       url("fonts/Aino-Regular.woff") format("woff");
 }
 
 @font-face {
-	font-family: "Aino Headline";
-	src: url("fonts/Aino-Headline.otf") format("otf"),
-	     url("fonts/Aino-Headline.woff") format("woff");
+  font-family: "Aino Headline";
+  src: url("fonts/Aino-Headline.otf") format("otf"),
+       url("fonts/Aino-Headline.woff") format("woff");
 }
