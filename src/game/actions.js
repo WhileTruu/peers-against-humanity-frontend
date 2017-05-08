@@ -1,5 +1,5 @@
 import {
-  START_GAME,
+  INITIALIZE_GAME,
   START_ROUND,
   PLAYER_READY,
   REMOVE_BLACK_CARD,
@@ -7,6 +7,7 @@ import {
   SUBMITTED,
   BEST_SUBMISSION,
   PLAYER_EXITED,
+  EXIT_GAME,
 } from './constants'
 import DataChannelService from '../common/RTCDataChannel'
 import { actions as gameMainActions } from './main'
@@ -100,6 +101,7 @@ export function readyCheck(id) {
   return (dispatch, getState) => {
     const { game, user, room } = getState()
     const { players } = game
+    console.log(game)
     const readyPlayers = Object.keys(players)
       .filter(key => players[key].ready || players[key].id === id)
     const activePlayers = Object.keys(players)
@@ -110,7 +112,7 @@ export function readyCheck(id) {
       user.id === room.ownerId
     ) {
       dispatch({ type: PLAYER_READY, id })
-      dispatch(startRound())
+      if (!game.started) dispatch(startRound())
     } else {
       dispatch({ type: PLAYER_READY, id })
     }
@@ -124,30 +126,36 @@ export function getCards(blackCardLimit, whiteCardLimit) {
   ])
 }
 
-function startGame(to, from, whiteCards, blackCards, players) {
-  return { type: START_GAME, to, from, whiteCards, blackCards, players }
-}
-
 export function initializeGame() {
   return (dispatch, getState) => {
     const { room, user } = getState()
+    // Map room members into players
     const players = Object.keys(room.members).map(memberId => parseInt(memberId, 10))
       .filter(id => room.members[id].hasDataChannel || id === user.id)
       .reduce((accumulator, id, index) => (
         { ...accumulator, [id]: { active: true, ready: false, points: 0, id, index } }
       ), {})
 
-    getCards(10, 100)
+    // get cards
+    getCards(50, 100)
       .then(([blackCards, whiteCards]) => {
-        dispatch(startGame(user.id, user.id, whiteCards, blackCards, players))
+        // send start game message to myself
+        dispatch(
+          { type: INITIALIZE_GAME, to: user.id, from: user.id, whiteCards, blackCards, players },
+        )
         dispatch({ type: PLAYER_READY, id: user.id })
-        Object.keys(players).forEach((strId) => {
-          const id = parseInt(strId, 10)
-          if (id === user.id) return
-          DataChannelService
-            .message(startGame(id, user.id, whiteCards, blackCards, players)).to(id).send()
-          DataChannelService.message({ type: PLAYER_READY, to: id, from: user.id }).to(id).send()
-        })
+        // send start game message to everyone else
+        Object.keys(players)
+          .map(id => parseInt(id, 10))
+          .forEach((id) => {
+            if (id === user.id) return
+            DataChannelService
+              .message(
+                { type: INITIALIZE_GAME, to: id, from: user.id, whiteCards, blackCards, players },
+              )
+              .to(id).send()
+            DataChannelService.message({ type: PLAYER_READY, to: id, from: user.id }).to(id).send()
+          })
       })
       .catch(console.log) // eslint-disable-line
   }
@@ -156,11 +164,26 @@ export function initializeGame() {
 export function joinGame(id) {
   return (dispatch, getState) => {
     const { user, game } = getState()
+    const { whiteCards, blackCards, players } = game
     DataChannelService
-      .message(startGame(id, user.id, game.whiteCards, game.blackCards, game.players)).to(id).send()
+      .message({ type: INITIALIZE_GAME, to: id, from: user.id, whiteCards, blackCards, players })
+      .to(id).send()
   }
 }
 
 export function playerExited(id) {
-  return { type: PLAYER_EXITED, id }
+  return (dispatch, getState) => {
+    const { user, game } = getState()
+    dispatch({ type: PLAYER_EXITED, id })
+    if (
+      game.evaluatorId === parseInt(id, 10) &&
+      getNextEvaluatorId(parseInt(id, 10), game.players) === user.id
+    ) {
+      dispatch(startRound())
+    }
+  }
+}
+
+export function exitGame() {
+  return { type: EXIT_GAME }
 }

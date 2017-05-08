@@ -13,6 +13,7 @@ class DataChannelService {
     this.peerConnections = null
     this.onClose = (id) => {
       this.dispatch(roomActions.removeMember(id))
+      this.dispatch(gameActions.playerExited(id))
       this.closePeerConnection(id)
     }
   }
@@ -177,7 +178,7 @@ class DataChannelService {
         this.dispatch(roomActions.joinedRoom(message.room))
         break
       }
-      case '@game/START_GAME': {
+      case '@game/INITIALIZE_GAME': {
         this.dispatch(gameActions.startGameMessage(message))
         break
       }

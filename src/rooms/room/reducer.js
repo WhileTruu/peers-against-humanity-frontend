@@ -61,6 +61,12 @@ export default function room(state = initialState, result) {
           [result.id]: { ...state.members[result.id], hasDataChannel: true },
         },
       }
+    case 'UPDATE_ROOM': {
+      if (state.id === result.room.id) {
+        return { ...state, ...result.room }
+      }
+      return state
+    }
     default:
       return state
   }

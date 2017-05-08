@@ -1,5 +1,6 @@
-import DataChannelService from '../../common/RTCDataChannel'
 import { actions as socketActions } from '../../common/socket'
+import { actions as gameActions } from '../../game'
+import { actions as dataChannelActions } from '../../common/dataChannel'
 
 export const ADD_MEMBER = 'ADD_MEMBER'
 export const REMOVE_MEMBER = 'REMOVE_MEMBER'
@@ -32,11 +33,27 @@ export function addMember(member) {
 }
 
 export function removeMember(id) {
-  return { type: REMOVE_MEMBER, id }
+  return (dispatch, getState) => {
+    const { room, user } = getState()
+    dispatch({ type: REMOVE_MEMBER, id })
+    const smallestMemberId = Object.keys(room.members)
+      .map(memberId => parseInt(memberId, 10))
+      .filter(memberId => memberId !== id)
+      .reduce((accumulator, current) => (
+        accumulator !== null && accumulator < current ? accumulator : current
+      ), null)
+
+    if (room.ownerId === id && (user.id < smallestMemberId || smallestMemberId === null)) {
+      dispatch(socketActions.connect())
+    }
+  }
 }
 
 export function hasDataChannel(id) {
-  return { type: HAS_DATA_CHANNEL, id }
+  return (dispatch, getState) => {
+    dispatch({ type: HAS_DATA_CHANNEL, id })
+    if (getState().game.started) dispatch(gameActions.joinGame(id))
+  }
 }
 
 export function createRoom() {
@@ -61,7 +78,8 @@ export function joinRoom(id) {
 
 export function exitRoom(id) {
   return (dispatch, getState) => {
-    DataChannelService.closeAllPeerConnections()
+    if (getState().game.started) dispatch(gameActions.exitGame())
+    dispatch(dataChannelActions.exitChannel())
     dispatch({ type: EXITED_ROOM, id })
     if (getState().socket.connected) {
       dispatch(socketActions.send({ type: EXIT_ROOM, id }))

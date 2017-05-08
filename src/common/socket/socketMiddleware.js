@@ -7,8 +7,7 @@ import {
 } from './actions'
 
 import { actions as roomActions } from '../../rooms/room'
-
-import DataChannelService from '../RTCDataChannel'
+import { actions as dataChannelActions } from '../dataChannel'
 
 const roomActionTypes = [
   'UPDATE_ROOMS',
@@ -36,19 +35,38 @@ const socketMiddleware = (() => {
     const message = JSON.parse(event.data)
     switch (message.type) {
 
-      case 'AUTHENTICATED':
+      case 'AUTHENTICATED': {
         store.dispatch(actions.connected())
+        const state = store.getState()
+        if (state.dataChannel.users && !state.dataChannel.users[state.room.ownerId].active) {
+          store.dispatch(actions.takeOverRoom())
+        }
         break
+      }
 
       case 'CREATED_ROOM':
         store.dispatch(roomActions.createdRoom(message.room))
         break
 
+      case 'JOIN_ROOM':
+        store.dispatch(dataChannelActions.join(message.from))
+        break
+
+      case '@dataChannel/OFFER':
+        store.dispatch(dataChannelActions.offer(message))
+        break
+
+      case '@dataChannel/ANSWER':
+        store.dispatch(dataChannelActions.answer(message))
+        break
+
+      case '@dataChannel/ICE_CANDIDATE':
+        store.dispatch(dataChannelActions.iceCandidate(message))
+        break
+
       default:
         if (roomActionTypes.includes(message.type)) {
           store.dispatch(message)
-        } else {
-          DataChannelService.onDataChannelMessage(message)
         }
         break
     }
@@ -80,9 +98,9 @@ const socketMiddleware = (() => {
         break
 
       default:
-        next(action)
         break
     }
+    next(action)
   }
 })()
 

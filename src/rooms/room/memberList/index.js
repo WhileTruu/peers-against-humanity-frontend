@@ -6,8 +6,8 @@ const memberListItem = ({ member, userId }) => {
     <li className="list-group-item justify-content-between" key={member.id}>
       {member.id + ' ' + (member.nickname || member.username)}
       {member.id !== userId ?
-        (<span className={`badge badge-${member.hasDataChannel ? 'success' : 'info'} badge-pill`}>
-          {member.hasDataChannel ? 'connected' : 'connecting...'}
+        (<span className={`badge badge-${member.hasRTCDataChannel ? 'success' : 'info'} badge-pill`}>
+          {member.hasRTCDataChannel ? 'connected' : 'connecting...'}
         </span>) :
         (<span className={`badge badge-primary badge-pill`}>
           you
@@ -21,6 +21,7 @@ export default ({ members, userId }) => (
   <div>
     <ul className="list-group">
       {Object.keys(members)
+        .filter(id => members[id].active !== false)
         .map(key => (
           memberListItem({
             member: members[key],

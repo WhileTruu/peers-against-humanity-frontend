@@ -106,7 +106,7 @@ const mapStoreToProps = store => ({
 })
 
 const mapDispatchToProps = dispatch => ({
-  sendMessage: data => dispatch(actions.sendMessage(data)),
+  sendMessage: data => dispatch(actions.send(data)),
 })
 
 export default connect(mapStoreToProps, mapDispatchToProps)(Chat)

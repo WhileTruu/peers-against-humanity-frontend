@@ -1,4 +1,4 @@
-import { CHAT_MESSAGE } from './actions'
+import { MESSAGE } from './constants'
 
 const initialState = {
   messages: null,
@@ -6,7 +6,7 @@ const initialState = {
 
 export default function chat(state = initialState, result) {
   switch (result.type) {
-    case CHAT_MESSAGE: {
+    case MESSAGE: {
       return {
         messages: state.messages ? state.messages.concat([result.data]) : [result.data],
       }

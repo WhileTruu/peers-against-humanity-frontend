@@ -1,5 +1,5 @@
 import {
-  START_GAME,
+  INITIALIZE_GAME,
   START_ROUND,
   PLAYER_READY,
   PLAYER_EXITED,
@@ -7,6 +7,7 @@ import {
   SUBMIT_CARDS,
   SUBMITTED,
   BEST_SUBMISSION,
+  EXIT_GAME,
 } from './constants'
 
 const initialState = {
@@ -35,7 +36,7 @@ function rearrangeCards({ allCardIds, currentCardIds }) {
 
 export default function game(state = initialState, action) {
   switch (action.type) {
-    case START_GAME: {
+    case INITIALIZE_GAME: {
       const { blackCards, whiteCards, players, to } = action
       const blackCardIds = Object.keys(blackCards).map(id => parseInt(id, 10))
       const whiteCardIds = Object.keys(whiteCards).map(id => parseInt(id, 10))
@@ -43,7 +44,6 @@ export default function game(state = initialState, action) {
       const whiteCardSliceSize = Math.floor(whiteCardIds.length / Object.keys(players).length)
       return {
         ...state,
-        started: true,
         whiteCards: action.whiteCards,
         blackCards: action.blackCards,
         players: action.players,
@@ -60,6 +60,7 @@ export default function game(state = initialState, action) {
     case START_ROUND: {
       return {
         ...state,
+        started: true,
         roundNumber: action.roundNumber,
         ...rearrangeCards({
           allCardIds: state.allocatedWhiteCardIds,
@@ -87,6 +88,7 @@ export default function game(state = initialState, action) {
       }
     }
     case PLAYER_EXITED:
+      if (!state.players || !state.players[action.id]) return state
       return {
         ...state,
         players: {
@@ -113,6 +115,9 @@ export default function game(state = initialState, action) {
           [action.id]: { ...state.players[action.id], points: state.players[action.id].points + 1 },
         },
       }
+    }
+    case EXIT_GAME: {
+      return initialState
     }
     default:
       return state
