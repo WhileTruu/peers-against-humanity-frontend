@@ -27,7 +27,7 @@ const AuthOptions = ({ url, isAuthenticated, temporaryLogin }) => (
               className="form-control btn btn-info"
               onClick={() => temporaryLogin(generateRandomNickname())}
             >
-              proceed anonymously
+              log in as guest
             </button>
           </div>
         </div>

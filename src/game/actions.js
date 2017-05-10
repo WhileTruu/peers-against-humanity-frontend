@@ -28,7 +28,7 @@ function randomElement(array) {
 
 export function selectBestSubmission(id) {
   return (dispatch) => {
-    dataChannelActions.message({ type: BEST_SUBMISSION, id }).broadcast()
+    dispatch(dataChannelActions.broadcast({ type: BEST_SUBMISSION, id }))
     dispatch({ type: BEST_SUBMISSION, id })
   }
 }
@@ -41,7 +41,7 @@ export function submitCards() {
       from: state.user.id,
       cards: state.gameMain.selectedCardIds,
     }
-    dataChannelActions.message(cardSubmissionMessage).broadcast()
+    dispatch(dataChannelActions.send(cardSubmissionMessage))
     dispatch(cardSubmissionMessage)
 
     dispatch({
@@ -56,7 +56,7 @@ export function submitCards() {
 export function startGameMessage(action) {
   return (dispatch, getState) => {
     dispatch(action)
-    dataChannelActions.message({ type: PLAYER_READY, from: getState().user.id }).broadcast()
+    dispatch(dataChannelActions.broadcast({ type: PLAYER_READY, from: getState().user.id }))
     dispatch({ type: PLAYER_READY, id: getState().user.id })
   }
 }
@@ -91,7 +91,7 @@ export function startRound() {
       evaluatorId: getNextEvaluatorId(game.evaluatorId, game.players),
       blackCardId,
     }
-    dataChannelActions.message(startRoundMessage).broadcast()
+    dispatch(dataChannelActions.broadcast(startRoundMessage))
     dispatch(removeBlackCard(blackCardId))
     dispatch(startRoundMessage)
   }
@@ -99,7 +99,7 @@ export function startRound() {
 
 export function readyCheck(id) {
   return (dispatch, getState) => {
-    const { game, user, room } = getState()
+    const { game, user, rooms } = getState()
     const { players } = game
     console.log(game)
     const readyPlayers = Object.keys(players)
@@ -109,7 +109,7 @@ export function readyCheck(id) {
 
     if (
       readyPlayers.length === activePlayers.length &&
-      user.id === room.ownerId
+      user.id === rooms.room.ownerId
     ) {
       dispatch({ type: PLAYER_READY, id })
       if (!game.started) dispatch(startRound())
@@ -128,13 +128,16 @@ export function getCards(blackCardLimit, whiteCardLimit) {
 
 export function initializeGame() {
   return (dispatch, getState) => {
-    const { room, user } = getState()
+    const { dataChannel, user } = getState()
     // Map room members into players
-    const players = Object.keys(room.members).map(memberId => parseInt(memberId, 10))
-      .filter(id => room.members[id].hasDataChannel || id === user.id)
-      .reduce((accumulator, id, index) => (
-        { ...accumulator, [id]: { active: true, ready: false, points: 0, id, index } }
-      ), {})
+    const players = Object.keys(dataChannel.users).map(memberId => parseInt(memberId, 10))
+      .filter(id => dataChannel.users[id].hasRTCDataChannel || id === user.id)
+      .reduce((accumulator, id, index) => ({
+        ...accumulator,
+        [id]: {
+          active: dataChannel.users[id].active, ready: false, points: 0, id, index: index + 1,
+        },
+      }), { [user.id]: { active: true, ready: true, points: 0, id: user.id, index: 0 } })
 
     // get cards
     getCards(50, 100)
@@ -149,12 +152,12 @@ export function initializeGame() {
           .map(id => parseInt(id, 10))
           .forEach((id) => {
             if (id === user.id) return
-            dataChannelActions
-              .message(
+            console.log('sending', id)
+            dispatch(dataChannelActions
+              .send(
                 { type: INITIALIZE_GAME, to: id, from: user.id, whiteCards, blackCards, players },
-              )
-              .to(id).send()
-            dataChannelActions.message({ type: PLAYER_READY, to: id, from: user.id }).to(id).send()
+              ))
+            dispatch(dataChannelActions.send({ type: PLAYER_READY, to: id, from: user.id }))
           })
       })
       .catch(console.log) // eslint-disable-line
@@ -165,9 +168,8 @@ export function joinGame(id) {
   return (dispatch, getState) => {
     const { user, game } = getState()
     const { whiteCards, blackCards, players } = game
-    dataChannelActions
-      .message({ type: INITIALIZE_GAME, to: id, from: user.id, whiteCards, blackCards, players })
-      .to(id).send()
+    dispatch(dataChannelActions
+      .send({ type: INITIALIZE_GAME, to: id, from: user.id, whiteCards, blackCards, players }))
   }
 }
 

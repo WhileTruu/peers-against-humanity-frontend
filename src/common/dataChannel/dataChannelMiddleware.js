@@ -3,10 +3,11 @@ import {
   sessionDescriptionProtocolConstraints as sdpConstraints,
 } from './config'
 
-import { JOIN, JOINED, OFFER, ANSWER, ICE_CANDIDATE, BROADCAST, EXIT } from './constants'
+import { JOIN, JOINED, OFFER, ANSWER, ICE_CANDIDATE, BROADCAST, EXIT, SEND } from './constants'
 import { actions as dataChannelActions } from '.'
 import { actions as socketActions } from '../socket'
 import { actions as chatActions } from '../../chat'
+import { actions as gameActions } from '../../game'
 import { actions as roomsActions } from '../../rooms'
 
 const dataChannelMiddleware = (() => {
@@ -171,6 +172,27 @@ const dataChannelMiddleware = (() => {
         addIceCandidate(data.from, data.candidate)
         break
 
+      case '@game/INITIALIZE_GAME': {
+        store.dispatch(gameActions.startGameMessage(data))
+        break
+      }
+      case '@game/START_ROUND': {
+        store.dispatch(data)
+        break
+      }
+      case '@game/PLAYER_READY': {
+        store.dispatch(gameActions.readyCheck(data.from))
+        break
+      }
+      case '@game/SUBMIT_CARDS': {
+        store.dispatch(data)
+        break
+      }
+      case '@game/BEST_SUBMISSION': {
+        store.dispatch(data)
+        break
+      }
+
       default:
         console.log(data)
         break
@@ -203,6 +225,10 @@ const dataChannelMiddleware = (() => {
 
       case BROADCAST:
         broadcast(action.message)
+        break
+
+      case SEND:
+        send(action.message, store)
         break
 
       default:

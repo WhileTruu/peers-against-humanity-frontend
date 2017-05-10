@@ -8,6 +8,7 @@ import {
   HAS_RTC_DATA_CHANNEL,
   BROADCAST,
   EXIT,
+  SEND,
 } from './constants'
 
 import { actions as socketActions } from '../socket'
@@ -57,6 +58,10 @@ export function hasRTCDataChannel(id) {
 
 export function broadcast(message) {
   return { type: BROADCAST, message }
+}
+
+export function send(message) {
+  return { type: SEND, message }
 }
 
 export function exitChannel() {

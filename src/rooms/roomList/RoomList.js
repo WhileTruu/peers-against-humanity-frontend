@@ -21,9 +21,7 @@ const RoomList = ({ createRoom, joinRoom, socket, rooms }) => (
     <div className="row">
       <div className="col-12">
         {
-          rooms && Object.keys(rooms).length ? (
-            <h3 className="text-success">Click on a room to join</h3>
-          ) : (
+          (!rooms || (rooms && !Object.keys(rooms).length)) && (
             <h3 className="text-info">No available rooms at the moment</h3>
           )
         }
@@ -31,15 +29,20 @@ const RoomList = ({ createRoom, joinRoom, socket, rooms }) => (
           {
             rooms &&
             Object.entries(rooms).map(([roomId, roomEntry]) => (
-              <button
+              <div
                 key={roomId}
-                onClick={() => joinRoom(roomId)}
                 className={`
-                  list-group-item list-group-item-action align-items-start
+                  list-group-item list-group-item-action align-items-center
                 `}
               >
                 <div className="d-flex w-100 justify-content-between">
-                  <h5 className="mb-1">{roomId}</h5>
+                  <div className="d-flex">
+                    <h5
+                      className="mb-1"
+                    >
+                      {roomId} <span className="text-info">not started</span>
+                    </h5>
+                  </div>
                   <div>
                     <small>
                       {
@@ -47,19 +50,31 @@ const RoomList = ({ createRoom, joinRoom, socket, rooms }) => (
                           const date = new Date(roomEntry.createdAt)
                           const hours = date.getTimezoneOffset() / 60
                           date.setHours(date.getHours() - hours)
-                          return `created at ${date.toLocaleString()}`
+                          return (
+                            <div>
+                              <span className="text-info">created at</span>
+                              {` ${date.toLocaleString()}`}
+                            </div>)
                         })()
                       }
                     </small>
                   </div>
                 </div>
-                <small>
-                  {`${roomEntry.ownerNickname || roomEntry.ownerUsername} `}
-                  <span className="text-info">
-                    is the room owner
-                  </span>
-                </small>
-              </button>
+                <div className="d-flex w-100 justify-content-between align-items-center">
+                  <small>
+                    {`${roomEntry.ownerNickname || roomEntry.ownerUsername} `}
+                    <span className="text-info">
+                      is the room owner
+                    </span>
+                  </small>
+                  <button
+                    className="btn btn-success"
+                    onClick={() => joinRoom(roomId)}
+                  >
+                    join
+                  </button>
+                </div>
+              </div>
             ))
           }
         </div>
