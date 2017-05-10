@@ -34,7 +34,7 @@ export function addUser(id, user) {
 
 export function removeUser(id) {
   return (dispatch, getState) => {
-    const { dataChannel, user, room } = getState()
+    const { dataChannel, user, rooms } = getState()
     dispatch({ type: REMOVE_USER, id })
     if (!dataChannel.users) return
     const smallestMemberId = Object.keys(dataChannel.users)
@@ -45,7 +45,7 @@ export function removeUser(id) {
         accumulator !== null && accumulator < current ? accumulator : current
       ), null)
 
-    if (room.ownerId === id && (user.id === smallestMemberId || smallestMemberId === null)) {
+    if (rooms.room.ownerId === id && (user.id === smallestMemberId || smallestMemberId === null)) {
       dispatch(socketActions.connect())
     }
   }

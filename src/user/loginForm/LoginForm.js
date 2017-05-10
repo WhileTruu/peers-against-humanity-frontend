@@ -1,7 +1,7 @@
 import React, { PropTypes as Types } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { Redirect } from 'react-router-dom'
+import { Redirect, Link } from 'react-router-dom'
 
 import ErrorAlert from '../../common/errorAlert'
 import { logIn, toggleRememberLogin } from '../actions'
@@ -68,17 +68,22 @@ export const LoginForm = ({
           {loading ? strings.loading : strings.submit}
         </button>
       </div>
-      <div className="form-check">
-        <input
-          type="checkbox"
-          id="login-remember-checkbox"
-          className="mr-1"
-          checked={rememberLogin}
-          onChange={onRememberLoginChange}
-        />
-        <label htmlFor="login-remember-checkbox" className="form-check-label">
-          {strings.rememberMe}
-        </label>
+      <div className="d-flex justify-content-between">
+        <div className="form-check mr-3 mb-0">
+          <input
+            type="checkbox"
+            id="login-remember-checkbox"
+            className="mr-1"
+            checked={rememberLogin}
+            onChange={onRememberLoginChange}
+          />
+          <label htmlFor="login-remember-checkbox" className="form-check-label">
+            {strings.rememberMe}
+          </label>
+        </div>
+        <div>
+          <p className="mb-0">new to peers against humanity? <Link to="/register">sign up</Link></p>
+        </div>
       </div>
     </form>
     {

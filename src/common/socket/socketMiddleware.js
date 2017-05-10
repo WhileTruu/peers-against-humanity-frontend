@@ -6,7 +6,7 @@ import {
   SOCKET_SEND as SEND,
 } from './actions'
 
-import { actions as roomActions } from '../../rooms/room'
+import { actions as roomsActions } from '../../rooms'
 import { actions as dataChannelActions } from '../dataChannel'
 
 const roomActionTypes = [
@@ -38,14 +38,14 @@ const socketMiddleware = (() => {
       case 'AUTHENTICATED': {
         store.dispatch(actions.connected())
         const state = store.getState()
-        if (state.dataChannel.users && !state.dataChannel.users[state.room.ownerId].active) {
+        if (state.dataChannel.users && !state.dataChannel.users[state.rooms.room.ownerId].active) {
           store.dispatch(actions.takeOverRoom())
         }
         break
       }
 
       case 'CREATED_ROOM':
-        store.dispatch(roomActions.createdRoom(message.room))
+        store.dispatch(roomsActions.createdRoom(message.room))
         break
 
       case 'JOIN_ROOM':

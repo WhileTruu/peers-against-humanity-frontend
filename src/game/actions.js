@@ -9,7 +9,7 @@ import {
   PLAYER_EXITED,
   EXIT_GAME,
 } from './constants'
-import DataChannelService from '../common/RTCDataChannel'
+import { actions as dataChannelActions } from '../common/dataChannel'
 import { actions as gameMainActions } from './main'
 import { api } from '../common'
 
@@ -28,7 +28,7 @@ function randomElement(array) {
 
 export function selectBestSubmission(id) {
   return (dispatch) => {
-    DataChannelService.message({ type: BEST_SUBMISSION, id }).broadcast()
+    dataChannelActions.message({ type: BEST_SUBMISSION, id }).broadcast()
     dispatch({ type: BEST_SUBMISSION, id })
   }
 }
@@ -41,7 +41,7 @@ export function submitCards() {
       from: state.user.id,
       cards: state.gameMain.selectedCardIds,
     }
-    DataChannelService.message(cardSubmissionMessage).broadcast()
+    dataChannelActions.message(cardSubmissionMessage).broadcast()
     dispatch(cardSubmissionMessage)
 
     dispatch({
@@ -56,7 +56,7 @@ export function submitCards() {
 export function startGameMessage(action) {
   return (dispatch, getState) => {
     dispatch(action)
-    DataChannelService.message({ type: PLAYER_READY, from: getState().user.id }).broadcast()
+    dataChannelActions.message({ type: PLAYER_READY, from: getState().user.id }).broadcast()
     dispatch({ type: PLAYER_READY, id: getState().user.id })
   }
 }
@@ -91,7 +91,7 @@ export function startRound() {
       evaluatorId: getNextEvaluatorId(game.evaluatorId, game.players),
       blackCardId,
     }
-    DataChannelService.message(startRoundMessage).broadcast()
+    dataChannelActions.message(startRoundMessage).broadcast()
     dispatch(removeBlackCard(blackCardId))
     dispatch(startRoundMessage)
   }
@@ -149,12 +149,12 @@ export function initializeGame() {
           .map(id => parseInt(id, 10))
           .forEach((id) => {
             if (id === user.id) return
-            DataChannelService
+            dataChannelActions
               .message(
                 { type: INITIALIZE_GAME, to: id, from: user.id, whiteCards, blackCards, players },
               )
               .to(id).send()
-            DataChannelService.message({ type: PLAYER_READY, to: id, from: user.id }).to(id).send()
+            dataChannelActions.message({ type: PLAYER_READY, to: id, from: user.id }).to(id).send()
           })
       })
       .catch(console.log) // eslint-disable-line
@@ -165,7 +165,7 @@ export function joinGame(id) {
   return (dispatch, getState) => {
     const { user, game } = getState()
     const { whiteCards, blackCards, players } = game
-    DataChannelService
+    dataChannelActions
       .message({ type: INITIALIZE_GAME, to: id, from: user.id, whiteCards, blackCards, players })
       .to(id).send()
   }

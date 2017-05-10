@@ -38,6 +38,6 @@ export function send(data) {
 
 export function takeOverRoom() {
   return (dispatch, getState) => {
-    dispatch(send({ type: TAKE_OVER_ROOM, id: getState().room.id }))
+    dispatch(send({ type: TAKE_OVER_ROOM, id: getState().rooms.room.id }))
   }
 }

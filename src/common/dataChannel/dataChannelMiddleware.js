@@ -7,7 +7,7 @@ import { JOIN, JOINED, OFFER, ANSWER, ICE_CANDIDATE, BROADCAST, EXIT } from './c
 import { actions as dataChannelActions } from '.'
 import { actions as socketActions } from '../socket'
 import { actions as chatActions } from '../../chat'
-import { actions as roomActions } from '../../rooms/room'
+import { actions as roomsActions } from '../../rooms'
 
 const dataChannelMiddleware = (() => {
   const peerConnections = {}
@@ -20,10 +20,11 @@ const dataChannelMiddleware = (() => {
     ) {
       peerConnections[message.to].dataChannel.send(JSON.stringify(message))
     } else if (
-      peerConnections[state.room.ownerId] &&
-      peerConnections[state.room.ownerId].dataChannel.readyState === 'open'
+      state.rooms.room &&
+      peerConnections[state.rooms.room.ownerId] &&
+      peerConnections[state.rooms.room.ownerId].dataChannel.readyState === 'open'
     ) {
-      peerConnections[state.room.ownerId].dataChannel.send(JSON.stringify(message))
+      peerConnections[state.rooms.room.ownerId].dataChannel.send(JSON.stringify(message))
     } else {
       store.dispatch(socketActions.send(message))
     }
@@ -55,14 +56,19 @@ const dataChannelMiddleware = (() => {
       send({ type: ICE_CANDIDATE, from: state.user.id, to: id, candidate: event.candidate }, store)
     )
     rtcPeerConnection.ondatachannel = (event) => {
-      if (state.user.id === state.room.ownerId) {
-        send({ type: JOINED, from: state.user.id, to: id, room: state.room }, store)
+      if (state.user.id === state.rooms.room.ownerId) {
+        send({ type: JOINED, from: state.user.id, to: id, room: state.rooms.room }, store)
         broadcast({ type: JOIN, id })
       }
       store.dispatch(dataChannelActions.hasRTCDataChannel(id))
       event.channel.onmessage = message => onMessage(message, store)  // eslint-disable-line
       event.channel.onclose = () => store.dispatch(dataChannelActions.removeUser(id))  // eslint-disable-line
       event.channel.onerror = console.log  // eslint-disable-line
+    }
+    rtcPeerConnection.oniceconnectionstatechange = () => {
+      if (rtcPeerConnection.iceConnectionState === 'disconnected') {
+        store.dispatch(dataChannelActions.removeUser(id))
+      }
     }
     rtcPeerConnection.createOffer(sdpConstraints)
       .then((localSessionDescription) => {
@@ -86,13 +92,18 @@ const dataChannelMiddleware = (() => {
       send({ type: ICE_CANDIDATE, from: state.user.id, to: id, candidate: event.candidate }, store)
     )
     rtcPeerConnection.ondatachannel = (event) => {
-      if (state.user.id !== state.room.ownerId) {
-        store.dispatch(socketActions.disconnect())
-      }
+      // if (state.user.id !== state.rooms.room.ownerId) {
+      //   store.dispatch(socketActions.disconnect())
+      // }
       store.dispatch(dataChannelActions.hasRTCDataChannel(id))
       event.channel.onmessage = message => onMessage(message, store)  // eslint-disable-line
       event.channel.onclose = () => store.dispatch(dataChannelActions.removeUser(id))  // eslint-disable-line
       event.channel.onerror = console.log  // eslint-disable-line
+    }
+    rtcPeerConnection.oniceconnectionstatechange = () => {
+      if (rtcPeerConnection.iceConnectionState === 'disconnected') {
+        store.dispatch(dataChannelActions.removeUser(id))
+      }
     }
     rtcPeerConnection.setRemoteDescription(new RTCSessionDescription(sessionDescription))
     rtcPeerConnection.createAnswer(sdpConstraints)
@@ -143,7 +154,7 @@ const dataChannelMiddleware = (() => {
         break
 
       case JOINED:
-        store.dispatch(roomActions.joinedRoom(data.room))
+        store.dispatch(roomsActions.joinedRoom(data.room))
         break
 
       case OFFER:

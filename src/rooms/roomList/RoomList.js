@@ -2,10 +2,10 @@ import React, { PropTypes as Types } from 'react'
 import { withRouter } from 'react-router'
 import { connect } from 'react-redux'
 
-import { actions as roomActions } from '../room'
+import { actions as roomsActions } from '..'
 
-const RoomList = ({ createRoom, socket, room, rooms, history, match }) => (
-  <div>
+const RoomList = ({ createRoom, joinRoom, socket, rooms }) => (
+  <div className="my-5">
     <div className="row">
       <div className="col-12">
         <div className="form-inline justify-content-between">
@@ -20,28 +20,49 @@ const RoomList = ({ createRoom, socket, room, rooms, history, match }) => (
     </div>
     <div className="row">
       <div className="col-12">
-        {rooms ? Object.entries(rooms).map(([roomId, roomEntry]) => (
-          <div className="pb-3" key={roomId}>
-            <div className="card">
-              <div className="card-block">
-                <div className="form-inline justify-content-between">
-                  <h4 className="card-title">{roomId}</h4>
+        {
+          rooms && Object.keys(rooms).length ? (
+            <h3 className="text-success">Click on a room to join</h3>
+          ) : (
+            <h3 className="text-info">No available rooms at the moment</h3>
+          )
+        }
+        <div className="list-group">
+          {
+            rooms &&
+            Object.entries(rooms).map(([roomId, roomEntry]) => (
+              <button
+                key={roomId}
+                onClick={() => joinRoom(roomId)}
+                className={`
+                  list-group-item list-group-item-action align-items-start
+                `}
+              >
+                <div className="d-flex w-100 justify-content-between">
+                  <h5 className="mb-1">{roomId}</h5>
                   <div>
-                    <button
-                      className="btn btn-success mr-2"
-                      onClick={() => history.push(`${match.url}/${roomId}`)}
-                    >
-                      {room.id ? 'enter' : 'join'}
-                    </button>
+                    <small>
+                      {
+                        (() => {
+                          const date = new Date(roomEntry.createdAt)
+                          const hours = date.getTimezoneOffset() / 60
+                          date.setHours(date.getHours() - hours)
+                          return `created at ${date.toLocaleString()}`
+                        })()
+                      }
+                    </small>
                   </div>
                 </div>
-                <p className="card-text">
-                  Room owned by {roomEntry.ownerNickname || roomEntry.ownerUsername}
-                </p>
-              </div>
-            </div>
-          </div>
-        )) : ''}
+                <small>
+                  {`${roomEntry.ownerNickname || roomEntry.ownerUsername} `}
+                  <span className="text-info">
+                    is the room owner
+                  </span>
+                </small>
+              </button>
+            ))
+          }
+        </div>
       </div>
     </div>
   </div>
@@ -49,15 +70,13 @@ const RoomList = ({ createRoom, socket, room, rooms, history, match }) => (
 
 RoomList.propTypes = {
   rooms: Types.object, // eslint-disable-line react/forbid-prop-types
-  history: Types.shape({ push: Types.func.isRequired }).isRequired,
-  match: Types.shape({ url: Types.string.isRequired }).isRequired,
-  room: Types.shape({ id: Types.number }).isRequired,
   socket: Types.shape({
     connected: Types.bool.isRequired,
     authenticating: Types.bool.isRequired,
     connecting: Types.bool.isRequired,
   }).isRequired,
   createRoom: Types.func.isRequired,
+  joinRoom: Types.func.isRequired,
 }
 
 RoomList.defaultProps = {
@@ -69,11 +88,11 @@ const mapStoreToProps = store => ({
   isAuthenticated: store.user.isLoggedIn,
   socket: store.socket,
   rooms: store.rooms.rooms,
-  room: store.room,
 })
 
 const mapDispatchToProps = dispatch => ({
-  createRoom: () => dispatch(roomActions.createRoom()),
+  createRoom: () => dispatch(roomsActions.createRoom()),
+  joinRoom: roomId => dispatch(roomsActions.joinRoom(roomId)),
 })
 
 export default connect(mapStoreToProps, mapDispatchToProps)(withRouter(RoomList))

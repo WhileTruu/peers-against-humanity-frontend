@@ -17,7 +17,7 @@ const Container = () => (
       </div>
       <div className="container-fluid" style={{ minHeight: '100vh' }}>
         <div className="row">
-          <div className="col-12 col-lg-10 offset-lg-1 col-xl-8 offset-xl-2">
+          <div className="col-12 col-md-10 offset-md-1 col-lg-8 offset-lg-2 col-xl-6 offset-xl-3">
             <Route exact path="/" component={FrontPage} />
             <Route path="/login" component={LoginForm} />
             <Route path="/register" component={RegistrationForm} />

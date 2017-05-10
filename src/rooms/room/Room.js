@@ -2,7 +2,7 @@ import React, { Component, PropTypes as Types } from 'react'
 import { withRouter } from 'react-router-dom'
 import { connect } from 'react-redux'
 
-import { actions as roomActions } from '.'
+import { actions as roomsActions } from '..'
 import MemberList from './memberList'
 import Chat from '../../chat'
 
@@ -10,38 +10,38 @@ import Game, { actions as gameActions } from '../../game'
 
 class Room extends Component {
   componentDidMount() {
-    const { room, match, token, socket } = this.props
-    if (!room.id && socket.connected) {
-      this.props.joinRoom(match.params.roomId, token)
+    const { room, match, socket } = this.props
+    if (!room && socket.connected) {
+      this.props.joinRoom(match.params.roomId)
     }
   }
 
   componentWillReceiveProps(nextProps) {
-    const { room, socket, error } = nextProps
+    const { room, socket, error, isFetching } = nextProps
     if (error) {
       this.props.history.replace('/rooms')
-    } else if (!room.id && socket.connected) {
-      this.props.joinRoom(this.props.match.params.roomId, this.props.token)
+    } else if (!isFetching && !room && socket.connected) {
+      this.props.joinRoom(this.props.match.params.roomId)
     }
   }
 
   componentWillUnmount() {
-    this.props.exitRoom(this.props.room.id)
+    if (this.props.room) this.props.exitRoom(this.props.room.id)
   }
 
   render() {
     const { room, members } = this.props
     return (
-      <div>
+      <div className="my-5">
         <div className="row">
           <div className="col-12">
             <div className="form-inline justify-content-between">
-              <h1 className="panel-heading">Room {room.id}</h1>
+              <h1 className="panel-heading">Room {room && room.id}</h1>
               <div>
                 {
-                  (this.props.user.id === room.ownerId) &&
+                  (room && this.props.user.id === room.ownerId) &&
                   <button
-                    className="btn btn-outline-success ml-2"
+                    className="btn btn-success ml-2"
                     onClick={this.props.startGame}
                   >
                     start game
@@ -52,7 +52,7 @@ class Room extends Component {
                   className="btn btn-danger ml-2"
                   onClick={() => this.props.history.replace('/rooms')}
                 >
-                  exit room
+                  exit
                 </button>
               </div>
             </div>
@@ -78,28 +78,24 @@ Room.propTypes = {
     params: Types.shape({ roomId: Types.string.isRequired }).isRequired,
   }).isRequired,
   history: Types.shape({ replace: Types.func.isRequired }).isRequired,
-  user: Types.shape({
-    id: Types.number,
-    nickname: Types.string,
-    username: Types.string,
-  }).isRequired,
-  token: Types.string,
-  room: Types.shape({ id: Types.number }).isRequired,
+  user: Types.shape(
+    { id: Types.number, nickname: Types.string, username: Types.string },
+  ).isRequired,
+  room: Types.shape({ id: Types.number }),
   members: Types.shape({}),
   joinRoom: Types.func.isRequired,
   exitRoom: Types.func.isRequired,
   startGame: Types.func.isRequired,
+  isFetching: Types.bool.isRequired,
   error: Types.string,
-  socket: Types.shape({ // eslint-disable-line
-    connecting: Types.bool.isRequired,
-    authenticating: Types.bool.isRequired,
-    connected: Types.bool.isRequired,
-  }).isRequired,
+  socket: Types.shape(
+    { connnecting: Types.bool, authenticating: Types.bool, connected: Types.bool },
+  ).isRequired,
   gameStarted: Types.bool,
 }
 
 Room.defaultProps = {
-  token: null,
+  room: null,
   members: null,
   error: null,
   gameStarted: false,
@@ -107,18 +103,17 @@ Room.defaultProps = {
 
 const mapStoreToProps = store => ({
   user: store.user,
-  token: store.user.token,
-  room: store.room,
-  members: store.dataChannel.users,
-  isFetching: store.room.isFetching,
-  error: store.room.error,
+  room: store.rooms.room,
+  isFetching: store.rooms.isFetching,
+  error: store.rooms.error,
   socket: store.socket,
   gameStarted: store.game.started,
+  members: store.dataChannel.users,
 })
 
 const mapDispatchToProps = dispatch => ({
-  joinRoom: roomId => dispatch(roomActions.joinRoom(roomId)),
-  exitRoom: roomId => dispatch(roomActions.exitRoom(roomId)),
+  joinRoom: roomId => dispatch(roomsActions.joinRoom(roomId)),
+  exitRoom: roomId => dispatch(roomsActions.exitRoom(roomId)),
   startGame: () => dispatch(gameActions.initializeGame()),
 })
 

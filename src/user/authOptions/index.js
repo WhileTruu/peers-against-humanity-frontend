@@ -6,26 +6,29 @@ import { LoginForm, actions } from '../'
 import generateRandomNickname from './util'
 
 const AuthOptions = ({ url, isAuthenticated, temporaryLogin }) => (
-  <div>
+  <div className="my-5">
     {isAuthenticated ? <Redirect to={url} /> : ''}
     <div className="row">
       <div className="col-12" style={{ position: 'absolute', zIndex: 2 }}>
-        <div className="card" style={{ backgroundColor: 'rgba(255, 255, 255, 0.9)' }}>
-          <div className="card-block">
-            <div className="row">
-              <div className="col-12 col-md-6">
-                <button
-                  type="button"
-                  className="form-control btn btn-primary mb-3"
-                  onClick={() => temporaryLogin(generateRandomNickname())}
-                >
-                  I want to be anonymous
-                </button>
-              </div>
-              <div className="col-12 col-md-6">
-                <LoginForm redirectUrl={url} />
-              </div>
-            </div>
+        <div className="row">
+          <div className="col-12">
+            <LoginForm redirectUrl={url} />
+          </div>
+        </div>
+        <div className="col-12 my-3" style={{ borderTop: '1px solid rgba(0, 0, 0, 0.125)' }} />
+        <div className="row">
+          <div className="col-12">
+            <label htmlFor="anon-register" className="form-check-label">
+              want to stay anonymous?
+            </label>
+            <button
+              id="anon-register"
+              type="button"
+              className="form-control btn btn-info"
+              onClick={() => temporaryLogin(generateRandomNickname())}
+            >
+              proceed anonymously
+            </button>
           </div>
         </div>
       </div>
