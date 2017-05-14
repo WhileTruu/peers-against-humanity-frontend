@@ -41,7 +41,7 @@ export function submitCards() {
       from: state.user.id,
       cards: state.gameMain.selectedCardIds,
     }
-    dispatch(dataChannelActions.send(cardSubmissionMessage))
+    dispatch(dataChannelActions.broadcast(cardSubmissionMessage))
     dispatch(cardSubmissionMessage)
 
     dispatch({

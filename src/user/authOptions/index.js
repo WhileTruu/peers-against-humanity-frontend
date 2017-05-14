@@ -6,7 +6,7 @@ import { LoginForm, actions } from '../'
 import generateRandomNickname from './util'
 
 const AuthOptions = ({ url, isAuthenticated, temporaryLogin }) => (
-  <div className="my-5">
+  <div className="container my-5">
     {isAuthenticated ? <Redirect to={url} /> : ''}
     <div className="row">
       <div className="col-12" style={{ position: 'absolute', zIndex: 2 }}>

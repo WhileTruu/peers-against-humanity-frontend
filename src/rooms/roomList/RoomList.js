@@ -5,7 +5,7 @@ import { connect } from 'react-redux'
 import { actions as roomsActions } from '..'
 
 const RoomList = ({ createRoom, joinRoom, socket, rooms }) => (
-  <div className="my-5">
+  <div className="container my-5">
     <div className="row">
       <div className="col-12">
         <div className="form-inline justify-content-between">
@@ -40,7 +40,7 @@ const RoomList = ({ createRoom, joinRoom, socket, rooms }) => (
                     <h5
                       className="mb-1"
                     >
-                      {roomId} <span className="text-info">not started</span>
+                      {roomId}
                     </h5>
                   </div>
                   <div>

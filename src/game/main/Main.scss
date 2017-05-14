@@ -1,0 +1,17 @@
+.white-card-container {
+  // justify-content-center d-flex flex-wrap
+  justify-content: center;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+  .white-card-container {
+    flex-wrap: nowrap;
+    overflow-x: scroll;
+  }
+}
+
+.main {
+  margin-top: -3rem;
+}

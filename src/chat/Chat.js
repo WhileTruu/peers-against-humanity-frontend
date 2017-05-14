@@ -75,7 +75,7 @@ class Chat extends Component {
           </div>
         </div>
         <button className="chat-button btn btn-primary" onClick={this.toggleOpen}>
-          chat over webRTC
+          chat
         </button>
       </div>
     )

@@ -8,6 +8,8 @@ import WhiteCard from '../cards/whiteCard'
 import { toggleCardSelected } from './actions'
 import { submitCards } from '../actions'
 
+import './Main.scss'
+
 export const Main = ({
   blackCards,
   whiteCards,
@@ -17,7 +19,7 @@ export const Main = ({
   onSubmitCards,
   onToggleCardSelected,
 }) => (
-  <div>
+  <div className="main">
     <div className="black-card-container justify-content-center d-flex">
       {
         (blackCards !== null && currentBlackCardId !== null) &&
@@ -27,7 +29,7 @@ export const Main = ({
         />
       }
     </div>
-    <div className="white-card-container justify-content-center d-flex flex-wrap">
+    <div className="white-card-container">
       {
         /* eslint-disable */
         (whiteCards && currentWhiteCardIds) &&
@@ -46,8 +48,8 @@ export const Main = ({
         /* eslint-enable */
       }
     </div>
-    <div>
-      <button className="btn btn-default btn-block" onClick={onSubmitCards}>
+    <div className="container">
+      <button className="btn btn-success mt-2 mb-5 btn-block" onClick={onSubmitCards}>
         submit cards
       </button>
     </div>

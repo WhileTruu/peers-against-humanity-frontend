@@ -4,7 +4,6 @@ import { BrowserRouter as Router, Route } from 'react-router-dom'
 import FrontPage from './pages/frontPage'
 import { LoginForm, RegistrationForm } from './user'
 import Rooms from './rooms'
-import Game from './game'
 
 const Container = () => (
   <Router>
@@ -15,16 +14,13 @@ const Container = () => (
       <div className="boulder-container">
         <img className="boulder-left" src="/boulder2.svg" alt="boulder" />
       </div>
-      <div className="container-fluid" style={{ minHeight: '100vh' }}>
-        <div className="row">
-          <div className="col-12 col-md-10 offset-md-1 col-lg-8 offset-lg-2 col-xl-6 offset-xl-3">
-            <Route exact path="/" component={FrontPage} />
-            <Route path="/login" component={LoginForm} />
-            <Route path="/register" component={RegistrationForm} />
-            <Route path="/rooms" component={Rooms} />
-            <Route path="/game" component={Game} />
-          </div>
-        </div>
+      <div style={{ minHeight: '100vh' }}>
+        <Route exact path="/" component={FrontPage} />
+
+        <Route path="/login" component={LoginForm} />
+        <Route path="/register" component={RegistrationForm} />
+        <Route path="/rooms" component={Rooms} />
+
       </div>
     </div>
   </Router>

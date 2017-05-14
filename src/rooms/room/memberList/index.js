@@ -18,7 +18,7 @@ const memberListItem = ({ member, userId }) => {
 }
 
 export default ({ members, userId }) => (
-  <div>
+  <div className="container mt-3">
     <ul className="list-group">
       {Object.keys(members)
         .filter(id => members[id].active !== false)

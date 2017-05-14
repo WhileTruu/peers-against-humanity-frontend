@@ -10,11 +10,11 @@ function heading(players, submittedCards, evaluator) {
   const everyoneHasSubmitted = submittedCards &&
     Object.keys(players).length - 1 === Object.keys(submittedCards).length
   if (everyoneHasSubmitted && evaluator) {
-    return 'Evaluate!'
+    return <h2 className="text-danger">{ 'Evaluate!' }</h2>
   } else if (everyoneHasSubmitted) {
-    return 'Waiting for evaluation...'
+    return <h2 className="text-info">{ 'Waiting for evaluation...' }</h2>
   }
-  return 'Waiting for submissions...'
+  return <h2 className="text-info">{ 'Waiting for submissions...' }</h2>
 }
 
 export const Evaluation = ({
@@ -27,8 +27,8 @@ export const Evaluation = ({
   onNextRound,
   players,
 }) => (
-  <div>
-    <h2>{heading(players, submittedCards, evaluator)}</h2>
+  <div className="container">
+    { heading(players, submittedCards, evaluator) }
     <div>
       {/* eslint-disable */}
       {submittedCards && Object.keys(submittedCards).map(key => (
@@ -45,7 +45,7 @@ export const Evaluation = ({
         </div>
       ))}
       {evaluator && (
-        <button className="btn btn-default btn-block" onClick={onNextRound}>
+        <button className="mt-3 mb-5 btn btn-success btn-block" onClick={onNextRound}>
           next round
         </button>
       )}
