@@ -9,10 +9,10 @@ const RoomList = ({ createRoom, joinRoom, socket, rooms }) => (
     <div className="row">
       <div className="col-12">
         <div className="form-inline justify-content-between">
-          <h1 className="panel-heading">Rooms</h1>
+          <h1 className="panel-heading">rooms</h1>
           {socket.connected ? (
             <button type="button" className="btn btn-info" onClick={() => createRoom()}>
-              Create Room
+              create room
             </button>
           ) : ''}
         </div>
@@ -22,7 +22,7 @@ const RoomList = ({ createRoom, joinRoom, socket, rooms }) => (
       <div className="col-12">
         {
           (!rooms || (rooms && !Object.keys(rooms).length)) && (
-            <h3 className="text-info">No available rooms at the moment</h3>
+            <h3 className="text-info">no available rooms at the moment</h3>
           )
         }
         <div className="list-group">

@@ -1,9 +1,9 @@
 {
   "loginForm": {
-    "title": "log in",
+    "title": "sign in",
     "username": "username",
     "password": "password",
-    "submit": "log in",
+    "submit": "sign in",
     "loading": "loading",
     "rememberMe": "remember me",
     "error": {

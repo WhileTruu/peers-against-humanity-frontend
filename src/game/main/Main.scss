@@ -5,10 +5,23 @@
   flex-wrap: wrap;
 }
 
+.white-card-container-singleline {
+  display: none;
+}
+
 @media (max-width: 768px) {
+  .white-card-container-multiline {
+    display: none;
+  }
+  .white-card-container-singleline {
+    display: flex;
+  }
   .white-card-container {
     flex-wrap: nowrap;
     overflow-x: scroll;
+  }
+  .main {
+    margin-top: 0rem !important;
   }
 }
 

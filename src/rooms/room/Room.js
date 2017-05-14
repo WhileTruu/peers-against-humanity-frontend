@@ -32,12 +32,12 @@ class Room extends Component {
   render() {
     const { room, members } = this.props
     return (
-      <div className="my-5">
+      <div className="my-3">
         <div className="container">
           <div className="row">
             <div className="col-12">
               <div className="form-inline justify-content-between align-items-start">
-                <h2 className="panel-heading">Room {room && room.id}</h2>
+                <h2 className="panel-heading">room {room && room.id}</h2>
                 <div>
                   {
                     (room && this.props.user.id === room.ownerId && !this.props.gameStarted) &&
@@ -61,11 +61,18 @@ class Room extends Component {
           </div>
         </div>
 
-        { this.props.gameStarted && <Game /> }
-        <MemberList
-          userId={this.props.user.id}
-          members={{ [this.props.user.id]: this.props.user, ...members }}
-        />
+        {
+          this.props.gameStarted ? (
+            <Game />
+          ) : (
+            <div className="container mt-3">
+              <MemberList
+                userId={this.props.user.id}
+                members={{ [this.props.user.id]: this.props.user, ...members }}
+              />
+            </div>
+          )
+        }
         <Chat />
       </div>
     )

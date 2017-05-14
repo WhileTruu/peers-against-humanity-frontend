@@ -18,43 +18,62 @@ export const Main = ({
   selectedCardIds,
   onSubmitCards,
   onToggleCardSelected,
-}) => (
-  <div className="main">
-    <div className="black-card-container justify-content-center d-flex">
-      {
-        (blackCards !== null && currentBlackCardId !== null) &&
-        <BlackCard
-          text={blackCards[currentBlackCardId].text}
-          pick={blackCards[currentBlackCardId].pick}
+}) => {
+  /* eslint-disable */
+  const renderWhiteCards = () => (currentWhiteCardIds
+    .map(id => (
+      <div
+        key={id}
+        onClick={() => onToggleCardSelected(id, blackCards[currentBlackCardId].pick)}
+      >
+        <WhiteCard
+          text={whiteCards[id].text}
+          number={selectedCardIds && selectedCardIds.indexOf(id) + 1}
+          selected={selectedCardIds && selectedCardIds.includes(id)}
         />
-      }
+      </div>
+    ))
+  )
+    /* eslint-enable */
+  return (
+    <div className="main">
+      <div className="black-card-container justify-content-center d-flex">
+        {
+          (blackCards !== null && currentBlackCardId !== null) &&
+          <BlackCard
+            text={blackCards[currentBlackCardId].text}
+            pick={blackCards[currentBlackCardId].pick}
+          />
+        }
+      </div>
+
+      <div className="white-card-container-singleline">
+        <div className="white-card-container">
+          { (whiteCards && currentWhiteCardIds) && renderWhiteCards() }
+        </div>
+      </div>
+
+      <div className="white-card-container-multiline">
+        <div className="white-card-container">
+          { (whiteCards && currentWhiteCardIds) && renderWhiteCards().slice(0, 5) }
+        </div>
+        <div className="white-card-container">
+          { (whiteCards && currentWhiteCardIds) && renderWhiteCards().slice(5) }
+        </div>
+      </div>
+
+      <div className="container text-center">
+        <button
+          className="btn btn-success mt-2 mb-5"
+          onClick={onSubmitCards}
+          style={{ width: '143px' }}
+        >
+          submit cards
+        </button>
+      </div>
     </div>
-    <div className="white-card-container">
-      {
-        /* eslint-disable */
-        (whiteCards && currentWhiteCardIds) &&
-        currentWhiteCardIds.map(id => (
-          <div
-            key={id}
-            onClick={() => onToggleCardSelected(id, blackCards[currentBlackCardId].pick)}
-          >
-            <WhiteCard
-              text={whiteCards[id].text}
-              number={selectedCardIds && selectedCardIds.indexOf(id) + 1}
-              selected={selectedCardIds && selectedCardIds.includes(id)}
-            />
-          </div>
-        ))
-        /* eslint-enable */
-      }
-    </div>
-    <div className="container">
-      <button className="btn btn-success mt-2 mb-5 btn-block" onClick={onSubmitCards}>
-        submit cards
-      </button>
-    </div>
-  </div>
-)
+  )
+}
 
 
 Main.propTypes = {

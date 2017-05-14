@@ -34,6 +34,11 @@
   position: fixed;
   bottom: 20px;
   right: 20px;
+  filter: drop-shadow(0 4px 6px rgba(50,50,93,.11)) drop-shadow(0 1px 3px rgba(0,0,0,.08));
+}
+
+.chat-button:hover {
+  filter: drop-shadow(0 7px 14px rgba(50,50,93,.1)) drop-shadow(0 3px 6px rgba(0,0,0,.08));
 }
 
 @media only screen and (max-device-width: 667px), screen and (max-width: 450px) {
@@ -68,4 +73,29 @@
   display: flex !important;
   justify-content: center !important;
   align-items: center !important;
+}
+
+.chat-navbar {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row !important;
+  width: 100%;
+}
+.chat-nav-item {
+  width: 100%;
+  justify-content: center;
+  display: flex;
+  text-align: center;
+}
+
+.chat-member-list {
+  top: 44px;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+}
+
+.chat-member-list .list-group-item {
+  background-color: transparent;
+  border: none;
 }

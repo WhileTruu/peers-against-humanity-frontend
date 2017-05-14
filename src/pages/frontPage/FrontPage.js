@@ -48,7 +48,7 @@ class FrontPage extends Component {
   render() {
     const { isLoggedIn, isRegistered, history } = this.props
     return (
-      <div>
+      <div className="d-flex flex-column justify-content-between" style={{ height: '100vh' }}>
         <div className="header">
           <div className="container">
             <div className="header-cards">
@@ -79,8 +79,10 @@ class FrontPage extends Component {
             </div>
             <div className="row">
               <div className="col-12">
+                <h5 className="pt-2">
+                  {'welcome to a borken cah clone, enjoy your stay'}
+                </h5>
                 <div className="py-3">
-                  {/* <h5>{"if you're feeling suicidal you've come to the right place"}</h5> */}
                   <div>
                     <button
                       id="roomsButton"
@@ -98,16 +100,25 @@ class FrontPage extends Component {
         <div className="footer">
           <div className="container">
             <div className="row text-center">
-              <p className="col-12 py-3">{
-                `
-                  peers against humanity is a prototype
-                  application based on Cards Against Humanity
-                  and created as part of a bachelor's thesis.
-                  The game is based on the Cards Against Humanity card game,
-                  which is CC licensed (BY-NC-SA).
-                  peers against humanity is not affiliated with
-                  Cards Against Humanity in any way.
-                `}
+              <p className="col-12 py-3">
+                {
+                  `
+                    peers against humanity is a prototype
+                    application based on
+                  `
+                }
+                <a className="btn-link" href="www.cardsagainsthumanity.com">
+                  Cards Against Humanity
+                </a>
+                {
+                  `
+                    and created as part of a bachelor's thesis.
+                    The game is based on the Cards Against Humanity card game,
+                    which is CC licensed (BY-NC-SA).
+                    peers against humanity is not affiliated with
+                    Cards Against Humanity in any way.
+                  `
+                }
               </p>
             </div>
           </div>

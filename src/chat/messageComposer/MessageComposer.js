@@ -31,7 +31,7 @@ class MessageComposer extends Component {
           className="form-control message-composer-input p-3"
           rows="1"
           ref={(input) => { this.textInput = input }}
-          placeholder="Send a message..."
+          placeholder="write a message..."
           onChange={event => this.onMessageChange(event.target.value)}
           onKeyPress={(event) => { // eslint-disable-line
             if (event.charCode === 13 && !event.shiftKey) {
@@ -44,7 +44,7 @@ class MessageComposer extends Component {
         />
         <div className="input-group-btn">
           <button
-            className="btn btn-primary message-composer-input-group-btn"
+            className="btn btn-link message-composer-input-group-btn"
             type="button"
             onClick={() => {
               this.props.onSendMessage(this.state.message)
@@ -52,7 +52,7 @@ class MessageComposer extends Component {
               this.onMessageChange('')
             }}
           >
-            Send!
+            send
           </button>
         </div>
       </div>

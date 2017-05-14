@@ -3,6 +3,8 @@ import { connect } from 'react-redux'
 
 import MessageComposer from './messageComposer'
 import MessageArea from './messageArea'
+import MemberList from '../rooms/room/memberList'
+
 import { actions } from '.'
 import './Chat.scss'
 
@@ -15,6 +17,7 @@ class Chat extends Component {
     this.state = {
       composerHeight: null,
       isOpen: false,
+      chatSelected: true,
     }
   }
 
@@ -41,10 +44,11 @@ class Chat extends Component {
   }
 
   render() {
+    const { isOpen, chatSelected } = this.state
     return (
       <div>
         <div className="chat-container">
-          <div className={`chat-frame ${this.state.isOpen ? '' : 'hidden'}`}>
+          <div className={`chat-frame ${isOpen ? '' : 'hidden'}`}>
             <div className="boulder-container">
               <img className="boulder-right" src="/boulder4.svg" alt="boulder" />
             </div>
@@ -60,22 +64,67 @@ class Chat extends Component {
                 >
                   <img style={{ width: '16px', height: '16px' }} src="/closeButton.svg" alt="close" />
                 </button>
+                <div className="navbar-inverse" style={{ width: '100%' }}>
+                  <ul className="chat-navbar navbar-nav">
+                    <li className={`chat-nav-item nav-item ${chatSelected && 'active'}`}>
+                      <button
+                        className="btn-link nav-link"
+                        onClick={() => this.setState({ chatSelected: true })}
+                      >
+                        chat
+                      </button>
+                    </li>
+                    <li className={`chat-nav-item nav-item ${!chatSelected && 'active'}`}>
+                      <button
+                        className="btn-link nav-link"
+                        onClick={() => this.setState({ chatSelected: false })}
+                      >
+                        members
+                      </button>
+                    </li>
+                  </ul>
+                </div>
               </div>
-              <MessageArea
-                userId={this.props.userId}
-                messages={this.props.messages}
-                composerHeight={this.state.composerHeight}
-              />
-              <MessageComposer
-                isOpen={this.state.isOpen}
-                onSendMessage={this.sendMessage}
-                changeComposerHeight={this.changeComposerHeight}
-              />
+              {
+                chatSelected ? (
+                  <div>
+                    <MessageArea
+                      userId={this.props.userId}
+                      messages={this.props.messages}
+                      composerHeight={this.state.composerHeight}
+                    />
+                    <MessageComposer
+                      isOpen={isOpen}
+                      onSendMessage={this.sendMessage}
+                      changeComposerHeight={this.changeComposerHeight}
+                    />
+                  </div>
+                ) : (
+                  <div className="chat-member-list">
+                    <MemberList
+                      userId={this.props.userId}
+                      members={{ [this.props.userId]: this.props.user, ...this.props.members }}
+                    />
+                  </div>
+                )
+              }
             </div>
           </div>
         </div>
-        <button className="chat-button btn btn-primary" onClick={this.toggleOpen}>
-          chat
+        <button
+          className="chat-button btn btn-primary p-2"
+          onClick={this.toggleOpen}
+          style={{ borderRadius: '50%' }}
+        >
+          {
+            isOpen ? (
+              <div style={{ padding: '6px' }}>
+                <img style={{ width: '24px', height: '24px' }} src="/closeButton.svg" alt="close" />
+              </div>
+            ) : (
+              <img style={{ width: '36px', height: '36px' }} src="/chat.svg" alt="close" />
+            )
+          }
         </button>
       </div>
     )
@@ -83,26 +132,32 @@ class Chat extends Component {
 }
 
 Chat.propTypes = {
+  user: PropTypes.shape({}),
   userId: PropTypes.number,
   username: PropTypes.string,
   nickname: PropTypes.string,
   messages: PropTypes.array, // eslint-disable-line
+  members: PropTypes.shape({}),
   sendMessage: PropTypes.func.isRequired,
 }
 
 
 Chat.defaultProps = {
+  user: null,
   userId: null,
   username: null,
   nickname: null,
   messages: null,
+  members: null,
 }
 
 const mapStoreToProps = store => ({
   userId: store.user.id,
+  user: store.user,
   username: store.user.username,
   nickname: store.user.nickname,
   messages: store.chat.messages,
+  members: store.dataChannel.users,
 })
 
 const mapDispatchToProps = dispatch => ({
