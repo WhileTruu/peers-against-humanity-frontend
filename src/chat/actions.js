@@ -1,4 +1,4 @@
-import { MESSAGE } from './constants'
+import { MESSAGE, RESET } from './constants'
 import { actions as dataChannelActions } from '../common/dataChannel'
 
 export function send(data) {
@@ -10,4 +10,8 @@ export function send(data) {
 
 export function message(data) {
   return { type: MESSAGE, data }
+}
+
+export function reset() {
+  return { type: RESET }
 }

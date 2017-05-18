@@ -22,7 +22,7 @@ class MessageArea extends Component {
     const { messages, userId } = this.props
     return (
       <div
-        className="message-area" style={{ bottom: '54px', top: 0 }}
+        className="message-area" style={{ bottom: '54px', top: '44px' }}
         ref={(input) => { this.messageArea = input }}
       >
         <div

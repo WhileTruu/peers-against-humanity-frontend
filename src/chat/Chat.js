@@ -69,6 +69,7 @@ class Chat extends Component {
                     <li className={`chat-nav-item nav-item ${chatSelected && 'active'}`}>
                       <button
                         className="btn-link nav-link"
+                        style={{ outline: 'none' }}
                         onClick={() => this.setState({ chatSelected: true })}
                       >
                         chat
@@ -77,6 +78,7 @@ class Chat extends Component {
                     <li className={`chat-nav-item nav-item ${!chatSelected && 'active'}`}>
                       <button
                         className="btn-link nav-link"
+                        style={{ outline: 'none' }}
                         onClick={() => this.setState({ chatSelected: false })}
                       >
                         members

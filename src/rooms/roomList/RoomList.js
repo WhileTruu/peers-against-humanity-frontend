@@ -3,6 +3,7 @@ import { withRouter } from 'react-router'
 import { connect } from 'react-redux'
 
 import { actions as roomsActions } from '..'
+import Loader from '../../common/loader'
 
 const socketState = (socket) => {
   if (socket.connecting) return { text: 'connecting...', textStyle: 'text-info' }
@@ -11,7 +12,7 @@ const socketState = (socket) => {
   return { text: 'disconnected', textStyle: 'text-primary' }
 }
 
-const RoomList = ({ createRoom, joinRoom, socket, rooms }) => (
+const RoomList = ({ createRoom, joinRoom, socket, rooms, roomsState }) => (
   <div className="container">
     <div className="row">
       <div className="col-12 mt-3">
@@ -39,6 +40,7 @@ const RoomList = ({ createRoom, joinRoom, socket, rooms }) => (
             <h3 className="text-info">no available rooms at the moment</h3>
           )
         }
+        { (roomsState && roomsState.isFetching) && <Loader /> }
         <div className="list-group">
           {
             rooms &&
@@ -106,10 +108,12 @@ RoomList.propTypes = {
   }).isRequired,
   createRoom: Types.func.isRequired,
   joinRoom: Types.func.isRequired,
+  roomsState: Types.shape({}),
 }
 
 RoomList.defaultProps = {
   rooms: null,
+  roomsState: null,
 }
 
 
@@ -117,6 +121,7 @@ const mapStoreToProps = store => ({
   isAuthenticated: store.user.isLoggedIn,
   socket: store.socket,
   rooms: store.rooms.rooms,
+  roomsState: store.rooms,
 })
 
 const mapDispatchToProps = dispatch => ({

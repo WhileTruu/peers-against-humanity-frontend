@@ -1,5 +1,6 @@
 import { actions as socketActions } from '../common/socket'
 import { actions as gameActions } from '../game'
+import { actions as chatActions } from '../chat'
 import { actions as dataChannelActions } from '../common/dataChannel'
 
 export const roomActionTypes = [
@@ -57,6 +58,7 @@ export function joinRoom(id) {
 export function exitRoom(id) {
   return (dispatch, getState) => {
     if (getState().game.started) dispatch(gameActions.exitGame())
+    dispatch(chatActions.reset())
     dispatch(dataChannelActions.exitChannel())
     dispatch({ type: EXITED_ROOM, id })
     if (getState().socket.connected) {
