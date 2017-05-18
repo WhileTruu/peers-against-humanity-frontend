@@ -4,6 +4,8 @@ import {
 } from './config'
 
 import { JOIN, JOINED, OFFER, ANSWER, ICE_CANDIDATE, BROADCAST, EXIT, SEND } from './constants'
+import { PLAYER_READY } from '../../game/constants'
+
 import { actions as dataChannelActions } from '.'
 import { actions as socketActions } from '../socket'
 import { actions as chatActions } from '../../chat'
@@ -42,7 +44,7 @@ const dataChannelMiddleware = (() => {
   const broadcast = (message) => {
     Object.keys(peerConnections).forEach((id) => {
       if (peerConnections[id].dataChannel.readyState === 'open') {
-        if (message.id !== parseInt(id, 10)) {
+        if (message.from !== parseInt(id, 10)) {
           peerConnections[id].dataChannel.send(JSON.stringify(message))
         }
       }
@@ -59,7 +61,13 @@ const dataChannelMiddleware = (() => {
     rtcPeerConnection.ondatachannel = (event) => {
       if (state.user.id === state.rooms.room.ownerId) {
         send({ type: JOINED, from: state.user.id, to: id, room: state.rooms.room }, store)
-        broadcast({ type: JOIN, id })
+        if (
+          state.game.players &&
+          Object.keys(state.game.players).map(key => parseInt(key, 10)).includes(id)
+        ) {
+          store.dispatch(gameActions.joinGame(id))
+        }
+        broadcast({ type: JOIN, from: id })
       }
       store.dispatch(dataChannelActions.hasRTCDataChannel(id))
       event.channel.onmessage = message => onMessage(message, store)  // eslint-disable-line
@@ -96,9 +104,18 @@ const dataChannelMiddleware = (() => {
       // if (state.user.id !== state.rooms.room.ownerId) {
       //   store.dispatch(socketActions.disconnect())
       // }
+      if (
+        state.game.players &&
+        Object.keys(state.game.players).map(key => parseInt(key, 10)).includes(id)
+      ) {
+        store.dispatch(dataChannelActions.broadcast({ type: PLAYER_READY, from: state.user.id }))
+      }
+
       store.dispatch(dataChannelActions.hasRTCDataChannel(id))
       event.channel.onmessage = message => onMessage(message, store)  // eslint-disable-line
-      event.channel.onclose = () => store.dispatch(dataChannelActions.removeUser(id))  // eslint-disable-line
+      event.channel.onclose = () => { // eslint-disable-line
+        store.dispatch(dataChannelActions.removeUser(id))  // eslint-disable-line
+      }
       event.channel.onerror = console.log  // eslint-disable-line
     }
     rtcPeerConnection.oniceconnectionstatechange = () => {
@@ -126,25 +143,13 @@ const dataChannelMiddleware = (() => {
   }
 
   const addIceCandidate = (id, candidate) => {
-    console.log(id, peerConnections)
     peerConnections[id].rtcPeerConnection.addIceCandidate(new RTCIceCandidate(candidate))
   }
-
-  // const countUTF8Bytes = (s) => {
-  //   let b = 0
-  //   for (let i = 0; i < s.length; i += 1) {
-  //     const c = s.charCodeAt(i)
-  //     if (c >> 11) b += 3 // eslint-disable-line no-bitwise
-  //     else if (c >> 7) b += 2 // eslint-disable-line no-bitwise
-  //     else b += 1
-  //   }
-  //   return b
-  // }
 
   const onMessage = (message, store) => {
     const data = JSON.parse(message.data)
     const state = store.getState()
-    console.log(message.data, (new TextEncoder('utf-8').encode(message.data)).length)
+    // console.log(message.data, (new TextEncoder('utf-8').encode(message.data)).length)
 
     if (data.to && data.to !== state.user.id) {
       send(data, store)
@@ -161,8 +166,7 @@ const dataChannelMiddleware = (() => {
         break
 
       case JOIN:
-        console.log('requesting new connection')
-        requestNewPeerConnection(data.id, store)
+        requestNewPeerConnection(data.from, store)
         break
 
       case JOINED:
@@ -205,7 +209,7 @@ const dataChannelMiddleware = (() => {
       }
 
       default:
-        console.log(data)
+        console.warn(data)
         break
     }
   }
@@ -217,7 +221,7 @@ const dataChannelMiddleware = (() => {
         break
 
       case JOIN:
-        requestNewPeerConnection(action.id, store)
+        requestNewPeerConnection(action.from, store)
         break
 
       case OFFER:

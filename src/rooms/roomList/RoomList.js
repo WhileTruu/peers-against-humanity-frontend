@@ -4,10 +4,17 @@ import { connect } from 'react-redux'
 
 import { actions as roomsActions } from '..'
 
+const socketState = (socket) => {
+  if (socket.connecting) return { text: 'connecting...', textStyle: 'text-info' }
+  if (socket.authenticating) return { text: 'authenticating...', textStyle: 'text-warn' }
+  if (socket.connected) return { text: 'connected', textStyle: 'text-success' }
+  return { text: 'disconnected', textStyle: 'text-primary' }
+}
+
 const RoomList = ({ createRoom, joinRoom, socket, rooms }) => (
   <div className="container">
     <div className="row">
-      <div className="col-12 mt-5">
+      <div className="col-12 mt-3">
         <div className="form-inline justify-content-between">
           <h1 className="panel-heading">rooms</h1>
           {socket.connected ? (
@@ -20,6 +27,13 @@ const RoomList = ({ createRoom, joinRoom, socket, rooms }) => (
     </div>
     <div className="row">
       <div className="col-12">
+        {
+          socket && (
+            <h3 className={socketState(socket).textStyle}>
+              server is {socketState(socket).text}
+            </h3>
+          )
+        }
         {
           (!rooms || (rooms && !Object.keys(rooms).length)) && (
             <h3 className="text-info">no available rooms at the moment</h3>

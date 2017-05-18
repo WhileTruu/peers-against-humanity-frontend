@@ -23,6 +23,7 @@ const initialState = {
   currentWhiteCardIds: null,
   submittedCards: null,
   submitted: false,
+  bestSubmission: null,
 }
 
 function rearrangeCards({ allCardIds, currentCardIds }) {
@@ -70,6 +71,7 @@ export default function game(state = initialState, action) {
         evaluatorId: action.evaluatorId,
         submittedCards: null,
         submitted: false,
+        bestSubmission: null,
       }
     }
     case SUBMIT_CARDS: {
@@ -114,6 +116,7 @@ export default function game(state = initialState, action) {
           ...state.players,
           [action.id]: { ...state.players[action.id], points: state.players[action.id].points + 1 },
         },
+        bestSubmission: action.id,
       }
     }
     case EXIT_GAME: {

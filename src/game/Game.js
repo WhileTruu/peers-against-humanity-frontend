@@ -6,7 +6,7 @@ import Evaluation from './evaluation'
 
 const Game = ({ isEvaluator, hasSubmitted, roundNumber }) => (
   <div>
-    <div className="container">
+    <div>
       {
         roundNumber && <h4 className="text-info">{ `Round ${roundNumber}` }</h4>
       }

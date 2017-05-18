@@ -12,9 +12,10 @@ import {
 } from './constants'
 
 import { actions as socketActions } from '../socket'
+import { actions as gameActions } from '../../game'
 
 export function join(id) {
-  return { type: JOIN, id }
+  return { type: JOIN, from: id }
 }
 
 export function offer(message) {
@@ -35,8 +36,11 @@ export function addUser(id, user) {
 
 export function removeUser(id) {
   return (dispatch, getState) => {
-    const { dataChannel, user, rooms } = getState()
+    const { dataChannel, user, rooms, game } = getState()
     dispatch({ type: REMOVE_USER, id })
+    if (game.players && game.players[id]) {
+      dispatch(gameActions.playerExited(id))
+    }
     if (!dataChannel.users) return
     const smallestMemberId = Object.keys(dataChannel.users)
       .map(memberId => parseInt(memberId, 10))

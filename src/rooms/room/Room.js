@@ -30,16 +30,25 @@ class Room extends Component {
   }
 
   render() {
-    const { room, members } = this.props
+    const { room, members, user, dataChannel } = this.props
     return (
       <div className="container">
         <div className="row">
-          <div className="col-12">
+          <div className="col-12 mt-3">
             <div className="form-inline justify-content-between align-items-start">
               <h2 className="panel-heading">room {room && room.id}</h2>
+              <h3 className="text-success">
+                {user && `${user.id} ${user.username || user.nickname}`}
+              </h3>
               <div>
                 {
-                  (room && this.props.user.id === room.ownerId && !this.props.gameStarted) &&
+                  (
+                    room && user.id === room.ownerId && !this.props.gameStarted &&
+                    dataChannel && dataChannel.users &&
+                    Object.keys(dataChannel.users).map(memberId => parseInt(memberId, 10))
+                      .filter(id => dataChannel.users[id].hasRTCDataChannel || id === user.id)
+                      .length >= 2
+                  ) &&
                   <button
                     className="btn btn-success ml-2"
                     onClick={this.props.startGame}
@@ -49,7 +58,7 @@ class Room extends Component {
                 }
                 <button
                   type="button"
-                  className="btn btn-danger ml-2"
+                  className="btn btn-outline-danger ml-2"
                   onClick={() => this.props.history.replace('/rooms')}
                 >
                   exit
@@ -97,6 +106,7 @@ Room.propTypes = {
     { connnecting: Types.bool, authenticating: Types.bool, connected: Types.bool },
   ).isRequired,
   gameStarted: Types.bool,
+  dataChannel: Types.shape({}),
 }
 
 Room.defaultProps = {
@@ -104,6 +114,7 @@ Room.defaultProps = {
   members: null,
   error: null,
   gameStarted: false,
+  dataChannel: null,
 }
 
 const mapStoreToProps = store => ({
@@ -114,6 +125,7 @@ const mapStoreToProps = store => ({
   socket: store.socket,
   gameStarted: store.game.started,
   members: store.dataChannel.users,
+  dataChannel: store.dataChannel,
 })
 
 const mapDispatchToProps = dispatch => ({

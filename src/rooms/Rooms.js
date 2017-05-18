@@ -22,15 +22,8 @@ class Rooms extends Component {
   }
 
   render() {
-    const { isLoggedIn, room, match, socket } = this.props
+    const { isLoggedIn, room, match } = this.props
 
-    const socketState = (() => {
-      if (socket.connecting) return { text: 'CONNECTING', textStyle: 'text-info' }
-      if (socket.authenticating) return { text: 'AUTHENTICATING', textStyle: 'text-primary' }
-      if (socket.connected) return { text: 'CONNECTED', textStyle: 'text-success' }
-      return { text: 'DISCONNECTED', textStyle: 'text-danger' }
-    })()
-    console.log(`SOCKET IS ${socketState.text}`)
     return (
       <div>
         {room && room.id ? <Redirect to={`/rooms/${room.id}`} /> : ''}

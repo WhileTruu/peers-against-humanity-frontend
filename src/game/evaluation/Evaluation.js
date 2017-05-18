@@ -5,6 +5,7 @@ import { connect } from 'react-redux'
 import BlackCard from '../cards/blackCard'
 import WhiteCard from '../cards/whiteCard'
 import { selectBestSubmission, startRound } from '../actions'
+import './Evaluation.scss'
 
 function heading(players, submittedCards, evaluator) {
   const everyoneHasSubmitted = submittedCards &&
@@ -26,31 +27,52 @@ export const Evaluation = ({
   onSelectBestSubmission,
   onNextRound,
   players,
+  bestSubmission,
 }) => (
-  <div className="container">
+  <div>
     { heading(players, submittedCards, evaluator) }
-    <div>
-      {/* eslint-disable */}
-      {submittedCards && Object.keys(submittedCards).map(key => (
-        <div key={key} onClick={() => onSelectBestSubmission(parseInt(key, 10))}>
-          <BlackCard
-            text={blackCards[currentBlackCardId].text}
-            pick={blackCards[currentBlackCardId].pick}
-          />
-          {
-            submittedCards[key].map((id) => (
-              <WhiteCard text={whiteCards[id].text} key={id} />
-            ))
-          }
-        </div>
-      ))}
-      {evaluator && (
-        <button className="mt-3 mb-5 btn btn-success btn-block" onClick={onNextRound}>
-          next round
-        </button>
-      )}
+    <div className="submissions d-flex">
+      {
+        submittedCards && Object.keys(submittedCards).map((key) => {
+          const submitterId = parseInt(key, 10)
+          return (
+            <div // eslint-disable-line
+              className="submission"
+              key={key}
+              onClick={() => onSelectBestSubmission(submitterId)}
+            >
+              <div className={`winner-message ${bestSubmission === submitterId}`}>
+                <h1 className="text-danger">Winner</h1>
+              </div>
+              <BlackCard
+                text={blackCards[currentBlackCardId].text}
+                pick={blackCards[currentBlackCardId].pick}
+              />
+              {
+                submittedCards[key].map(id => (
+                  <WhiteCard text={whiteCards[id].text} key={id} />
+                ))
+              }
+            </div>
+          )
+        })
+      }
     </div>
-    {/* eslint-enable */}
+    <div>
+      {
+        evaluator && (
+          <div className="container text-center">
+            <button
+              className="btn btn-success mt-2 mb-5"
+              onClick={onNextRound}
+              style={{ width: '143px' }}
+            >
+              next round
+            </button>
+          </div>
+        )
+      }
+    </div>
   </div>
 )
 
@@ -64,6 +86,7 @@ Evaluation.propTypes = {
   submittedCards: Types.shape({}),
   onSelectBestSubmission: Types.func,
   onNextRound: Types.func,
+  bestSubmission: Types.number,
 }
 
 Evaluation.defaultProps = {
@@ -73,6 +96,7 @@ Evaluation.defaultProps = {
   evaluator: null,
   players: null,
   submittedCards: null,
+  bestSubmission: null,
   onSelectBestSubmission: () => null,
   onNextRound: () => null,
 }
@@ -84,6 +108,7 @@ const mapStoreToProps = store => ({
   whiteCards: store.game.whiteCards,
   blackCards: store.game.blackCards,
   players: store.game.players,
+  bestSubmission: store.game.bestSubmission,
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators({
