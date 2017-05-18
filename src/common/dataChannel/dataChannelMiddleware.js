@@ -208,6 +208,11 @@ const dataChannelMiddleware = (() => {
         break
       }
 
+      case 'UPDATE_ROOM': {
+        store.dispatch(roomsActions.updateRoom(data.room))
+        break
+      }
+
       default:
         console.warn(data)
         break

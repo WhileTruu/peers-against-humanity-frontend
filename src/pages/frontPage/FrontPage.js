@@ -130,21 +130,18 @@ class FrontPage extends Component {
               <span>
                 {
                   `
-                    peers against humanity is a prototype
-                    application based on
+                    peers against humanity is a
+                    web application based on
                   `
                 }
                 <a className="btn-link" href="https://www.cardsagainsthumanity.com">
                   Cards Against Humanity
                 </a>
                 {
-                  `
-                    and created as part of a bachelor's thesis.
-                    The game is based on the Cards Against Humanity card game,
-                    which is CC licensed (BY-NC-SA).
+                  `, which is CC licensed (BY-NC-SA).
+                    The app was created as part of a bachelor's thesis.
                     peers against humanity is not affiliated with
-                    Cards Against Humanity in any way.
-                  `
+                    Cards Against Humanity in any way.`
                 }
               </span>
             </div>

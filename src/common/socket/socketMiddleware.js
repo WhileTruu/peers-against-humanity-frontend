@@ -32,12 +32,12 @@ const socketMiddleware = (() => {
   }
 
   const onMessage = (socket, store) => (event) => {
+    const state = store.getState()
     const message = JSON.parse(event.data)
     switch (message.type) {
 
       case 'AUTHENTICATED': {
         store.dispatch(actions.connected())
-        const state = store.getState()
         if (state.dataChannel.users && !state.dataChannel.users[state.rooms.room.ownerId].active) {
           store.dispatch(actions.takeOverRoom())
         }
@@ -62,6 +62,13 @@ const socketMiddleware = (() => {
 
       case '@dataChannel/ICE_CANDIDATE':
         store.dispatch(dataChannelActions.iceCandidate(message))
+        break
+
+      case 'UPDATE_ROOM':
+        store.dispatch(roomsActions.updateRoom(message.room))
+        if (state.user.id === message.room.ownerId) {
+          store.dispatch(dataChannelActions.broadcast(message))
+        }
         break
 
       default:
