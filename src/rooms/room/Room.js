@@ -37,9 +37,6 @@ class Room extends Component {
           <div className="col-12 mt-3">
             <div className="form-inline justify-content-between align-items-start">
               <h2 className="panel-heading">room {room && room.id}</h2>
-              <h3 className="text-success">
-                {user && `${user.id} ${user.username || user.nickname}`}
-              </h3>
               <div>
                 {
                   (
@@ -65,6 +62,13 @@ class Room extends Component {
                 </button>
               </div>
             </div>
+            <small>
+              { 'you are ' }
+              <span className="text-primary">
+                {user && `${user.username || user.nickname}`}
+              </span>
+              { (room && user.id === room.ownerId) && ', the owner of this room' }
+            </small>
           </div>
         </div>
         {

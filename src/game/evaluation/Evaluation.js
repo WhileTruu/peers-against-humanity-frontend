@@ -27,6 +27,8 @@ export const Evaluation = ({
   onSelectBestSubmission,
   onNextRound,
   players,
+  users,
+  user,
   bestSubmission,
 }) => (
   <div>
@@ -35,6 +37,7 @@ export const Evaluation = ({
       {
         submittedCards && Object.keys(submittedCards).map((key) => {
           const submitterId = parseInt(key, 10)
+          const submitter = submitterId === user.id ? user : users[key]
           return (
             <div // eslint-disable-line
               className="submission"
@@ -43,6 +46,9 @@ export const Evaluation = ({
             >
               <div className={`winner-message ${bestSubmission === submitterId}`}>
                 <h1 className="text-danger">Winner</h1>
+                <h4 className="text-primary">
+                  { submitter && (submitter.username || submitter.nickname) }
+                </h4>
               </div>
               <BlackCard
                 text={blackCards[currentBlackCardId].text}
@@ -87,9 +93,12 @@ Evaluation.propTypes = {
   onSelectBestSubmission: Types.func,
   onNextRound: Types.func,
   bestSubmission: Types.number,
+  users: Types.shape({}),
+  user: Types.shape({}),
 }
 
 Evaluation.defaultProps = {
+  user: null,
   currentBlackCardId: null,
   whiteCards: null,
   blackCards: null,
@@ -97,11 +106,13 @@ Evaluation.defaultProps = {
   players: null,
   submittedCards: null,
   bestSubmission: null,
+  users: null,
   onSelectBestSubmission: () => null,
   onNextRound: () => null,
 }
 
 const mapStoreToProps = store => ({
+  user: store.user,
   evaluator: store.game.evaluatorId === store.user.id,
   submittedCards: store.game.submittedCards,
   currentBlackCardId: store.game.currentBlackCardId,
@@ -109,6 +120,7 @@ const mapStoreToProps = store => ({
   blackCards: store.game.blackCards,
   players: store.game.players,
   bestSubmission: store.game.bestSubmission,
+  users: store.dataChannel.users,
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators({
