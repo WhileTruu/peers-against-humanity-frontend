@@ -130,10 +130,21 @@ const dataChannelMiddleware = (() => {
     peerConnections[id].rtcPeerConnection.addIceCandidate(new RTCIceCandidate(candidate))
   }
 
+  // const countUTF8Bytes = (s) => {
+  //   let b = 0
+  //   for (let i = 0; i < s.length; i += 1) {
+  //     const c = s.charCodeAt(i)
+  //     if (c >> 11) b += 3 // eslint-disable-line no-bitwise
+  //     else if (c >> 7) b += 2 // eslint-disable-line no-bitwise
+  //     else b += 1
+  //   }
+  //   return b
+  // }
+
   const onMessage = (message, store) => {
     const data = JSON.parse(message.data)
     const state = store.getState()
-    console.log(data)
+    console.log(message.data, (new TextEncoder('utf-8').encode(message.data)).length)
 
     if (data.to && data.to !== state.user.id) {
       send(data, store)

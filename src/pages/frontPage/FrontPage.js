@@ -16,98 +16,125 @@ class FrontPage extends Component {
   renderLoginButton() {
     const { history } = this.props
     return (
-      <div>
-        <button className="btn btn-success mb-3 btn-link" onClick={() => history.push('/login')}>
-          sign in
-        </button>
-      </div>
+      <button
+        className="btn btn-link"
+        onClick={() => history.push('/login')}
+      >
+        sign in
+      </button>
     )
   }
 
   renderRegistrationButton() {
     const { history } = this.props
     return (
-      <div>
-        <button className="btn btn-primary mb-3 ml-3 btn-link" onClick={() => history.push('/register')}>
-          register
-        </button>
-      </div>
+      <button
+        className="btn btn-link"
+        onClick={() => history.push('/register')}
+      >
+        register
+      </button>
     )
   }
 
   renderLogOutButton() {
     return (
-      <div>
-        <button className="btn btn-info mb-3 btn-link" onClick={() => this.logOut()}>
-          sign out
-        </button>
-      </div>
+      <button
+        className="btn btn-link"
+        onClick={() => this.logOut()}
+      >
+        sign out
+      </button>
     )
   }
 
   render() {
     const { isLoggedIn, isRegistered, history } = this.props
+    const renderHeaderCards = () => ( // eslint-disable-line
+      <div className="header-cards container">
+        <BlackCard
+          text={
+            `In a world ravaged by the violation of our most basic human rights,
+            our only solace is _.`
+          }
+          pick={2}
+        />
+        <WhiteCard text="The cool, refreshing taste of Pepsi." />
+      </div>
+    )
     return (
-      <div className="d-flex flex-column justify-content-between" style={{ height: '100vh' }}>
+      <div className="d-flex flex-column" style={{ minHeight: '100vh' }}>
         <div className="header">
           <div className="container">
-            <div className="header-cards">
-              <BlackCard
-                text={
-                  `In a world ravaged by the violation of our most basic human rights,
-                  our only solace is _.`
-                }
-                pick={2}
-              />
-              <WhiteCard text="The cool, refreshing taste of Pepsi." />
-            </div>
-            <div className="row">
-              <div className="col-12">
-                <div
-                  className="d-flex justify-content-between align-items-end"
-                  style={{ flexWrap: 'wrap-reverse' }}
-                >
-                  <h1 className="panel-heading">
-                    peers<br />against<br />humanity
-                  </h1>
-                  <div className="form-inline justify-content-end" style={{ flexGrow: 1 }}>
-                    {isLoggedIn ? this.renderLogOutButton() : this.renderLoginButton()}
-                    {!isRegistered && this.renderRegistrationButton()}
-                  </div>
-                </div>
+            { /* renderHeaderCards() */ }
+            <div className="d-flex justify-content-between align-items-end flex-wrap-reverse">
+              <h1 className="panel-heading">
+                peers<br />against<br />humanity
+              </h1>
+              <div className="form-inline justify-content-end" style={{ flexGrow: 1 }}>
+                {isLoggedIn ? this.renderLogOutButton() : this.renderLoginButton()}
+                {!isRegistered && this.renderRegistrationButton()}
               </div>
             </div>
-            <div className="row">
-              <div className="col-12">
-                <h5 className="pt-2">
-                  {'welcome to a borken cah clone, enjoy your stay'}
-                </h5>
-                <div className="py-3">
-                  <div>
-                    <button
-                      id="roomsButton"
-                      className="btn btn-success"
-                      onClick={() => history.push('/rooms')}
-                    >
-                      explore the game rooms
-                    </button>
-                  </div>
+            <div>
+              <div className="pt-2">
+                {
+                  ((window.mozRTCPeerConnection) ||
+                  (window.RTCPeerConnection) ||
+                  (window.webkitRTCPeerConnection)) ? (
+                    <h5>
+                      {'your browser '}
+                      <span className="text-success">
+                        supports WebRTC
+                      </span>
+                      {', feel free to mess around*'}
+                    </h5>
+                  ) : (
+                    <h5 className="text-danger">
+                      {'your browser '}
+                      <span className="text-success">
+                        does not support WebRTC
+                      </span>
+                      {', git gud browser*'}
+                    </h5>
+                  )
+                }
+                <small className="text-info">
+                  *but who am I to judge browser support, go ahead and try
+                </small>
+              </div>
+              <div className="py-3">
+                <div>
+                  <button
+                    id="roomsButton"
+                    className="btn btn-success"
+                    onClick={() => history.push('/rooms')}
+                  >
+                    explore the game rooms
+                  </button>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div className="footer">
-          <div className="container">
-            <div className="row text-center">
-              <p className="col-12 py-3">
+        <div className="content container py-3" style={{ flex: 1 }}>
+          { /*eslint-disable */ }
+          <span>
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+          </span>
+        </div>
+        <footer className="footer">
+          <div className="container py-3">
+            <div className="text-center small text-muted">
+              <span>
                 {
                   `
                     peers against humanity is a prototype
                     application based on
                   `
                 }
-                <a className="btn-link" href="www.cardsagainsthumanity.com">
+                <a className="btn-link" href="https://www.cardsagainsthumanity.com">
                   Cards Against Humanity
                 </a>
                 {
@@ -119,10 +146,10 @@ class FrontPage extends Component {
                     Cards Against Humanity in any way.
                   `
                 }
-              </p>
+              </span>
             </div>
           </div>
-        </div>
+        </footer>
       </div>
     )
   }

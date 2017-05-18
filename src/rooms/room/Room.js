@@ -32,44 +32,43 @@ class Room extends Component {
   render() {
     const { room, members } = this.props
     return (
-      <div className="my-3">
-        <div className="container">
-          <div className="row">
-            <div className="col-12">
-              <div className="form-inline justify-content-between align-items-start">
-                <h2 className="panel-heading">room {room && room.id}</h2>
-                <div>
-                  {
-                    (room && this.props.user.id === room.ownerId && !this.props.gameStarted) &&
-                    <button
-                      className="btn btn-success ml-2"
-                      onClick={this.props.startGame}
-                    >
-                      start game
-                    </button>
-                  }
+      <div className="container">
+        <div className="row">
+          <div className="col-12">
+            <div className="form-inline justify-content-between align-items-start">
+              <h2 className="panel-heading">room {room && room.id}</h2>
+              <div>
+                {
+                  (room && this.props.user.id === room.ownerId && !this.props.gameStarted) &&
                   <button
-                    type="button"
-                    className="btn btn-danger ml-2"
-                    onClick={() => this.props.history.replace('/rooms')}
+                    className="btn btn-success ml-2"
+                    onClick={this.props.startGame}
                   >
-                    exit
+                    start game
                   </button>
-                </div>
+                }
+                <button
+                  type="button"
+                  className="btn btn-danger ml-2"
+                  onClick={() => this.props.history.replace('/rooms')}
+                >
+                  exit
+                </button>
               </div>
             </div>
           </div>
         </div>
-
         {
           this.props.gameStarted ? (
             <Game />
           ) : (
-            <div className="container mt-3">
-              <MemberList
-                userId={this.props.user.id}
-                members={{ [this.props.user.id]: this.props.user, ...members }}
-              />
+            <div>
+              <div className="mt-3">
+                <MemberList
+                  userId={this.props.user.id}
+                  members={{ [this.props.user.id]: this.props.user, ...members }}
+                />
+              </div>
             </div>
           )
         }

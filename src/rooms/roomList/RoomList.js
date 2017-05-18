@@ -5,9 +5,9 @@ import { connect } from 'react-redux'
 import { actions as roomsActions } from '..'
 
 const RoomList = ({ createRoom, joinRoom, socket, rooms }) => (
-  <div className="container my-5">
+  <div className="container">
     <div className="row">
-      <div className="col-12">
+      <div className="col-12 mt-5">
         <div className="form-inline justify-content-between">
           <h1 className="panel-heading">rooms</h1>
           {socket.connected ? (
