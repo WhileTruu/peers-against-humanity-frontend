@@ -9,6 +9,7 @@ import {
   ROOM_NOT_EXITED,
   JOINED_ROOM,
   CREATED_ROOM,
+  UPDATE_ROOM_OWNER,
 } from './actions'
 
 const initialState = {
@@ -49,6 +50,17 @@ export default function rooms(state = initialState, action) {
       return {
         ...state,
         rooms: action.rooms,
+      }
+    }
+    case UPDATE_ROOM_OWNER: {
+      return {
+        ...state,
+        room: {
+          ...state.room,
+          ownerId: action.id,
+          ownerNickname: action.ownerNickname,
+          ownerUsername: action.ownerUsername,
+        },
       }
     }
     case JOIN_ROOM: case CREATE_ROOM:

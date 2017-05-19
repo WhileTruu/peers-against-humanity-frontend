@@ -71,7 +71,7 @@ function getNextEvaluatorId(evaluatorId, players) {
     return parseInt(randomElement(activePlayerIds), 10)
   }
   const nextEvaluatorIndex = (players[evaluatorId].index + 1) % Object.keys(players).length
-  console.log(nextEvaluatorIndex, Object.keys(players).length)
+
   const nextEvaluatorId = Object.keys(players).reduce((accumulator, key) => (
     (players[key].index === nextEvaluatorIndex) ? parseInt(key, 10) : accumulator
   ), null)
@@ -79,23 +79,30 @@ function getNextEvaluatorId(evaluatorId, players) {
   return getNextEvaluatorId(nextEvaluatorId, players)
 }
 
-export function startRound() {
+export function startRound(data) {
+  return (dispatch, getState) => {
+    dispatch(dataChannelActions.broadcast({ type: PLAYER_READY, from: getState().user.id }))
+    dispatch(data)
+  }
+}
+
+export function initializeRound() {
   return (dispatch, getState) => {
     const state = getState()
     const { game } = state
     const blackCardId = randomElement(game.allocatedBlackCardIds)
     const nextEvaluatorId = getNextEvaluatorId(game.evaluatorId, game.players)
-    console.log(nextEvaluatorId, game.evaluatorId, game.players)
-    const startRoundMessage = {
+
+    const initializeRoundMessage = {
       type: START_ROUND,
       from: state.user.id,
       roundNumber: state.game.roundNumber + 1,
       evaluatorId: nextEvaluatorId,
       blackCardId,
     }
-    dispatch(dataChannelActions.broadcast(startRoundMessage))
+    dispatch(dataChannelActions.broadcast(initializeRoundMessage))
     dispatch(removeBlackCard(blackCardId))
-    dispatch(startRoundMessage)
+    dispatch(initializeRoundMessage)
   }
 }
 
@@ -113,7 +120,7 @@ export function readyCheck(id) {
       user.id === rooms.room.ownerId
     ) {
       dispatch({ type: PLAYER_READY, id })
-      if (!game.started) dispatch(startRound())
+      if (!game.started) dispatch(initializeRound())
     } else {
       dispatch({ type: PLAYER_READY, id })
     }
@@ -181,7 +188,7 @@ export function playerExited(id) {
       game.evaluatorId === parseInt(id, 10) &&
       getNextEvaluatorId(parseInt(id, 10), game.players) === user.id
     ) {
-      dispatch(startRound())
+      dispatch(initializeRound())
     }
   }
 }

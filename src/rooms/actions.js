@@ -26,6 +26,8 @@ export const ROOM_NOT_EXITED = 'ROOM_NOT_EXITED'
 export const JOINED_ROOM = 'JOINED_ROOM'
 export const EXITED_ROOM = 'EXITED_ROOM'
 export const CREATED_ROOM = 'CREATED_ROOM'
+export const UPDATE_ROOM_OWNER = 'UPDATE_ROOM_OWNER'
+
 
 export function updateRoom(room) {
   return (dispatch) => {
@@ -94,4 +96,8 @@ export function roomNotJoined() {
 
 export function roomNotExited() {
   return { type: ROOM_NOT_EXITED }
+}
+
+export function updateRoomOwner(id, ownerUsername, ownerNickname) {
+  return { type: UPDATE_ROOM_OWNER, id, ownerUsername, ownerNickname }
 }

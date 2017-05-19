@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 
 import { actions as roomsActions } from '..'
 import Loader from '../../common/loader'
+import Alert from '../../common/errorAlert'
 
 const socketState = (socket) => {
   if (socket.connecting) return { text: 'connecting...', textStyle: 'text-info' }
@@ -12,7 +13,7 @@ const socketState = (socket) => {
   return { text: 'disconnected', textStyle: 'text-primary' }
 }
 
-const RoomList = ({ createRoom, joinRoom, socket, rooms, roomsState }) => (
+const RoomList = ({ createRoom, joinRoom, socket, rooms, roomsState, error }) => (
   <div className="container">
     <div className="row">
       <div className="col-12 mt-3">
@@ -38,6 +39,11 @@ const RoomList = ({ createRoom, joinRoom, socket, rooms, roomsState }) => (
         {
           (!rooms || (rooms && !Object.keys(rooms).length)) && (
             <h3 className="text-info">no available rooms at the moment</h3>
+          )
+        }
+        {
+          (error && error === 'JOIN_REQUEST_DENIED') && (
+            <Alert error={'join room request denied'} />
           )
         }
         { (roomsState && roomsState.isFetching) && <Loader /> }
@@ -109,11 +115,13 @@ RoomList.propTypes = {
   createRoom: Types.func.isRequired,
   joinRoom: Types.func.isRequired,
   roomsState: Types.shape({}),
+  error: Types.string,
 }
 
 RoomList.defaultProps = {
   rooms: null,
   roomsState: null,
+  error: null,
 }
 
 
@@ -122,6 +130,7 @@ const mapStoreToProps = store => ({
   socket: store.socket,
   rooms: store.rooms.rooms,
   roomsState: store.rooms,
+  error: store.rooms.error,
 })
 
 const mapDispatchToProps = dispatch => ({

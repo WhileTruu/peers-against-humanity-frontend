@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 
 import BlackCard from '../cards/blackCard'
 import WhiteCard from '../cards/whiteCard'
-import { selectBestSubmission, startRound } from '../actions'
+import { selectBestSubmission, initializeRound } from '../actions'
 import './Evaluation.scss'
 
 function heading(players, submittedCards, evaluator) {
@@ -45,8 +45,8 @@ export const Evaluation = ({
               onClick={() => onSelectBestSubmission(submitterId)}
             >
               <div className={`winner-message ${bestSubmission === submitterId}`}>
-                <h1 className="text-danger">Winner</h1>
-                <h4 className="text-primary">
+                <h1 className="text-danger w-100 text-center">Winner</h1>
+                <h4 className="text-primary w-100 text-center">
                   { submitter && (submitter.username || submitter.nickname) }
                 </h4>
               </div>
@@ -125,7 +125,7 @@ const mapStoreToProps = store => ({
 
 const mapDispatchToProps = dispatch => bindActionCreators({
   onSelectBestSubmission: selectBestSubmission,
-  onNextRound: startRound,
+  onNextRound: initializeRound,
 }, dispatch)
 
 export default connect(mapStoreToProps, mapDispatchToProps)(Evaluation)

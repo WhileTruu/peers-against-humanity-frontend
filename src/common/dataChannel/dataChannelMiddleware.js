@@ -4,7 +4,7 @@ import {
 } from './config'
 
 import { JOIN, JOINED, OFFER, ANSWER, ICE_CANDIDATE, BROADCAST, EXIT, SEND } from './constants'
-import { PLAYER_READY } from '../../game/constants'
+// import { PLAYER_READY } from '../../game/constants'
 
 import { actions as dataChannelActions } from '.'
 import { actions as socketActions } from '../socket'
@@ -51,6 +51,29 @@ const dataChannelMiddleware = (() => {
     })
   }
 
+  const onDataChannel = (store, event, id) => {
+    const { game, user, rooms } = store.getState()
+    const isPlayer = game.players &&
+      Object.keys(game.players).map(key => parseInt(key, 10)).includes(id)
+
+    if (rooms.room && user.id === rooms.room.ownerId) {
+      send({ type: JOINED, from: user.id, to: id, room: rooms.room }, store)
+      if (isPlayer) store.dispatch(gameActions.joinGame(id))
+      broadcast({ type: JOIN, from: id })
+    }
+    // if (isPlayer) {
+    //   store.dispatch(dataChannelActions.broadcast({ type: PLAYER_READY, from: user.id }))
+    // }
+
+    store.dispatch(dataChannelActions.hasRTCDataChannel(id))
+    event.channel.onmessage = message => onMessage(message, store)  // eslint-disable-line
+    event.channel.onclose = () => { // eslint-disable-line
+      store.dispatch(dataChannelActions.removeUser(id))
+    }
+    event.channel.signalingstatechange = console.log // eslint-disable-line
+    event.channel.onerror = console.log  // eslint-disable-line
+  }
+
   const requestNewPeerConnection = (id, store) => {
     const state = store.getState()
     const rtcPeerConnection = new RTCPeerConnection(peerConnectionConfig)
@@ -58,22 +81,8 @@ const dataChannelMiddleware = (() => {
     rtcPeerConnection.onicecandidate = event => event.candidate && (
       send({ type: ICE_CANDIDATE, from: state.user.id, to: id, candidate: event.candidate }, store)
     )
-    rtcPeerConnection.ondatachannel = (event) => {
-      if (state.user.id === state.rooms.room.ownerId) {
-        send({ type: JOINED, from: state.user.id, to: id, room: state.rooms.room }, store)
-        if (
-          state.game.players &&
-          Object.keys(state.game.players).map(key => parseInt(key, 10)).includes(id)
-        ) {
-          store.dispatch(gameActions.joinGame(id))
-        }
-        broadcast({ type: JOIN, from: id })
-      }
-      store.dispatch(dataChannelActions.hasRTCDataChannel(id))
-      event.channel.onmessage = message => onMessage(message, store)  // eslint-disable-line
-      event.channel.onclose = () => store.dispatch(dataChannelActions.removeUser(id))  // eslint-disable-line
-      event.channel.onerror = console.log  // eslint-disable-line
-    }
+    rtcPeerConnection.ondatachannel = event => onDataChannel(store, event, id)
+
     rtcPeerConnection.oniceconnectionstatechange = () => {
       if (rtcPeerConnection.iceConnectionState === 'disconnected') {
         store.dispatch(dataChannelActions.removeUser(id))
@@ -100,24 +109,8 @@ const dataChannelMiddleware = (() => {
     rtcPeerConnection.onicecandidate = event => event.candidate && (
       send({ type: ICE_CANDIDATE, from: state.user.id, to: id, candidate: event.candidate }, store)
     )
-    rtcPeerConnection.ondatachannel = (event) => {
-      // if (state.user.id !== state.rooms.room.ownerId) {
-      //   store.dispatch(socketActions.disconnect())
-      // }
-      if (
-        state.game.players &&
-        Object.keys(state.game.players).map(key => parseInt(key, 10)).includes(id)
-      ) {
-        store.dispatch(dataChannelActions.broadcast({ type: PLAYER_READY, from: state.user.id }))
-      }
+    rtcPeerConnection.ondatachannel = event => onDataChannel(store, event, id)
 
-      store.dispatch(dataChannelActions.hasRTCDataChannel(id))
-      event.channel.onmessage = message => onMessage(message, store)  // eslint-disable-line
-      event.channel.onclose = () => { // eslint-disable-line
-        store.dispatch(dataChannelActions.removeUser(id))  // eslint-disable-line
-      }
-      event.channel.onerror = console.log  // eslint-disable-line
-    }
     rtcPeerConnection.oniceconnectionstatechange = () => {
       if (rtcPeerConnection.iceConnectionState === 'disconnected') {
         store.dispatch(dataChannelActions.removeUser(id))
@@ -192,7 +185,7 @@ const dataChannelMiddleware = (() => {
         break
       }
       case '@game/START_ROUND': {
-        store.dispatch(data)
+        store.dispatch(gameActions.startRound(data))
         break
       }
       case '@game/PLAYER_READY': {
@@ -208,10 +201,10 @@ const dataChannelMiddleware = (() => {
         break
       }
 
-      case 'UPDATE_ROOM': {
-        store.dispatch(roomsActions.updateRoom(data.room))
-        break
-      }
+      // case 'UPDATE_ROOM': {
+      //   store.dispatch(roomsActions.updateRoom(data.room))
+      //   break
+      // }
 
       default:
         console.warn(data)
@@ -220,12 +213,23 @@ const dataChannelMiddleware = (() => {
   }
 
   return store => next => (action) => {
+    const state = store.getState()
     switch (action.type) {
       case EXIT:
         closeAllPeerConnections()
         break
 
       case JOIN:
+        if (state.game.started && !state.game.players[action.from]) {
+          store.dispatch(socketActions.send({
+            type: 'ROOM_NOT_JOINED',
+            to: action.from,
+            from: state.user.id,
+            id: state.rooms.room.id,
+            error: 'JOIN_REQUEST_DENIED',
+          }))
+          break
+        }
         requestNewPeerConnection(action.from, store)
         break
 

@@ -13,6 +13,8 @@ import {
 
 import { actions as socketActions } from '../socket'
 import { actions as gameActions } from '../../game'
+import { actions as roomsActions } from '../../rooms'
+
 
 export function join(id) {
   return { type: JOIN, from: id }
@@ -43,6 +45,7 @@ export function removeUser(id) {
     }
     if (!dataChannel.users) return
     const smallestMemberId = Object.keys(dataChannel.users)
+      .filter(key => dataChannel.users[key].active && dataChannel.users[key].hasRTCDataChannel)
       .map(memberId => parseInt(memberId, 10))
       .concat([user.id])
       .filter(memberId => memberId !== id)
@@ -50,7 +53,19 @@ export function removeUser(id) {
         accumulator !== null && accumulator < current ? accumulator : current
       ), null)
 
-    if (rooms.room.ownerId === id && (user.id === smallestMemberId || smallestMemberId === null)) {
+    if (smallestMemberId && rooms.room.ownerId === id && user.id === smallestMemberId) {
+      dispatch(socketActions.connect())
+      dispatch(roomsActions.updateRoomOwner(user.id, user.username, user.nickname))
+    } else if (rooms.room.ownerId === id && smallestMemberId) {
+      dispatch(roomsActions
+        .updateRoomOwner(
+          smallestMemberId,
+          dataChannel.users[smallestMemberId].username,
+          dataChannel.users[smallestMemberId].nickname,
+        ),
+      )
+    } else {
+      console.log('u fucked up real good bro')
       dispatch(socketActions.connect())
     }
   }

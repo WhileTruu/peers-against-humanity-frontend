@@ -33,14 +33,13 @@ const socketMiddleware = (() => {
 
   const onMessage = (socket, store) => (event) => {
     const state = store.getState()
+    const { rooms, user } = state
+    const { room } = rooms
     const message = JSON.parse(event.data)
     switch (message.type) {
 
       case 'AUTHENTICATED': {
         store.dispatch(actions.connected())
-        if (state.dataChannel.users && !state.dataChannel.users[state.rooms.room.ownerId].active) {
-          store.dispatch(actions.takeOverRoom())
-        }
         break
       }
 
@@ -64,12 +63,35 @@ const socketMiddleware = (() => {
         store.dispatch(dataChannelActions.iceCandidate(message))
         break
 
-      case 'UPDATE_ROOM':
+      case 'UPDATE_ROOM': {
         store.dispatch(roomsActions.updateRoom(message.room))
-        if (state.user.id === message.room.ownerId) {
-          store.dispatch(dataChannelActions.broadcast(message))
+        const messageRoom = (room && room.id && message.room.id === room.id) && message.room
+        if (
+          (room && room.ownerId === user.id) &&
+          (room.ownerId !== messageRoom.ownerId && !messageRoom.active)
+        ) {
+          store.dispatch(actions.takeOverRoom())
+        }
+        // if (state.user.id === message.room.ownerId) {
+        //   store.dispatch(dataChannelActions.broadcast(message))
+        // }
+        break
+      }
+
+      case 'UPDATE_ROOMS': {
+        store.dispatch(roomsActions.updateRooms(message.rooms))
+        const messageRoom = (room && room.id && message.rooms) && message.rooms[room.id]
+        if (
+          (room && room.ownerId === user.id) &&
+          (
+            (message.rooms === null) ||
+            (room.ownerId !== messageRoom.ownerId && !messageRoom.active)
+          )
+        ) {
+          store.dispatch(actions.takeOverRoom())
         }
         break
+      }
 
       default:
         if (roomActionTypes.includes(message.type)) {

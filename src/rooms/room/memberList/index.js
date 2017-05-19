@@ -14,6 +14,9 @@ const memberListItem = ({ member, userId }) => {
             you
           </span>)
         }
+        <span className={`ml-2 badge badge-info badge-pill`}>
+          { member.id }
+        </span>
       </div>
       <div>
         0 points

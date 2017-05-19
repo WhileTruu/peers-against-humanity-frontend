@@ -59,6 +59,7 @@ export default function login(state = initialState(user, token), action) {
 
     case LOG_OUT:
       if (window.localStorage) {
+        localStorage.removeItem(REMEMBER_LOGIN_STORAGE_KEY)
         localStorage.removeItem(TOKEN_STORAGE_KEY)
         localStorage.removeItem(USER_INFO_STORAGE_KEY)
       }
