@@ -68,7 +68,7 @@ export default function rooms(state = initialState, action) {
     case ROOM_NOT_CREATED: case ROOM_NOT_JOINED: case ROOM_NOT_EXITED:
       return { ...state, room: null, isFetching: false, error: action.error }
     case JOINED_ROOM: case CREATED_ROOM:
-      return { ...state, isFetching: false, error: null, room: action.room }
+      return { ...state, isFetching: false, error: null, room: action.room, rooms: null }
     case EXITED_ROOM:
       return { ...state, isFetching: false, error: null, room: null }
     default:

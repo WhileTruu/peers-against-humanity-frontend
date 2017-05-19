@@ -6,10 +6,12 @@ import Evaluation from './evaluation'
 
 const Game = ({ isEvaluator, hasSubmitted, roundNumber }) => (
   <div>
-    <div className="pt-2">
-      {
-        roundNumber && <h4 className="text-info">{ `Round ${roundNumber}` }</h4>
-      }
+    <div className="container">
+      <div className="pt-2">
+        {
+          roundNumber && <h4 className="text-info">{ `Round ${roundNumber}` }</h4>
+        }
+      </div>
     </div>
     { (isEvaluator || hasSubmitted) ? <Evaluation /> : <Main /> }
   </div>

@@ -32,51 +32,53 @@ class Room extends Component {
   render() {
     const { room, members, user, dataChannel } = this.props
     return (
-      <div className="container">
-        <div className="row">
-          <div className="col-12 mt-3">
-            <div className="form-inline justify-content-between align-items-start">
-              <h2 className="panel-heading">room {room && room.id}</h2>
-              <div>
-                {
-                  (
-                    room && user.id === room.ownerId && !this.props.gameStarted &&
-                    dataChannel && dataChannel.users &&
-                    Object.keys(dataChannel.users).map(memberId => parseInt(memberId, 10))
-                      .filter(id => dataChannel.users[id].hasRTCDataChannel || id === user.id)
-                      .length >= 2
-                  ) &&
+      <div>
+        <div className="container">
+          <div className="row">
+            <div className="col-12 mt-3">
+              <div className="form-inline justify-content-between align-items-start">
+                <h2 className="panel-heading">room {room && room.id}</h2>
+                <div>
+                  {
+                    (
+                      room && user.id === room.ownerId && !this.props.gameStarted &&
+                      dataChannel && dataChannel.users &&
+                      Object.keys(dataChannel.users).map(memberId => parseInt(memberId, 10))
+                        .filter(id => dataChannel.users[id].hasRTCDataChannel || id === user.id)
+                        .length >= 2
+                    ) &&
+                    <button
+                      className="btn btn-success ml-2"
+                      onClick={this.props.startGame}
+                    >
+                      start game
+                    </button>
+                  }
                   <button
-                    className="btn btn-success ml-2"
-                    onClick={this.props.startGame}
+                    type="button"
+                    className="btn btn-outline-danger ml-2"
+                    onClick={() => this.props.history.replace('/rooms')}
                   >
-                    start game
+                    exit
                   </button>
-                }
-                <button
-                  type="button"
-                  className="btn btn-outline-danger ml-2"
-                  onClick={() => this.props.history.replace('/rooms')}
-                >
-                  exit
-                </button>
+                </div>
               </div>
+              <small>
+                { 'you are ' }
+                <span className="text-primary">
+                  {user && `${user.username || user.nickname}`}
+                </span>
+                { (room && user.id === room.ownerId) && ', the owner of this room' }
+              </small>
             </div>
-            <small>
-              { 'you are ' }
-              <span className="text-primary">
-                {user && `${user.username || user.nickname}`}
-              </span>
-              { (room && user.id === room.ownerId) && ', the owner of this room' }
-            </small>
           </div>
         </div>
         {
           this.props.gameStarted ? (
             <Game />
           ) : (
-            <div>
-              <div className="mt-3">
+            <div className="container">
+              <div className="pt-3">
                 <MemberList
                   userId={this.props.user.id}
                   members={{ [this.props.user.id]: this.props.user, ...members }}

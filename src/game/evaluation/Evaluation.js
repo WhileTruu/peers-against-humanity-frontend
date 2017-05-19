@@ -31,7 +31,7 @@ export const Evaluation = ({
   user,
   bestSubmission,
 }) => (
-  <div>
+  <div className="container">
     { heading(players, submittedCards, evaluator) }
     <div className="submissions d-flex">
       {
@@ -40,13 +40,13 @@ export const Evaluation = ({
           const submitter = submitterId === user.id ? user : users[key]
           return (
             <div // eslint-disable-line
-              className="submission"
+              className={`submission ${evaluator && 'cursor-pointer'}`}
               key={key}
-              onClick={() => onSelectBestSubmission(submitterId)}
+              onClick={() => evaluator && onSelectBestSubmission(submitterId)}
             >
               <div className={`winner-message ${bestSubmission === submitterId}`}>
                 <h1 className="text-danger w-100 text-center">Winner</h1>
-                <h4 className="text-primary w-100 text-center">
+                <h4 className="text-warning w-100 text-center">
                   { submitter && (submitter.username || submitter.nickname) }
                 </h4>
               </div>

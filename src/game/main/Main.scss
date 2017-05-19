@@ -7,9 +7,10 @@
 
 .white-card-container-singleline {
   display: none;
+  overflow-x: scroll;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 820px) {
   .white-card-container-multiline {
     display: none;
   }
@@ -18,7 +19,6 @@
   }
   .white-card-container {
     flex-wrap: nowrap;
-    overflow-x: scroll;
   }
   .main {
     margin-top: 0rem !important;

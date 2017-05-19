@@ -6,7 +6,6 @@
 .submission {
   position: relative;
   flex-shrink: 0;
-  cursor: pointer;
 }
 
 .winner-message {
@@ -29,4 +28,8 @@
   &.true {
     opacity: 1;
   }
+}
+
+.cursor-pointer {
+  cursor: pointer;
 }
