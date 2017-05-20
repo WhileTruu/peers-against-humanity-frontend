@@ -1,33 +1,76 @@
-/* eslint-disable */
-import React from 'react'
+import React, { PropTypes as Types } from 'react'
+import { connect } from 'react-redux'
 
-const memberListItem = ({ member, userId }) => {
-  return (
-    <li className="list-group-item justify-content-between" key={member.id}>
-      {member.id + ' ' + (member.nickname || member.username)}
-      {member.id !== userId ?
-        (<span className={`badge badge-${member.hasDataChannel ? 'success' : 'info'} badge-pill`}>
-          {member.hasDataChannel ? 'connected' : 'connecting...'}
+const UserListItem = ({ player, user, userId }) => (
+  <li className={`list-group-item justify-content-between ${user.id}`} key={user.id}>
+    <div>
+      {user.nickname || user.username}
+      {user.id !== userId ?
+        (<span className={`ml-2 badge badge-${user.hasRTCDataChannel ? 'success' : 'info'} badge-pill`}>
+          {user.hasRTCDataChannel ? 'connected' : 'connecting...'}
         </span>) :
-        (<span className={`badge badge-primary badge-pill`}>
+        (<span className={'ml-2 badge badge-primary badge-pill'}>
           you
         </span>)
       }
-    </li>
-  )
+      <span className={'ml-2 badge badge-info badge-pill'}>
+        { user.id }
+      </span>
+    </div>
+    <div>
+      { (player && player.points !== 0) && player.points }
+    </div>
+  </li>
+)
+
+UserListItem.propTypes = {
+  user: Types.shape({}),
+  userId: Types.number,
+  player: Types.shape({}),
 }
 
-export default ({ members, userId }) => (
+UserListItem.defaultProps = {
+  user: null,
+  userId: null,
+  player: null,
+}
+
+const UserList = ({ users, user, players }) => (
   <div>
     <ul className="list-group">
-      {Object.keys(members)
-        .map(key => (
-          memberListItem({
-            member: members[key],
-            userId,
-          })
-        ))
+      {
+        user &&
+        UserListItem({ player: players && players[user.id], user, userId: user.id })
+      }
+      {
+        users &&
+        Object.keys(users)
+          .filter(id => users[id].active !== false)
+          .map(key => (
+            UserListItem({ player: players && players[key], user: users[key], userId: user.id })
+          ))
       }
     </ul>
   </div>
 )
+
+
+UserList.propTypes = {
+  users: Types.shape({}),
+  user: Types.shape({}),
+  players: Types.shape({}),
+}
+
+UserList.defaultProps = {
+  users: null,
+  user: null,
+  players: null,
+}
+
+const mapStoreToProps = store => ({
+  users: store.dataChannel.users,
+  user: store.user,
+  players: store.game.players,
+})
+
+export default connect(mapStoreToProps)(UserList)

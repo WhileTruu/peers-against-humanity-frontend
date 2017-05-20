@@ -5,6 +5,7 @@ export const SOCKET_DISCONNECTED = 'SOCKET_DISCONNECTED'
 export const SOCKET_CONNECT = 'SOCKET_CONNECT'
 export const SOCKET_DISCONNECT = 'SOCKET_DISCONNECT'
 export const SOCKET_SEND = 'SOCKET_SEND'
+export const TAKE_OVER_ROOM = 'TAKE_OVER_ROOM'
 
 export function connecting() {
   return { type: SOCKET_CONNECTING }
@@ -33,4 +34,10 @@ export function disconnect() {
 
 export function send(data) {
   return { type: SOCKET_SEND, data: JSON.stringify(data) }
+}
+
+export function takeOverRoom() {
+  return (dispatch, getState) => {
+    dispatch(send({ type: TAKE_OVER_ROOM, id: getState().rooms.room.id }))
+  }
 }

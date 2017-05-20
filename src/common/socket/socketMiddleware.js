@@ -6,9 +6,8 @@ import {
   SOCKET_SEND as SEND,
 } from './actions'
 
-import { actions as roomActions } from '../../rooms/room'
-
-import DataChannelService from '../RTCDataChannel'
+import { actions as roomsActions } from '../../rooms'
+import { actions as dataChannelActions } from '../dataChannel'
 
 const roomActionTypes = [
   'UPDATE_ROOMS',
@@ -33,22 +32,70 @@ const socketMiddleware = (() => {
   }
 
   const onMessage = (socket, store) => (event) => {
+    const state = store.getState()
+    const { rooms, user } = state
+    const { room } = rooms
     const message = JSON.parse(event.data)
     switch (message.type) {
 
-      case 'AUTHENTICATED':
+      case 'AUTHENTICATED': {
         store.dispatch(actions.connected())
         break
+      }
 
       case 'CREATED_ROOM':
-        store.dispatch(roomActions.createdRoom(message.room))
+        store.dispatch(roomsActions.createdRoom(message.room))
         break
+
+      case 'JOIN_ROOM':
+        store.dispatch(dataChannelActions.join(message.from))
+        break
+
+      case '@dataChannel/OFFER':
+        store.dispatch(dataChannelActions.offer(message))
+        break
+
+      case '@dataChannel/ANSWER':
+        store.dispatch(dataChannelActions.answer(message))
+        break
+
+      case '@dataChannel/ICE_CANDIDATE':
+        store.dispatch(dataChannelActions.iceCandidate(message))
+        break
+
+      case 'UPDATE_ROOM': {
+        store.dispatch(roomsActions.updateRoom(message.room))
+        const messageRoom = (room && room.id && message.room.id === room.id) && message.room
+        if (
+          (room && room.ownerId === user.id) &&
+          (room.ownerId !== messageRoom.ownerId && !messageRoom.active)
+        ) {
+          store.dispatch(actions.takeOverRoom())
+        }
+        // if (state.user.id === message.room.ownerId) {
+        //   store.dispatch(dataChannelActions.broadcast(message))
+        // }
+        break
+      }
+
+      case 'UPDATE_ROOMS': {
+        store.dispatch(roomsActions.updateRooms(message.rooms))
+        const messageRoom = (room && room.id && message.rooms) && message.rooms[room.id]
+        if (
+          (room && room.ownerId === user.id) &&
+          (
+            (message.rooms === null) ||
+            (room.ownerId !== messageRoom.ownerId && !messageRoom.active)
+          )
+        ) {
+          store.dispatch(actions.takeOverRoom())
+        }
+        break
+      }
 
       default:
         if (roomActionTypes.includes(message.type)) {
           store.dispatch(message)
-        } else {
-          DataChannelService.onDataChannelMessage(message)
         }
         break
     }
@@ -80,9 +127,9 @@ const socketMiddleware = (() => {
         break
 
       default:
-        next(action)
         break
     }
+    next(action)
   }
 })()
 

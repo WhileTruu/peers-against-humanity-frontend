@@ -6,10 +6,6 @@ const ErrorAlert = ({ error }) => (
   </div>
 )
 
-ErrorAlert.defaultProps = {
-  overlayed: false,
-}
-
 ErrorAlert.propTypes = {
   error: Types.string.isRequired,
 }

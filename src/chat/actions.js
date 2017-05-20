@@ -1,11 +1,17 @@
-import DataChannelService from '../common/RTCDataChannel'
+import { MESSAGE, RESET } from './constants'
+import { actions as dataChannelActions } from '../common/dataChannel'
 
-export const CHAT_MESSAGE = 'CHAT_MESSAGE'
-
-export function sendMessage(data) {
+export function send(data) {
   return (dispatch) => {
-    const message = { type: CHAT_MESSAGE, data }
-    DataChannelService.message(message).broadcast()
-    dispatch(message)
+    dispatch(dataChannelActions.broadcast({ type: MESSAGE, data }))
+    dispatch({ type: MESSAGE, data })
   }
+}
+
+export function message(data) {
+  return { type: MESSAGE, data }
+}
+
+export function reset() {
+  return { type: RESET }
 }

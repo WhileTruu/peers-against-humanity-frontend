@@ -42,7 +42,8 @@ export function register(nickname, username, password) {
 }
 
 export function temporaryLogin(nickname) {
-  return (dispatch) => {
+  return (dispatch, getState) => {
+    if (getState().user.loading) return
     dispatch({ type: GET_USER_START })
     api
       .createTemporaryAccount(nickname)

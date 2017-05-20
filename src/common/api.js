@@ -37,38 +37,24 @@ export function login(username, password) {
   }).then(transformResponse)
 }
 
-// export function createRoom(token) {
-//   return fetch('/api/v1/rooms', {
-//     method: 'POST',
-//     headers: { ...headers, Authorization: `Bearer ${token}` },
-//   }).then(checkStatus).then(response => response.json())
-// }
-
-// export function getRooms(token) {
-//   return fetch('/api/v1/rooms', {
-//     method: 'GET',
-//     headers: { ...headers, Authorization: `Bearer ${token}` },
-//   }).then(checkStatus).then(response => response.json())
-// }
-
-// export function joinRoom(roomId, token) {
-//   return fetch(`/api/v1/rooms/${roomId}`, {
-//     method: 'PUT',
-//     headers: { ...headers, Authorization: `Bearer ${token}` },
-//   }).then(checkStatus).then(response => response.json())
-// }
-
-// export function exitRoom(roomId, token) {
-//   return fetch(`/api/v1/rooms/${roomId}`, {
-//     method: 'DELETE',
-//     headers: { ...headers, Authorization: `Bearer ${token}` },
-//   }).then(checkStatus)
-// }
-
 export function createTemporaryAccount(nickname) {
   return fetch('/api/v1/users/temporary', {
     method: 'POST',
     headers,
     body: JSON.stringify({ nickname }),
+  }).then(transformResponse)
+}
+
+export function getBlackCards(limit) {
+  return fetch(`/api/v1/cards/black?limit=${limit}`, {
+    method: 'GET',
+    headers,
+  }).then(transformResponse)
+}
+
+export function getWhiteCards(limit) {
+  return fetch(`/api/v1/cards/white?limit=${limit}`, {
+    method: 'GET',
+    headers,
   }).then(transformResponse)
 }
