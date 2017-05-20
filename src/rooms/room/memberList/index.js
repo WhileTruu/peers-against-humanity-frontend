@@ -18,10 +18,7 @@ const UserListItem = ({ player, user, userId }) => (
       </span>
     </div>
     <div>
-      {
-        player &&
-        player.points
-      }
+      { (player && player.points !== 0) && player.points }
     </div>
   </li>
 )
