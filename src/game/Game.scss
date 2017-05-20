@@ -1,0 +1,34 @@
+.winner-message {
+  position: absolute;
+  transform: rotate(-10deg);
+  transition: opacity 0.25s ease-out;
+  opacity: 1;
+  flex-wrap: wrap;
+  width: 100%;
+  min-height: 400px;
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.winner-boulder {
+  overflow: hidden;
+  left: 0;
+  right: 0;
+  position: absolute;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  min-width: 600px;
+}
+
+.winning-cards {
+  opacity: 0.65;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  & > .sah-card {
+    min-height: 400px !important;
+  }
+}

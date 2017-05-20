@@ -7,6 +7,8 @@ import Evaluation from './evaluation'
 import BlackCard from './cards/blackCard'
 import WhiteCard from './cards/whiteCard'
 
+import './Game.scss'
+
 const mapWinnerScreenStoreToProps = store => ({
   submittedCards: store.game.submittedCards,
   currentBlackCardId: store.game.currentBlackCardId,
@@ -29,7 +31,8 @@ const WinnerScreen = connect(mapWinnerScreenStoreToProps)(({
   const submitter = users[winner] || (user.id === winner && user)
   return (
     <div style={{ position: 'relative' }}>
-      <div className="container w-100 h-100" style={{ position: 'absolute' }}>
+      <div className="container w-100 h-100" style={{ position: 'absolute', overflowX: 'hidden' }}>
+        <img className="winner-boulder" alt="winner-boulder" src="/boulder1.svg" />
         <div className={'winner-message'}>
           <h1 className="text-danger w-100 text-center">{ 'winner' }</h1>
           <h1 className="text-info w-100 text-center">
@@ -37,7 +40,7 @@ const WinnerScreen = connect(mapWinnerScreenStoreToProps)(({
           </h1>
         </div>
       </div>
-      <div className="winning-cards d-flex justify-content-center" style={{ overflowX: 'hidden' }}>
+      <div className="winning-cards">
         <BlackCard
           text={blackCards[currentBlackCardId].text}
           pick={blackCards[currentBlackCardId].pick}
