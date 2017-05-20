@@ -138,8 +138,8 @@ export default function game(state = initialState, action) {
           [action.id]: { ...state.players[action.id], points },
         },
         bestSubmission: action.id,
-        finished: points >= 1,
-        winner: points >= 1 && action.id ? action.id : null,
+        finished: points >= 3,
+        winner: points >= 3 && action.id ? action.id : null,
       }
     }
     case EXIT_GAME: {
