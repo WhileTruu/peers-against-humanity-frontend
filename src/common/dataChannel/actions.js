@@ -64,9 +64,6 @@ export function removeUser(id) {
           dataChannel.users[smallestMemberId].nickname,
         ),
       )
-    } else {
-      console.log('u fucked up real good bro')
-      dispatch(socketActions.connect())
     }
   }
 }

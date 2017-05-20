@@ -68,6 +68,7 @@ const dataChannelMiddleware = (() => {
     store.dispatch(dataChannelActions.hasRTCDataChannel(id))
     event.channel.onmessage = message => onMessage(message, store)  // eslint-disable-line
     event.channel.onclose = () => { // eslint-disable-line
+      // console.log(event, peerConnections[id])
       store.dispatch(dataChannelActions.removeUser(id))
     }
     event.channel.signalingstatechange = console.log // eslint-disable-line

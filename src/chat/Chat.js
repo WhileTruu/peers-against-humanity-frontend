@@ -81,7 +81,7 @@ class Chat extends Component {
                         style={{ outline: 'none' }}
                         onClick={() => this.setState({ chatSelected: false })}
                       >
-                        members
+                        people & scores
                       </button>
                     </li>
                   </ul>
@@ -116,7 +116,7 @@ class Chat extends Component {
         <button
           className="chat-button btn btn-primary p-2"
           onClick={this.toggleOpen}
-          style={{ borderRadius: '50%' }}
+          style={{ borderRadius: '2rem' }}
         >
           {
             isOpen ? (
@@ -124,7 +124,9 @@ class Chat extends Component {
                 <img style={{ width: '24px', height: '24px' }} src="/closeButton.svg" alt="close" />
               </div>
             ) : (
-              <img style={{ width: '36px', height: '36px' }} src="/chat.svg" alt="close" />
+              <div style={{ padding: '6px' }}>
+                <span style={{ height: '24px' }}>{ 'people, scores and chat' }</span>
+              </div>
             )
           }
         </button>

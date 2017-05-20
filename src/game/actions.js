@@ -146,9 +146,9 @@ export function initializeGame() {
           active: dataChannel.users[id].active, ready: false, points: 0, id, index: index + 1,
         },
       }), { [user.id]: { active: true, ready: true, points: 0, id: user.id, index: 0 } })
-
+    const playerCount = Object.keys(players).length
     // get cards
-    getCards(50, 100)
+    getCards(playerCount * 3, (playerCount * (10 + (2 * 3))) - 9)
       .then(([blackCards, whiteCards]) => {
         // send start game message to myself
         dispatch(
