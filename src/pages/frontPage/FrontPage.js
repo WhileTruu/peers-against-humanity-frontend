@@ -77,33 +77,13 @@ class FrontPage extends Component {
               </div>
             </div>
             <div>
-              <div className="pt-2">
-                {
-                  ((window.mozRTCPeerConnection) ||
-                  (window.RTCPeerConnection) ||
-                  (window.webkitRTCPeerConnection)) ? (
-                    <h5>
-                      {'your browser '}
-                      <span className="text-success">
-                        supports WebRTC
-                      </span>
-                      {', feel free to mess around*'}
-                    </h5>
-                  ) : (
-                    <h5 className="text-danger">
-                      {'your browser '}
-                      <span className="text-success">
-                        does not support WebRTC
-                      </span>
-                      {', git gud browser*'}
-                    </h5>
-                  )
-                }
-                <small className="text-info">
-                  *but who am I to judge browser support, go ahead and try
-                </small>
-              </div>
               <div className="py-3">
+                <h5 className="pb-2">
+                  { 'peers against humanity is a card game based on '}
+                  <a className="btn-link text-warning" href="https://www.cardsagainsthumanity.com">
+                    Cards Against Humanity
+                  </a>
+                </h5>
                 <div>
                   <button
                     id="roomsButton"
@@ -118,11 +98,32 @@ class FrontPage extends Component {
           </div>
         </div>
         <div className="content container py-3" style={{ flex: 1 }}>
-          { /*eslint-disable */ }
-          <span>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-          </span>
+          <div className="pt-2">
+            {
+              ((window.mozRTCPeerConnection) ||
+              (window.RTCPeerConnection) ||
+              (window.webkitRTCPeerConnection)) ? (
+                <h5>
+                  {'your browser '}
+                  <span className="text-success">
+                    supports WebRTC*
+                  </span>
+                  {', feel free to mess around'}
+                </h5>
+              ) : (
+                <h5 className="text-danger">
+                  {'your browser '}
+                  <span className="text-success">
+                    does not support WebRTC*
+                  </span>
+                  {', git gud browser'}
+                </h5>
+              )
+            }
+            <small className="text-muted">
+              *who am I to judge browser support, go ahead and try anyway
+            </small>
+          </div>
         </div>
         <footer className="footer">
           <div className="container py-3">
