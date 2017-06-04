@@ -1,10 +1,9 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
-import { compose, createStore, applyMiddleware } from 'redux'
+import { createStore, applyMiddleware, compose } from 'redux'
 import thunk from 'redux-thunk'
 
-// import DataChannelService from './common/RTCDataChannel'
 import { dataChannelMiddleware } from './common/dataChannel'
 import { socketMiddleware } from './common/socket'
 import Container from './Container'
@@ -20,14 +19,18 @@ const crashReporter = () => next => (action) => {
   }
 }
 
-const devTools = window.devToolsExtension ? window.devToolsExtension() : variable => variable
-const finalCreateStore = compose(
-  applyMiddleware(crashReporter, thunk, socketMiddleware, dataChannelMiddleware), devTools,
-)(createStore)
-const store = finalCreateStore(rootReducer)
+const composeEnhancers =
+  typeof window === 'object' &&
+  window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ ? // eslint-disable-line no-underscore-dangle
+    window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({ // eslint-disable-line no-underscore-dangle
+       // Specify extension’s options like name, actionsBlacklist, actionsCreators, serialize...
+    }) : compose
 
-// DataChannelService.dispatch = store.dispatch
-// DataChannelService.getState = store.getState
+const enhancer = composeEnhancers(
+  applyMiddleware(crashReporter, thunk, socketMiddleware, dataChannelMiddleware),
+)
+
+const store = createStore(rootReducer, enhancer)
 
 ReactDOM.render(
   <Provider store={store}>
