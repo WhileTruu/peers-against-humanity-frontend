@@ -149,7 +149,7 @@ export function initializeGame() {
     const playerCount = Object.keys(players).length
     // get cards
     const maxRounds = (playerCount * (3 - 1)) + 1
-    getCards(maxRounds, playerCount * (10 + ((maxRounds - 1) * 3)) - maxRounds * 3) // eslint-disable-line
+    getCards(maxRounds + playerCount, playerCount * (10 + ((maxRounds - 1) * 3)) - maxRounds * 3) // eslint-disable-line
       .then(([blackCards, whiteCards]) => {
         // send start game message to myself
         dispatch(

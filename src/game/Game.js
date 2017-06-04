@@ -46,6 +46,7 @@ const WinnerScreen = connect(mapWinnerScreenStoreToProps)(({
           pick={blackCards[currentBlackCardId].pick}
         />
         {
+          submittedCards &&
           submittedCards[winner].map(id => (
             <WhiteCard text={whiteCards[id].text} key={id} />
           ))
