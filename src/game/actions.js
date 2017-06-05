@@ -1,5 +1,6 @@
 import {
   INITIALIZE_GAME,
+  JOINED_GAME,
   START_ROUND,
   PLAYER_READY,
   REMOVE_BLACK_CARD,
@@ -53,8 +54,12 @@ export function submitCards() {
   }
 }
 
+export function joinedGame(action) {
+  return action
+}
+
 export function startGameMessage(action) {
-  return (dispatch, getState) => {
+  return (dispatch, getState) => { // eslint-disable-line
     dispatch(action)
     dispatch(dataChannelActions.broadcast({ type: PLAYER_READY, from: getState().user.id }))
     dispatch({ type: PLAYER_READY, id: getState().user.id })
@@ -88,21 +93,20 @@ export function startRound(data) {
 
 export function initializeRound() {
   return (dispatch, getState) => {
-    const state = getState()
-    const { game } = state
+    const { game, user } = getState()
     const blackCardId = randomElement(game.allocatedBlackCardIds)
     const nextEvaluatorId = getNextEvaluatorId(game.evaluatorId, game.players)
 
-    const initializeRoundMessage = {
+    const initializeRoundAction = {
       type: START_ROUND,
-      from: state.user.id,
-      roundNumber: state.game.roundNumber + 1,
+      from: user.id,
+      roundNumber: game.roundNumber + 1,
       evaluatorId: nextEvaluatorId,
       blackCardId,
     }
-    dispatch(dataChannelActions.broadcast(initializeRoundMessage))
+    dispatch(dataChannelActions.broadcast(initializeRoundAction))
     dispatch(removeBlackCard(blackCardId))
-    dispatch(initializeRoundMessage)
+    dispatch(initializeRoundAction)
   }
 }
 
@@ -176,8 +180,10 @@ export function joinGame(id) {
   return (dispatch, getState) => {
     const { user, game } = getState()
     const { whiteCards, blackCards, players } = game
-    dispatch(dataChannelActions
-      .send({ type: INITIALIZE_GAME, to: id, from: user.id, whiteCards, blackCards, players }))
+    dispatch(
+      dataChannelActions
+        .send({ type: JOINED_GAME, to: id, from: user.id, whiteCards, blackCards, players }),
+    )
   }
 }
 

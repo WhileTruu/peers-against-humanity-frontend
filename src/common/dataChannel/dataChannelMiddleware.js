@@ -41,9 +41,8 @@ const dataChannelMiddleware = (() => {
           peerConnections[id].rtcPeerConnection.close()
           return resolve()
         }))),
-    ).then(() => {
-      peerConnections = {}
-    })
+    )
+      .then(() => { peerConnections = {} })
   }
 
   const broadcast = (message) => {
@@ -56,6 +55,13 @@ const dataChannelMiddleware = (() => {
     })
   }
 
+  // const onIceConnectionStateChange = (event, rtcPeerConnection, id, store) => {
+  //   if (rtcPeerConnection.iceConnectionState === 'failed') {
+  //     setTimeout(() => console.log('iceconnstatechange', event, peerConnections[id]), 3000)
+  //     store.dispatch(dataChannelActions.removeUser(id))
+  //   }
+  // }
+
   const onDataChannel = (store, event, id) => {
     const { game, user, rooms } = store.getState()
     const isPlayer = game.players &&
@@ -66,16 +72,12 @@ const dataChannelMiddleware = (() => {
       if (isPlayer) store.dispatch(gameActions.joinGame(id))
       broadcast({ type: JOIN, from: id })
     }
-    // if (isPlayer) {
-    //   store.dispatch(dataChannelActions.broadcast({ type: PLAYER_READY, from: user.id }))
-    // }
 
     store.dispatch(dataChannelActions.hasRTCDataChannel(id))
     event.channel.onmessage = message => onMessage(message, store)  // eslint-disable-line
-    event.channel.onclose = () => { // eslint-disable-line
+    event.channel.onclose = (event) => { // eslint-disable-line
       store.dispatch(dataChannelActions.removeUser(id))
       delete peerConnections[id]
-      // console.log(event, peerConnections[id])
     }
     event.channel.signalingstatechange = console.log // eslint-disable-line
     event.channel.onerror = console.log  // eslint-disable-line
@@ -90,11 +92,10 @@ const dataChannelMiddleware = (() => {
     )
     rtcPeerConnection.ondatachannel = event => onDataChannel(store, event, id)
 
-    rtcPeerConnection.oniceconnectionstatechange = () => {
-      if (rtcPeerConnection.iceConnectionState === 'disconnected') {
-        store.dispatch(dataChannelActions.removeUser(id))
-      }
-    }
+    // rtcPeerConnection.oniceconnectionstatechange = event => (
+    //   onIceConnectionStateChange(event, rtcPeerConnection, store, id)
+    // )
+
     rtcPeerConnection.createOffer(sdpConstraints)
       .then((localSessionDescription) => {
         rtcPeerConnection.setLocalDescription(localSessionDescription)
@@ -118,11 +119,10 @@ const dataChannelMiddleware = (() => {
     )
     rtcPeerConnection.ondatachannel = event => onDataChannel(store, event, id)
 
-    rtcPeerConnection.oniceconnectionstatechange = () => {
-      if (rtcPeerConnection.iceConnectionState === 'disconnected') {
-        store.dispatch(dataChannelActions.removeUser(id))
-      }
-    }
+    // rtcPeerConnection.oniceconnectionstatechange = event => (
+    //   onIceConnectionStateChange(event, rtcPeerConnection, id, store)
+    // )
+
     rtcPeerConnection.setRemoteDescription(new RTCSessionDescription(sessionDescription))
     rtcPeerConnection.createAnswer(sdpConstraints)
       .then((localSessionDescription) => {
@@ -191,18 +191,27 @@ const dataChannelMiddleware = (() => {
         store.dispatch(gameActions.startGameMessage(data))
         break
       }
+
+      case '@game/JOINED_GAME': {
+        store.dispatch(gameActions.joinedGame(data))
+        break
+      }
+
       case '@game/START_ROUND': {
         store.dispatch(gameActions.startRound(data))
         break
       }
+
       case '@game/PLAYER_READY': {
         store.dispatch(gameActions.readyCheck(data.from))
         break
       }
+
       case '@game/SUBMIT_CARDS': {
         store.dispatch(data)
         break
       }
+
       case '@game/BEST_SUBMISSION': {
         store.dispatch(data)
         break

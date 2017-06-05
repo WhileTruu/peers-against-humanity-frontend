@@ -81,7 +81,7 @@ class Chat extends Component {
                         style={{ outline: 'none' }}
                         onClick={() => this.setState({ chatSelected: false })}
                       >
-                        people & scores
+                        scores
                       </button>
                     </li>
                   </ul>
@@ -124,8 +124,8 @@ class Chat extends Component {
                 <img style={{ width: '24px', height: '24px' }} src="/closeButton.svg" alt="close" />
               </div>
             ) : (
-              <div style={{ padding: '6px' }}>
-                <span style={{ height: '24px' }}>{ 'people, scores and chat' }</span>
+              <div style={{ padding: '0px' }}>
+                <img style={{ width: '36px', height: '36px', fill: 'white' }} src="/menu.svg" alt="close" />
               </div>
             )
           }
