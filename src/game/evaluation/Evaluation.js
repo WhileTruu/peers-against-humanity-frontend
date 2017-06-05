@@ -36,7 +36,7 @@ export const Evaluation = ({
 }) => {
   const activePlayerCount = Object.keys(players).filter(key => players[key].active).length
   const everyoneHasSubmitted = (
-    submittedCards && activePlayerCount - 1 === Object.keys(submittedCards).length
+    submittedCards && Object.keys(submittedCards).length >= activePlayerCount - 1
   )
   return (
     <div className="container">
@@ -84,7 +84,7 @@ export const Evaluation = ({
                 onClick={onNextRound}
                 style={{ width: '143px' }}
               >
-                next round
+                start next round
               </button>
             </div>
           )
