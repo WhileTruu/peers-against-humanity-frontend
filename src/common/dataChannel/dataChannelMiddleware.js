@@ -13,7 +13,7 @@ import { actions as gameActions } from '../../game'
 import { actions as roomsActions } from '../../rooms'
 
 const dataChannelMiddleware = (() => {
-  const peerConnections = {}
+  let peerConnections = {}
 
   const send = (message, store) => {
     const state = store.getState()
@@ -34,11 +34,16 @@ const dataChannelMiddleware = (() => {
   }
 
   const closeAllPeerConnections = () => {
-    Object.keys(peerConnections)
-      .forEach((id) => {
-        if (peerConnections[id].rtcPeerConnection.signalingState === 'closed') return
-        peerConnections[id].rtcPeerConnection.close()
-      })
+    Promise.all(
+      Object.keys(peerConnections)
+        .map(id => (new Promise((resolve) => {
+          if (peerConnections[id].rtcPeerConnection.signalingState === 'closed') return resolve()
+          peerConnections[id].rtcPeerConnection.close()
+          return resolve()
+        }))),
+    ).then(() => {
+      peerConnections = {}
+    })
   }
 
   const broadcast = (message) => {
@@ -68,8 +73,9 @@ const dataChannelMiddleware = (() => {
     store.dispatch(dataChannelActions.hasRTCDataChannel(id))
     event.channel.onmessage = message => onMessage(message, store)  // eslint-disable-line
     event.channel.onclose = () => { // eslint-disable-line
-      // console.log(event, peerConnections[id])
       store.dispatch(dataChannelActions.removeUser(id))
+      delete peerConnections[id]
+      // console.log(event, peerConnections[id])
     }
     event.channel.signalingstatechange = console.log // eslint-disable-line
     event.channel.onerror = console.log  // eslint-disable-line

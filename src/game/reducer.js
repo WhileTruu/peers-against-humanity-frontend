@@ -7,7 +7,7 @@ import {
   SUBMIT_CARDS,
   SUBMITTED,
   BEST_SUBMISSION,
-  EXIT_GAME,
+  RESET,
 } from './constants'
 
 const initialState = {
@@ -142,7 +142,7 @@ export default function game(state = initialState, action) {
         winner: points >= 3 && action.id ? action.id : null,
       }
     }
-    case EXIT_GAME: {
+    case RESET: {
       return initialState
     }
     default:

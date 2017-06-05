@@ -7,7 +7,7 @@ import {
   SUBMITTED,
   BEST_SUBMISSION,
   PLAYER_EXITED,
-  EXIT_GAME,
+  RESET,
 } from './constants'
 import { actions as dataChannelActions } from '../common/dataChannel'
 import { actions as gameMainActions } from './main'
@@ -194,6 +194,6 @@ export function playerExited(id) {
   }
 }
 
-export function exitGame() {
-  return { type: EXIT_GAME }
+export function reset() {
+  return { type: RESET }
 }

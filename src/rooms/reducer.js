@@ -10,7 +10,7 @@ import {
   JOINED_ROOM,
   CREATED_ROOM,
   UPDATE_ROOM_OWNER,
-} from './actions'
+} from './constants'
 
 const initialState = {
   room: null,
