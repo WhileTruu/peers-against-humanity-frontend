@@ -1,9 +1,9 @@
 import {
-  SOCKET_CONNECTING as CONNECTING,
-  SOCKET_AUTHENTICATING as AUTHENTICATING,
-  SOCKET_CONNECTED as CONNECTED,
-  SOCKET_DISCONNECTED as DISCONNECTED,
-} from './actions'
+  CONNECTING,
+  AUTHENTICATING,
+  CONNECTED,
+  DISCONNECTED,
+} from './constants'
 
 const initialState = { connected: false, authenticating: false, connecting: false }
 

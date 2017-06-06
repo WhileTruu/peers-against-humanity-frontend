@@ -1,29 +1,29 @@
 import webSocketUrl from './config'
 import { actions } from '.'
 import {
-  SOCKET_CONNECT as CONNECT,
-  SOCKET_DISCONNECT as DISCONNECT,
-  SOCKET_SEND as SEND,
-} from './actions'
+  CONNECT,
+  DISCONNECT,
+  SEND,
+} from './constants'
 
 import { actions as roomsActions } from '../../rooms'
 import { actions as dataChannelActions } from '../dataChannel'
 
 const roomActionTypes = [
-  'UPDATE_ROOMS',
-  'UPDATE_ROOM',
-  'CREATED_ROOM',
-  'EXITED_ROOM',
-  'ROOM_NOT_EXITED',
-  'ROOM_NOT_JOINED',
-  'ROOM_NOT_CREATED',
+  '@rooms/UPDATE_ROOMS',
+  '@rooms/UPDATE_ROOM',
+  '@rooms/CREATED_ROOM',
+  '@rooms/EXITED_ROOM',
+  '@rooms/ROOM_NOT_EXITED',
+  '@rooms/ROOM_NOT_JOINED',
+  '@rooms/ROOM_NOT_CREATED',
 ]
 
 const socketMiddleware = (() => {
   let webSocket = null
 
   const onOpen = (socket, store) => (event) => { // eslint-disable-line
-    store.dispatch(actions.send({ type: 'AUTHENTICATE', token: store.getState().user.token }))
+    store.dispatch(actions.send({ type: '@socket/AUTHENTICATE', token: store.getState().user.token }))
     store.dispatch(actions.authenticating())
   }
 
@@ -38,16 +38,16 @@ const socketMiddleware = (() => {
     const message = JSON.parse(event.data)
     switch (message.type) {
 
-      case 'AUTHENTICATED': {
+      case '@socket/AUTHENTICATED': {
         store.dispatch(actions.connected())
         break
       }
 
-      case 'CREATED_ROOM':
+      case '@rooms/CREATED_ROOM':
         store.dispatch(roomsActions.createdRoom(message.room))
         break
 
-      case 'JOIN_ROOM':
+      case '@rooms/JOIN_ROOM':
         store.dispatch(dataChannelActions.join(message.from))
         break
 
@@ -63,7 +63,7 @@ const socketMiddleware = (() => {
         store.dispatch(dataChannelActions.iceCandidate(message))
         break
 
-      case 'UPDATE_ROOM': {
+      case '@rooms/UPDATE_ROOM': {
         store.dispatch(roomsActions.updateRoom(message.room))
         const messageRoom = (room && room.id && message.room.id === room.id) && message.room
         if (
@@ -78,7 +78,7 @@ const socketMiddleware = (() => {
         break
       }
 
-      case 'UPDATE_ROOMS': {
+      case '@rooms/UPDATE_ROOMS': {
         store.dispatch(roomsActions.updateRooms(message.rooms))
         const messageRoom = (room && room.id && message.rooms) && message.rooms[room.id]
         if (

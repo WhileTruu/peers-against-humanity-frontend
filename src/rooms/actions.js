@@ -2,32 +2,20 @@ import { actions as socketActions } from '../common/socket'
 import { actions as gameActions } from '../game'
 import { actions as chatActions } from '../chat'
 import { actions as dataChannelActions } from '../common/dataChannel'
-
-export const roomActionTypes = [
-  'CREATE_ROOM',
-  'JOIN_ROOM',
-  'EXIT_ROOM',
-  'ROOM_NOT_CREATED',
-  'ROOM_NOT_JOINED',
-  'ROOM_NOT_EXITED',
-  'JOINED_ROOM',
-  'EXITED_ROOM',
-  'CREATED_ROOM',
-]
-
-export const UPDATE_ROOM = 'UPDATE_ROOM'
-export const UPDATE_ROOMS = 'UPDATE_ROOMS'
-export const CREATE_ROOM = 'CREATE_ROOM'
-export const JOIN_ROOM = 'JOIN_ROOM'
-export const EXIT_ROOM = 'EXIT_ROOM'
-export const ROOM_NOT_CREATED = 'ROOM_NOT_CREATED'
-export const ROOM_NOT_JOINED = 'ROOM_NOT_JOINED'
-export const ROOM_NOT_EXITED = 'ROOM_NOT_EXITED'
-export const JOINED_ROOM = 'JOINED_ROOM'
-export const EXITED_ROOM = 'EXITED_ROOM'
-export const CREATED_ROOM = 'CREATED_ROOM'
-export const UPDATE_ROOM_OWNER = 'UPDATE_ROOM_OWNER'
-
+import {
+  UPDATE_ROOM,
+  UPDATE_ROOMS,
+  CREATE_ROOM,
+  JOIN_ROOM,
+  EXIT_ROOM,
+  ROOM_NOT_CREATED,
+  ROOM_NOT_JOINED,
+  ROOM_NOT_EXITED,
+  JOINED_ROOM,
+  EXITED_ROOM,
+  CREATED_ROOM,
+  UPDATE_ROOM_OWNER,
+} from './constants'
 
 export function updateRoom(room) {
   return (dispatch) => {
@@ -54,20 +42,6 @@ export function joinRoom(id) {
   return (dispatch) => {
     dispatch({ type: JOIN_ROOM, id: parseInt(id, 10) })
     dispatch(socketActions.send({ type: JOIN_ROOM, id: parseInt(id, 10) }))
-  }
-}
-
-export function exitRoom(id) {
-  return (dispatch, getState) => {
-    if (getState().game.started) dispatch(gameActions.exitGame())
-    dispatch(chatActions.reset())
-    dispatch(dataChannelActions.exitChannel())
-    dispatch({ type: EXITED_ROOM, id })
-    if (getState().socket.connected) {
-      dispatch(socketActions.send({ type: EXIT_ROOM, id }))
-    } else {
-      dispatch(socketActions.connect())
-    }
   }
 }
 
@@ -100,4 +74,27 @@ export function roomNotExited() {
 
 export function updateRoomOwner(id, ownerUsername, ownerNickname) {
   return { type: UPDATE_ROOM_OWNER, id, ownerUsername, ownerNickname }
+}
+
+export function exitRoom(id) {
+  return (dispatch, getState) => {
+    // reset the game if needed
+    if (getState().game.started) dispatch(gameActions.reset())
+
+    // reset the chat
+    dispatch(chatActions.reset())
+
+    // exit the data channel
+    dispatch(dataChannelActions.exitChannel())
+
+    // exit the room
+    dispatch(exitedRoom())
+
+    // reconnect with the server if needed and say that I exited if I own room.
+    if (getState().socket.connected) {
+      dispatch(socketActions.send({ type: EXIT_ROOM, id }))
+    } else {
+      dispatch(socketActions.connect())
+    }
+  }
 }

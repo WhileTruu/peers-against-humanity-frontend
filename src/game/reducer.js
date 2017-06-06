@@ -1,5 +1,6 @@
 import {
   INITIALIZE_GAME,
+  JOINED_GAME,
   START_ROUND,
   PLAYER_READY,
   PLAYER_EXITED,
@@ -7,7 +8,7 @@ import {
   SUBMIT_CARDS,
   SUBMITTED,
   BEST_SUBMISSION,
-  EXIT_GAME,
+  RESET,
 } from './constants'
 
 const initialState = {
@@ -54,7 +55,8 @@ function rearrangeCards({ allCardIds, currentCardIds }) {
 
 export default function game(state = initialState, action) {
   switch (action.type) {
-    case INITIALIZE_GAME: {
+    case INITIALIZE_GAME:
+    case JOINED_GAME: {
       const { blackCards, whiteCards, players, to } = action
       const blackCardIds = Object.keys(blackCards).map(id => parseInt(id, 10))
       const whiteCardIds = Object.keys(whiteCards).map(id => parseInt(id, 10))
@@ -101,6 +103,15 @@ export default function game(state = initialState, action) {
       }
     }
     case PLAYER_READY: {
+      if (!state.players[action.id]) {
+        return {
+          ...state,
+          players: {
+            ...state.players,
+            [action.id]: { ready: true, active: true },
+          },
+        }
+      }
       return {
         ...state,
         players: {
@@ -142,7 +153,7 @@ export default function game(state = initialState, action) {
         winner: points >= 3 && action.id ? action.id : null,
       }
     }
-    case EXIT_GAME: {
+    case RESET: {
       return initialState
     }
     default:
