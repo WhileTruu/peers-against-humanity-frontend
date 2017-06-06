@@ -229,23 +229,13 @@ const dataChannelMiddleware = (() => {
   }
 
   return store => next => (action) => {
-    const state = store.getState()
+    // const state = store.getState()
     switch (action.type) {
       case EXIT:
         closeAllPeerConnections()
         break
 
       case JOIN:
-        if (state.game.started && !state.game.players[action.from]) {
-          store.dispatch(socketActions.send({
-            type: 'ROOM_NOT_JOINED',
-            to: action.from,
-            from: state.user.id,
-            id: state.rooms.room.id,
-            error: 'JOIN_REQUEST_DENIED',
-          }))
-          break
-        }
         requestNewPeerConnection(action.from, store)
         break
 

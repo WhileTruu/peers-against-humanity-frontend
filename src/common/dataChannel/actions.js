@@ -15,9 +15,16 @@ import { actions as socketActions } from '../socket'
 import { actions as gameActions } from '../../game'
 import { actions as roomsActions } from '../../rooms'
 
-
 export function join(id) {
-  return { type: JOIN, from: id }
+  return (dispatch, getState) => {
+    const state = getState()
+    const { game, user, rooms } = state
+    if (game.started && !game.players[id]) {
+      dispatch(socketActions.send({ type: '@rooms/JOIN_DENIED', to: id, from: user.id, id: rooms.room.id }))
+    } else {
+      dispatch({ type: JOIN, from: id })
+    }
+  }
 }
 
 export function offer(message) {

@@ -51,6 +51,10 @@ const socketMiddleware = (() => {
         store.dispatch(dataChannelActions.join(message.from))
         break
 
+      case '@rooms/JOIN_DENIED':
+        store.dispatch(roomsActions.roomNotJoined())
+        break
+
       case '@dataChannel/OFFER':
         store.dispatch(dataChannelActions.offer(message))
         break
