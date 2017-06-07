@@ -6,6 +6,7 @@ import BlackCard from '../cards/blackCard'
 import WhiteCard from '../cards/whiteCard'
 import { selectBestSubmission, initializeRound } from '../actions'
 import './Evaluation.scss'
+import Footer from '../../common/footer'
 
 function heading(everyoneHasSubmitted, evaluator, bestSubmission) {
   if (everyoneHasSubmitted && evaluator && !bestSubmission) {
@@ -39,54 +40,56 @@ export const Evaluation = ({
     submittedCards && Object.keys(submittedCards).length >= activePlayerCount - 1
   )
   return (
-    <div className="container">
+    <div style={{ display: 'flex', flex: 1, flexDirection: 'column' }} className="container">
       { heading(everyoneHasSubmitted, evaluator, bestSubmission) }
-      <div className="submissions d-flex">
-        {
-          (everyoneHasSubmitted && shuffledOrder) &&
-          shuffledOrder.map((key) => {
-            const submitterId = parseInt(key, 10)
-            const submitter = submitterId === user.id ? user : users[key]
-            return (
-              <div // eslint-disable-line
-                className={`submission ${evaluator && 'cursor-pointer'}`}
-                key={key}
-                onClick={() => (
-                  (evaluator && !bestSubmission) && onSelectBestSubmission(submitterId)
-                )}
-              >
-                <div className={`best-message ${bestSubmission === submitterId}`}>
-                  <h1 className="text-danger w-100 text-center">{ 'best' }</h1>
-                  <h4 className="text-warning w-100 text-center">
-                    { submitter && (submitter.username || submitter.nickname) }
-                  </h4>
+      <div className="submissions d-flex" style={{ flex: 1 }}>
+        <div>
+          {
+            (everyoneHasSubmitted && shuffledOrder) &&
+            shuffledOrder.map((key) => {
+              const submitterId = parseInt(key, 10)
+              const submitter = submitterId === user.id ? user : users[key]
+              return (
+                <div // eslint-disable-line
+                  className={`submission ${evaluator && 'cursor-pointer'}`}
+                  key={key}
+                  onClick={() => (
+                    (evaluator && !bestSubmission) && onSelectBestSubmission(submitterId)
+                  )}
+                >
+                  <div className={`best-message ${bestSubmission === submitterId}`}>
+                    <h1 className="text-danger w-100 text-center">{ 'best' }</h1>
+                    <h4 className="text-warning w-100 text-center">
+                      { submitter && (submitter.username || submitter.nickname) }
+                    </h4>
+                  </div>
+                  <BlackCard
+                    text={blackCards[currentBlackCardId].text}
+                    pick={blackCards[currentBlackCardId].pick}
+                  />
+                  {
+                    submittedCards[key].map(id => (
+                      <WhiteCard text={whiteCards[id].text} key={id} />
+                    ))
+                  }
                 </div>
-                <BlackCard
-                  text={blackCards[currentBlackCardId].text}
-                  pick={blackCards[currentBlackCardId].pick}
-                />
-                {
-                  submittedCards[key].map(id => (
-                    <WhiteCard text={whiteCards[id].text} key={id} />
-                  ))
-                }
-              </div>
-            )
-          })
-        }
+              )
+            })
+          }
+        </div>
       </div>
       <div>
         {
           evaluator && (
-            <div className="container text-center">
+            <Footer>
               <button
-                className="btn btn-success mt-2 mb-5"
+                className="btn btn-success"
                 onClick={onNextRound}
                 style={{ width: '143px' }}
               >
                 start next round
               </button>
-            </div>
+            </Footer>
           )
         }
       </div>

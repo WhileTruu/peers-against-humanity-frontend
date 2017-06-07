@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 
 import BlackCard from '../cards/blackCard'
 import WhiteCard from '../cards/whiteCard'
+import Footer from '../../common/footer'
 
 import { toggleCardSelected } from './actions'
 import { submitCards } from '../actions'
@@ -36,41 +37,45 @@ export const Main = ({
   )
     /* eslint-enable */
   return (
-    <div className="main">
-      <div className="black-card-container justify-content-center d-flex">
-        {
-          (blackCards !== null && currentBlackCardId !== null) &&
-          <BlackCard
-            text={blackCards[currentBlackCardId].text}
-            pick={blackCards[currentBlackCardId].pick}
-          />
-        }
-      </div>
+    <div style={{ display: 'flex', flex: 1, flexDirection: 'column' }}>
+      <div
+        className="main"
+        style={{ display: 'flex', flex: 1, flexDirection: 'column', justifyContent: 'center' }}
+      >
+        <div className="justify-content-center d-flex">
+          {
+            (blackCards !== null && currentBlackCardId !== null) &&
+            <BlackCard
+              text={blackCards[currentBlackCardId].text}
+              pick={blackCards[currentBlackCardId].pick}
+            />
+          }
+        </div>
 
-      <div className="white-card-container-singleline">
-        <div className="white-card-container">
-          { (whiteCards && currentWhiteCardIds) && renderWhiteCards() }
+        <div className="white-card-container-singleline">
+          <div className="white-card-container">
+            { (whiteCards && currentWhiteCardIds) && renderWhiteCards() }
+          </div>
+        </div>
+
+        <div className="white-card-container-multiline">
+          <div className="white-card-container">
+            { (whiteCards && currentWhiteCardIds) && renderWhiteCards().slice(0, 5) }
+          </div>
+          <div className="white-card-container">
+            { (whiteCards && currentWhiteCardIds) && renderWhiteCards().slice(5) }
+          </div>
         </div>
       </div>
-
-      <div className="white-card-container-multiline">
-        <div className="white-card-container">
-          { (whiteCards && currentWhiteCardIds) && renderWhiteCards().slice(0, 5) }
-        </div>
-        <div className="white-card-container">
-          { (whiteCards && currentWhiteCardIds) && renderWhiteCards().slice(5) }
-        </div>
-      </div>
-
-      <div className="container text-center">
+      <Footer>
         <button
-          className="btn btn-success mt-2 mb-5"
+          className="btn btn-success"
           onClick={onSubmitCards}
           style={{ width: '143px' }}
         >
           submit cards
         </button>
-      </div>
+      </Footer>
     </div>
   )
 }

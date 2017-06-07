@@ -5,7 +5,8 @@ import { connect } from 'react-redux'
 import { actions as roomsActions } from '..'
 import MemberList from './memberList'
 import Chat from '../../chat'
-
+import Header from '../../common/header'
+import './Room.scss'
 import Game, { actions as gameActions } from '../../game'
 
 class Room extends Component {
@@ -30,57 +31,74 @@ class Room extends Component {
   }
 
   render() {
-    const { room, user, dataChannel, finished } = this.props
+    const { room, user, dataChannel, finished, roundNumber } = this.props
+    const canStartGame = (
+      (finished && user.id === room.ownerId) ||
+      (room && user.id === room.ownerId && !this.props.gameStarted &&
+      dataChannel && dataChannel.users &&
+      Object.keys(dataChannel.users).map(memberId => parseInt(memberId, 10))
+        .filter(id => dataChannel.users[id].hasRTCDataChannel || id === user.id)
+        .length >= 2)
+    )
     return (
-      <div>
-        <div className="container">
-          <div className="row">
-            <div className="col-12 mt-3">
-              <div className="form-inline justify-content-between align-items-start">
-                <h2 className="panel-heading">room {room && room.id}</h2>
-                <div>
-                  {
-                    (
-                      finished ||
-                      (room && user.id === room.ownerId && !this.props.gameStarted &&
-                      dataChannel && dataChannel.users &&
-                      Object.keys(dataChannel.users).map(memberId => parseInt(memberId, 10))
-                        .filter(id => dataChannel.users[id].hasRTCDataChannel || id === user.id)
-                        .length >= 2)
-                    ) &&
-                    <button
-                      className="btn btn-success ml-2"
-                      onClick={this.props.startGame}
-                    >
-                      start game
-                    </button>
-                  }
-                  <button
-                    type="button"
-                    className="btn btn-outline-danger ml-2"
-                    onClick={() => this.props.history.replace('/rooms')}
-                  >
-                    exit
-                  </button>
-                </div>
-              </div>
-              <small>
-                { 'you are ' }
-                <span className="text-primary">
-                  {user && `${user.username || user.nickname}`}
-                </span>
-                { (room && user.id === room.ownerId) && ', the owner of this room' }
-              </small>
+      <div className="d-flex flex-column" style={{ minHeight: '100vh' }}>
+        <Header
+          navigation={[(
+            <h4
+              key="header-title"
+              className={`panel-heading ${roundNumber && 'panel-heading-hide'}`}
+              style={{ flex: 1, justifyContent: 'flex-start', display: 'flex' }}
+            >
+              room {room && room.id}
+            </h4>
+          ), (
+            roundNumber ? (
+              <h4
+                key="header-round-number"
+                className="header-round-number text-danger d-flex"
+                style={{ flex: 1, justifyContent: 'center' }}
+              >
+                { `round ${roundNumber}` }
+              </h4>
+            ) : ''
+          ), (
+            <span
+              key="header-username"
+              className="text-info d-flex"
+              style={{ flex: 1, justifyContent: 'center' }}
+            >
+              {user && `${user.username || user.nickname}`}
+            </span>
+          ), (
+            <div key="header-buttons" className="d-flex" style={{ flex: 1, justifyContent: 'flex-end' }}>
+              {
+                canStartGame &&
+                <button
+                  className="btn btn-success ml-2"
+                  onClick={this.props.startGame}
+                >
+                  start game
+                </button>
+              }
+              <button
+                type="button"
+                className="btn btn-outline-danger ml-2"
+                onClick={() => this.props.history.replace('/rooms')}
+              >
+                exit
+              </button>
             </div>
-          </div>
-        </div>
+          )]}
+        />
         {
           this.props.gameStarted ? (
             <Game />
           ) : (
-            <div className="container">
-              <div className="pt-3">
-                <MemberList />
+            <div>
+              <div className="container">
+                <div className="pt-3">
+                  <MemberList />
+                </div>
               </div>
             </div>
           )
@@ -111,6 +129,7 @@ Room.propTypes = {
   gameStarted: Types.bool,
   dataChannel: Types.shape({}),
   finished: Types.bool,
+  roundNumber: Types.number,
 }
 
 Room.defaultProps = {
@@ -119,9 +138,11 @@ Room.defaultProps = {
   gameStarted: false,
   dataChannel: null,
   finished: false,
+  roundNumber: null,
 }
 
 const mapStoreToProps = store => ({
+  roundNumber: store.game.roundNumber,
   user: store.user,
   room: store.rooms.room,
   isFetching: store.rooms.isFetching,

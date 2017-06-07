@@ -68,8 +68,8 @@ export const LoginForm = ({
           {loading ? strings.loading : strings.submit}
         </button>
       </div>
-      <div className="d-flex justify-content-between">
-        <div className="form-check mr-3 mb-0">
+      <div className="d-flex justify-content-between flex-wrap">
+        <div className="form-check mr-3 mb-3" style={{ flexShrink: 0 }}>
           <input
             type="checkbox"
             id="login-remember-checkbox"
@@ -81,8 +81,8 @@ export const LoginForm = ({
             {strings.rememberMe}
           </label>
         </div>
-        <div>
-          <p className="mb-0">new to peers against humanity? <Link to="/register">sign up</Link></p>
+        <div style={{ flexShrink: 0 }}>
+          <p className="mb-3">new to peers against humanity? <Link to="/register">sign up</Link></p>
         </div>
       </div>
     </form>

@@ -6,31 +6,23 @@ import { LoginForm, actions } from '../'
 import generateRandomNickname from './util'
 
 const AuthOptions = ({ url, isAuthenticated, temporaryLogin }) => (
-  <div className="container my-5">
+  <div className="col-12 col-sm-8 offset-sm-2 col-md-6 offset-md-3 col-xl-4 offset-xl-4 py-5">
     {isAuthenticated ? <Redirect to={url} /> : ''}
-    <div className="row">
-      <div className="col-12" style={{ position: 'absolute', zIndex: 2 }}>
-        <div className="row">
-          <div className="col-12">
-            <LoginForm redirectUrl={url} />
-          </div>
-        </div>
-        <div className="col-12 my-3" style={{ borderTop: '1px solid rgba(0, 0, 0, 0.125)' }} />
-        <div className="row">
-          <div className="col-12">
-            <label htmlFor="anon-register" className="form-check-label">
-              want to stay anonymous?
-            </label>
-            <button
-              id="anon-register"
-              type="button"
-              className="form-control btn btn-info"
-              onClick={() => temporaryLogin(generateRandomNickname())}
-            >
-              sign in as guest
-            </button>
-          </div>
-        </div>
+    <LoginForm redirectUrl={url} />
+    <div className="mb-3" style={{ borderTop: '1px solid rgba(0, 0, 0, 0.125)' }} />
+    <div>
+      <div>
+        <label htmlFor="anon-register" className="form-check-label">
+          want to stay anonymous?
+        </label>
+        <button
+          id="anon-register"
+          type="button"
+          className="form-control btn btn-info"
+          onClick={() => temporaryLogin(generateRandomNickname())}
+        >
+          sign in as guest
+        </button>
       </div>
     </div>
   </div>

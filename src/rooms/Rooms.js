@@ -8,13 +8,6 @@ import AuthOptions from '../user/authOptions'
 
 import { actions as socketActions } from '../common/socket'
 
-const socketState = (socket) => {
-  if (socket.connecting) return { text: 'connecting...', textStyle: 'text-info' }
-  if (socket.authenticating) return { text: 'authenticating...', textStyle: 'text-warn' }
-  if (socket.connected) return { text: 'connected', textStyle: 'text-success' }
-  return { text: 'disconnected', textStyle: 'text-primary' }
-}
-
 class Rooms extends Component {
   componentDidMount() {
     if (this.props.isLoggedIn && !this.props.socket.connected) {
@@ -29,19 +22,10 @@ class Rooms extends Component {
   }
 
   render() {
-    const { isLoggedIn, room, match, socket } = this.props
+    const { isLoggedIn, room, match } = this.props
 
     return (
       <div>
-        {
-          socket && (
-            <div className="container">
-              <h3 className={socketState(socket).textStyle}>
-                server is {socketState(socket).text}
-              </h3>
-            </div>
-          )
-        }
         {room && room.id ? <Redirect to={`/rooms/${room.id}`} /> : ''}
         {!isLoggedIn ? <AuthOptions url={match.url} /> : ''}
         {isLoggedIn ?

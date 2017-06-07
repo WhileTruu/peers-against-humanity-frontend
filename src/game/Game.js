@@ -76,15 +76,8 @@ WinnerScreen.defaultProps = {
   user: null,
 }
 
-const Game = ({ isEvaluator, hasSubmitted, roundNumber, finished, winner }) => (
-  <div>
-    <div className="container">
-      <div className="pt-2">
-        {
-          roundNumber && <h4 className="text-info">{ `round ${roundNumber}` }</h4>
-        }
-      </div>
-    </div>
+const Game = ({ isEvaluator, hasSubmitted, finished, winner }) => (
+  <div style={{ display: 'flex', flex: 1, flexDirection: 'column' }}>
     {
       !finished &&
       ((isEvaluator || hasSubmitted) ? <Evaluation /> : <Main />)
@@ -97,7 +90,6 @@ const Game = ({ isEvaluator, hasSubmitted, roundNumber, finished, winner }) => (
 )
 
 Game.propTypes = {
-  roundNumber: Types.number,
   hasSubmitted: Types.bool,
   isEvaluator: Types.bool,
   finished: Types.bool,
@@ -105,7 +97,6 @@ Game.propTypes = {
 }
 
 Game.defaultProps = {
-  roundNumber: null,
   hasSubmitted: false,
   isEvaluator: false,
   finished: false,
@@ -113,7 +104,6 @@ Game.defaultProps = {
 }
 
 const mapStoreToProps = store => ({
-  roundNumber: store.game.roundNumber,
   hasSubmitted: store.game.submitted,
   isEvaluator: store.user.id === store.game.evaluatorId,
   finished: store.game.finished,
