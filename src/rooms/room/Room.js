@@ -67,7 +67,7 @@ class Room extends Component {
               className="text-info d-flex"
               style={{ flex: 1, justifyContent: 'center' }}
             >
-              {user && `${user.username || user.nickname}`}
+              {user && `${user.nickname || user.username}`}
             </span>
           ), (
             <div key="header-buttons" className="d-flex" style={{ flex: 1, justifyContent: 'flex-end' }}>
